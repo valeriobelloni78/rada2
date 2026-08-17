@@ -289,6 +289,17 @@ function restartCycles() {
   /* Le tenute entrano più tardi e più distanziate: sono uno sfondo, e uno
      sfondo che attacca insieme al primo piano non è uno sfondo.          */
   droni.forEach((L, i) => avvia(L, now, 1.5 + i * 1.1 + Math.random() * 0.8));
+
+  /* Il primo ricambio è sfalsato di una frazione casuale del proprio tempo:
+     partendo tutti da zero le otto linee si rinnoverebbero per la prima volta
+     quasi insieme, e il ricambio si presenterebbe proprio nel momento in cui
+     si sta ancora capendo che cosa si sta ascoltando.                     */
+  sfalsaRicambio(loops, SPECIE_GOCCE,  now);
+  sfalsaRicambio(droni, SPECIE_TENUTE, now);
+}
+
+function sfalsaRicambio(lista, sp, now) {
+  lista.forEach((L, i) => { L.prossimoRicambio = now + sp.tempi[i] * (0.3 + Math.random() * 0.7); });
 }
 
 function avvia(L, now, entrata) {
@@ -343,6 +354,13 @@ function schedule() {
   }
   ultimoGiro = now;
 
+  /* Il tempo lungo avanza qui, e non nel ciclo di fotogrammi, per una ragione
+     precisa: a pagina nascosta i fotogrammi si fermano del tutto mentre lo
+     scheduler continua a girare. Se la deriva vivesse nel disegno, mettere
+     l'app in secondo piano la congelerebbe — e si tornerebbe dopo mezz'ora
+     esattamente dove la si era lasciata, cioè al difetto di Rada.         */
+  avanzaDeriva(now);
+
   const horizon = now + LOOKAHEAD;
   /* Solo in avanti: al ritorno in primo piano la finestra si stringe, ma le
      gocce prenotate con quella larga restano prenotate. Assegnare qui il
@@ -362,6 +380,26 @@ function schedule() {
      fa già per l'intero strumento.                                       */
   prenota(loops, buildPlan,      suonaGoccia, now, horizon, gocceOn);
   prenota(droni, buildPlanDrone, suonaTenuta, now, horizon, tessutiOn);
+
+  /* Il ricambio viene DOPO la prenotazione, non prima: così gli eventi appena
+     consegnati al motore audio sono già dentro `bookedUntil`, e l'orizzonte
+     che il ricambio consulta è quello vero. Invertendo i due, una goccia
+     prenotata in questo stesso giro potrebbe essere riscritta subito dopo.
+
+     Si ricambia anche a classe spenta, come i cicli avanzano a classe spenta:
+     riaccendendola si ritrova un materiale invecchiato quanto il tempo
+     passato, non quello di prima messo in frigo.                          */
+  ricambiaClasse(loops, SPECIE_GOCCE,  now);
+  ricambiaClasse(droni, SPECIE_TENUTE, now);
+}
+
+function ricambiaClasse(lista, sp, now) {
+  lista.forEach(L => {
+    if (now < L.prossimoRicambio) return;
+    /* Il ±15% non è cosmetico: senza, i tempi resterebbero esatti e due linee
+       con periodi vicini finirebbero per ricambiarsi in coppia a lungo.   */
+    if (ricambia(L, now, sp)) L.prossimoRicambio = now + sp.tempi[L.i] * (0.85 + Math.random() * 0.3);
+  });
 }
 
 /* Il cuore dello scheduler, uguale per le gocce e per le tenute: le due classi
@@ -392,7 +430,29 @@ function prenota(lista, costruisciPiano, suona, now, horizon, attiva) {
       const t = L.cycleStart + p.ph * L.period;
       if (t >= horizon) break;
 
-      if (attiva && !L.muted && t >= now - 0.25) {
+      /* PERIODO REFRATTARIO: lo stesso evento non torna prima di mezzo giro.
+
+         L'orizzonte da solo bastava a Rada, dove le fasi si ricalcolavano
+         quasi mai: l'addensamento cambiava solo mentre l'utente trascinava un
+         cursore. Qui la deriva lo muove di continuo, e `buildPlan` ricalcola
+         le fasi con l'addensamento DI ADESSO. Ne seguono due guai, che la
+         simulazione ha trovato in quest'ordine:
+
+         — una goccia già emessa scivola oltre l'orizzonte, `riposizionaIdx`
+           la ritrova e la riprenota (Δ ≈ 10 ms);
+         — una goccia in fondo al giro scavalca la fine e rientra in testa a
+           quello dopo, così suona due volte a cavallo del confine (Δ ≈ 6 ms).
+
+         Nessuno dei due si sente come un raddoppio: si sentono come un colpo
+         sporco. Contare i giri copriva solo il primo — il secondo cade
+         onestamente in due giri diversi. Il tempo trascorso li copre
+         entrambi, ed è una cosa sola da mantenere invece di due.
+
+         `flash` è già il momento dell'ultima emissione, e lo scrivono
+         entrambe le classi: non serve un campo nuovo. Il ricambio lo riporta
+         a −99 quando sostituisce un evento, ed è giusto — quella è un'altra
+         goccia, e ha diritto di suonare subito.                           */
+      if (attiva && !L.muted && t >= now - 0.25 && t - p.ev.flash > L.period * 0.5) {
         /* Un evento lievemente in ritardo (scatto di frame) si suona subito
            invece di perderlo. Oltre il quarto di secondo è obsoleto — per
            esempio una scheda tornata in primo piano — e va scartato,
@@ -422,7 +482,7 @@ function suonaTenuta(at, ev, L) {
    filo di parziale "campana" scordata dell'1% per un battimento lento.
    L'inviluppo ha attacco brevissimo e coda lunga.                          */
 function playDrop(when, ev, L) {
-  const spread = G.spread / 100;
+  const spread = effG.spread / 100;   // registro già inclinato dalla deriva
   const warmth = effWarmth;                 // calore già inclinato dall'ora
   const half = SCALE.length / 2;
   const freq = SCALE[clamp(Math.round(half + ev.rel * spread * half), 0, SCALE.length - 1)];
@@ -510,7 +570,7 @@ function playTone(when, ev, L) {
 
   const env = ctx.createGain();
   env.gain.value = 0;
-  const picco = 0.15 * (D.liv / 100) * ev.vel;
+  const picco = 0.15 * (effD.liv / 100) * ev.vel;
 
   /* Apertura e chiusura non possono sommarsi a più della durata, altrimenti
      la tenuta non raggiunge mai il suo livello.                           */
@@ -547,9 +607,16 @@ function playTone(when, ev, L) {
 function tickParams() {
   for (const k in GT) G[k] += (GT[k] - G[k]) * 0.06;
 
-  // se l'addensamento è cambiato, ricolloca le gocce senza risuonare quelle già emesse
-  if (Math.abs(G.head - lastHead) > 0.3) {
-    lastHead = G.head;
+  /* Prima i valori efficaci, poi tutto il resto: da qui in giù nessuno deve
+     più guardare i cursori nudi. */
+  effettiviGlobali();
+
+  /* Se l'addensamento EFFICACE è cambiato — per mano dell'utente o per deriva —
+     ricolloca le gocce senza risuonare quelle già emesse. La soglia di 0,3
+     serve adesso anche a un secondo scopo: la deriva muove `head` di continuo
+     e senza soglia si ricostruirebbero quattro piani a ogni fotogramma.    */
+  if (Math.abs(effG.head - lastHead) > 0.3) {
+    lastHead = effG.head;
     rebuildPlans(ctx ? ctx.currentTime : null);
   }
 

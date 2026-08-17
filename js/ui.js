@@ -10,15 +10,41 @@
 const $ = id => document.getElementById(id);
 
 /* --- valori accanto ai cursori ------------------------------------------- */
+/* "Cursore → efficace" ogni volta che i due differiscono. In Rada capitava
+   solo a calore e spazio, che l'ora inclina; qui capita quasi sempre e a
+   quasi tutti, perché la deriva non sta mai ferma. È il modo in cui lo
+   strumento resta onesto: il cursore dice dove l'hai messo, il secondo numero
+   dice che cosa sta suonando davvero.                                      */
+function due(cursore, efficace, suffisso) {
+  const a = Math.round(cursore), b = Math.round(efficace);
+  return (a === b) ? fmtInt(a) + suffisso : fmtInt(a) + "→" + fmtInt(b) + suffisso;
+}
+
+/* I centesimi vogliono sempre il segno, e vogliono il meno tipografico — il
+   trattino del tastierino è più corto e in una riga di cifre si vede.     */
+function fmtCents(c) {
+  const n = Math.round(c);
+  return (n < 0 ? "−" : "+") + fmtInt(Math.abs(n)) + "¢";
+}
+
 function readouts() {
-  $("vSpread").textContent = fmtInt(Math.round(G.spread)) + "%";
-  // calore e spazio: se l'ora li inclina, si mostra "cursore → efficace"
-  const wf = Math.round(G.warmth), we = Math.round(effWarmth * 100);
-  const rf = Math.round(G.rev),    re = Math.round(effRev * 100);
-  $("vWarmth").textContent = (we === wf) ? fmtInt(wf) + "%" : fmtInt(wf) + "→" + fmtInt(we) + "%";
-  $("vRev").textContent    = (re === rf) ? fmtInt(rf) + "%" : fmtInt(rf) + "→" + fmtInt(re) + "%";
-  $("vDens").textContent   = T("ctl.densValue", { n: fmtInt(Math.round(G.dens)) });
-  $("vHead").textContent   = fmtInt(Math.round(G.head)) + "%";
+  $("vSpread").textContent = due(G.spread, effG.spread, "%");
+  $("vWarmth").textContent = due(G.warmth, effWarmth * 100, "%");
+  $("vRev").textContent    = due(G.rev,    effRev * 100,    "%");
+  $("vDens").textContent   = T("ctl.densValue", { n: due(G.dens, effG.dens, "") });
+  $("vHead").textContent   = due(G.head, effG.head, "%");
+
+  /* La deriva sta qui e non in `onRealignChange` perché non ha un "cambio" da
+     ascoltare: si muove sempre, e va riletta come si rilegge un cursore.
+
+     Due chiavi e non un plurale calcolato: la regola del dizionario è che le
+     frasi ci stiano intere. Il giapponese non distingue e ha la stessa
+     stringa due volte, che è il prezzo giusto da pagare — molto minore di un
+     motore di plurali per una parola sola.                               */
+  $("deriva").textContent = T(passiQuinta === 1 ? "deriva.uno" : "deriva", {
+    q: fmtInt(passiQuinta),
+    c: fmtCents(derivaCents()),
+  });
 }
 setInterval(readouts, 120);
 

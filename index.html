@@ -41,6 +41,12 @@
   <div class="loopCard">
     <div class="cardHead">
       <span class="t" data-i18n="card.title">Le quattro frasi</span>
+      <!-- Due numeri diversi, e conviene non confonderli: `realign` dice
+           quando le FASI tornano nella stessa combinazione, `deriva` dice
+           quanto si è spostato il pezzo. Il primo è l'eredità di Rada, e da
+           solo non è più la promessa dello strumento; il secondo è la
+           promessa nuova, e non torna a zero mai. -->
+      <span class="realign" id="deriva">—</span>
       <span class="realign" id="realign">—</span>
     </div>
     <div class="loopHint" data-i18n="card.hint">trascina: durata · clic: silenzia · ↻ nuova idea</div>
@@ -194,6 +200,7 @@
      l'ordine conta: le parole e il modello prima (non dipendono da nulla),
      poi il suono, poi il disegno, infine i comandi -->
 <script src="js/i18n.js"></script>
+<script src="js/deriva.js"></script>
 <script src="js/model.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/droni.js"></script>

@@ -1,17 +1,49 @@
-# Rada — contesto di progetto
+# Rada2 — contesto di progetto
 
-Strumento generativo nel browser. Quattro frasi sonore di lunghezza diversa,
-ciascuno col proprio periodo, che non tornano mai insieme allo stesso modo.
+Strumento generativo nel browser, ramo divergente di
+[Rada](https://github.com/valeriobelloni78/rada). Eredita il motore sonoro, la
+grafica, la palette e le quattro lingue; cambia ciò che Rada faceva del tempo.
+
+**Rada stava ferma.** Quattro frasi con periodi coprimi si ricombinavano senza
+ripetersi, ma i parametri restavano dove li avevi messi, la scala era una
+pentatonica costruita una volta sola, e dopo un'ora lo strumento era
+esattamente dov'era all'inizio: imprevedibile e immobile. L'interfaccia lo
+dichiarava — «si ripete ogni ≈ 4,7 ore» era la promessa di non avere una forma.
+
+**Rada2 va da qualche parte e non torna.** Il pezzo ha un tempo proprio, molto
+più lento di quello delle frasi: l'armonia migra, la densità e il registro si
+spostano, e il materiale stesso si rinnova una goccia per volta. Non finisce e
+non culmina — non è un brano con una fine — ma non ripassa mai dove è già
+stato.
 
 **Rispondi sempre in italiano.** Commenti nel codice, messaggi di commit e
 testi dell'interfaccia sono in italiano.
 
 ## Regole da non violare
 
-**I periodi devono restare coprimi a due a due.** È il cuore del progetto: se
-due linee condividono un divisore tornano insieme presto e il collage collassa
-in un motivo riconoscibile. Vale per ogni serie in `MOODS` e in `DRONI_MOODS`.
-Verificare sempre il minimo comune multiplo prima di proporre nuove serie.
+**La deriva non deve poter tornare, e la garanzia è un teorema.** Lo stato del
+pezzo è un punto su un toro: sei canali che girano a velocità in rapporto
+`√2 : √3 : √5 : √7 : √11 : 1`. Le radici quadrate di interi distinti liberi da
+quadrati, prese insieme a 1, sono linearmente indipendenti sui razionali, e per
+il teorema di Kronecker un'orbita con frequenze razionalmente indipendenti è
+densa sul toro e non si chiude mai. **Chi sostituisce quelle radici con numeri
+qualunque — 1,3 e 1,7 e 2,1 — perde il teorema** e riporta lo strumento a
+un'orbita che prima o poi si richiude, cioè al difetto che `deriva.js` esiste
+per togliere. Sta tutto lì, e nessun altro file conosce quelle costanti.
+
+**Nessun parametro pende da un canale solo.** Ogni valore derivato è la somma
+pesata di tre canali (`misto`). Una sinusoide sola, per quanto lenta, si sente
+andare e tornare; tre incommensurabili no. E due parametri non devono
+condividere tutta la terna, altrimenti si muovono all'unisono e la deriva si
+riduce a una manopola sola tirata da una mano invisibile.
+
+**I periodi restano coprimi a due a due, ma non sono più la promessa.** Se due
+linee condividono un divisore tornano insieme presto e la trama collassa in un
+motivo riconoscibile: la regola serve ancora, e vale per ogni serie in `MOODS`
+e in `DRONI_MOODS`. Quello che è cambiato è il suo rango. In Rada il minimo
+comune multiplo era *il* dato dello strumento, scritto grande in interfaccia;
+qui è una regola igienica locale, e la riga che l'utente legge è la deriva.
+Verificare comunque l'MCM prima di proporre nuove serie.
 
 Le due classi sono otto linee, non due gruppi da quattro: i periodi dei tessuti
 devono essere coprimi **anche con quelli delle gocce**, altrimenti le due
@@ -43,6 +75,22 @@ aprirsi senza rete. Non rimetterne una.
 **La palette è definita una volta sola**, nelle variabili CSS di
 `css/style.css`. Anche il canvas le legge (`readPalette` in `frasi.js`).
 Non introdurre colori scritti direttamente nel JavaScript.
+
+**La deriva NON è una terza influenza esterna.** L'ora e la stagione vengono da
+fuori — un orologio, un calendario — e la regola qui sotto continua a valere per
+loro. La deriva viene da dentro: è il pezzo che si sposta, non il mondo che lo
+inclina. Per questo non ha un `id` da tradurre né una riga di stato propria, ma
+un indicatore che conta quanta strada è stata fatta. Chi aggiunge una terza
+influenza *esterna* rompe ancora la simmetria; chi confonde le due cose finisce
+per chiedere il permesso dei sensori a un orologio interno.
+
+**Il valore efficace ora è la regola, non l'eccezione.** In Rada solo calore e
+spazio avevano un valore inclinato. Qui `effG.spread`, `effG.dens` ed
+`effG.head` si muovono sempre, e **chi legge il cursore nudo legge una cosa che
+non sta suonando**: `makeIdea` usa `effG.dens`, `buildPlan` usa `effG.head`,
+`playDrop` usa `effG.spread`, `playTone` usa `effD.liv`. La lettura accanto a
+ogni cursore mostra i due numeri appena differiscono, ed è così che lo strumento
+resta onesto su chi comanda che cosa.
 
 **Una influenza esterna per classe, e sono simmetriche.** L'ora del giorno
 inclina le gocce (`timePalette`), la stagione inclina i tessuti
@@ -93,6 +141,29 @@ ciò che si vede da ciò che si sente.
 riordinate (lo fa `buildPlan`). In `rebuildPlans` il confronto avviene su
 **tempi assoluti**, non su fasi: `cycleStart` può essere nel futuro, e
 avvolgere la fase fa saltare gocce o interi cicli.
+
+**Un evento non torna prima di mezzo giro, e questa guardia è nuova.** In Rada
+l'orizzonte di prenotazione bastava, perché le fasi si ricalcolavano quasi mai:
+l'addensamento cambiava solo mentre l'utente trascinava un cursore. Qui la
+deriva lo muove di continuo e `buildPlan` ricalcola le fasi con l'addensamento
+*di adesso*, da cui due guai che la simulazione ha trovato in quest'ordine: una
+goccia già emessa scivola oltre l'orizzonte e `riposizionaIdx` la riprenota
+(Δ ≈ 10 ms); una goccia in fondo al giro scavalca la fine, rientra in testa a
+quello dopo e suona due volte a cavallo del confine (Δ ≈ 6 ms). Nessuno dei due
+si sente come un raddoppio: si sentono come un colpo sporco. Contare i giri
+copriva solo il primo — il secondo cade onestamente in due giri diversi. La
+guardia buona è `t - ev.flash > L.period * 0.5` dentro `prenota`, e copre
+entrambi con un meccanismo solo. **Non toglierla per "semplificare": è l'unica
+cosa che rende sicuro ricostruire un piano mentre il pezzo suona.**
+
+**Il ricambio tocca solo eventi liberi.** `raccogliLibere` scarta ciò che cade
+prima dell'orizzonte *e* ciò che sta ancora suonando (`!(ev.fino > now)`): la
+seconda condizione esiste per i tessuti, che restano aperti anche mezzo minuto e
+salterebbero di registro sotto l'orecchio. È scritta al negativo apposta —
+le gocce `fino` non ce l'hanno, e per loro il confronto deve cadere su
+`undefined` risultando "libera". Il ricambio va inoltre chiamato **dopo**
+`prenota`, così `bookedUntil` è già aggiornato e l'orizzonte che consulta è
+quello vero.
 
 **Il modello si popola da sé.** In fondo a `model.js` c'è
 `loops.forEach(regenerate)`. Senza quella riga le frasi nascono vuote e l'app

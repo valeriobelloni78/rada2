@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "rada2",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["/private/tmp/claude-501/-Users-valeriobelloni-Documents-rada2/39f1051b-e342-47ce-ac66-9a058bfbb786/scratchpad/serve.js"],
+      "port": 8777,
+      "autoPort": true
+    }
+  ]
+}

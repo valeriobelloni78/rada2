@@ -135,7 +135,13 @@ h1 em{font-style:normal;font-weight:600;color:var(--amber)}
   flex-wrap:wrap;
 }
 .cardHead .t{font-weight:200;font-size:16px;letter-spacing:.1em}
-.realign{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+/* Due indicatori nella stessa testata, e uno solo può essere arancione:
+   l'accento vale finché è raro. Prende l'arancione la deriva, che è la
+   promessa di questo strumento; il riallineamento delle fasi resta — è ancora
+   vero, ed è l'eredità di Rada — ma in grigio, perché non è più la cosa che
+   lo strumento dichiara di sé.                                            */
+.realign{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dust)}
+#deriva{color:var(--amber)}
 .loopHint{
   font-size:8px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--dust);margin:0 8px 6px;

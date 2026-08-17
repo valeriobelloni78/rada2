@@ -1,10 +1,9 @@
 /* =============================================================================
-   RADA · model.js — lo stato del collage
-   Nessuna dipendenza: non conosce né l'audio né la grafica. Descrive soltanto
-   che cosa sono le quattro frasi e come nascono le loro idee musicali.
+   RADA2 · model.js — lo stato del collage
+   Non conosce né l'audio né la grafica. Sotto di sé ha soltanto deriva.js, da
+   cui prende il tempo lungo e il campo armonico; descrive che cosa sono le
+   quattro frasi, come nascono le loro idee e come si rinnovano.
 ============================================================================= */
-
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 /* --- parametri globali: valore corrente (G) e target smussato (GT) --------- */
 const G  = { spread: 45, warmth: 70, rev: 72, dens: 5, head: 30 };
@@ -49,15 +48,31 @@ let currentPalette = { id: "", toneBias: 0, warmBias: 0, spaceBias: 0 };
 /* valori efficaci = posizione del fader + inclinazione oraria */
 let effWarmth = 0.70, effRev = 0.72, lastHead = 30;
 
-/* --- scala consonante -----------------------------------------------------
-   Pentatonica maggiore su quattro ottave: qualunque combinazione di note
-   suona bene, non è possibile ottenere una dissonanza sgradevole.          */
-const SCALE = (() => {
-  const penta = [0, 2, 4, 7, 9], out = [];
-  for (let oct = -2; oct <= 1; oct++)
-    for (const s of penta) out.push(261.63 * Math.pow(2, (oct * 12 + s) / 12));
-  return out.sort((a, b) => a - b);
-})();
+/* La scala non abita più qui. Era una pentatonica costruita una volta e mai
+   più toccata; adesso è un campo che migra, e sta in deriva.js insieme a ciò
+   che lo muove. `SCALE` resta un vettore di venti frequenze crescenti, così
+   `playDrop` e `playTone` non si accorgono del cambio.                     */
+
+/* --- valori efficaci globali ----------------------------------------------
+   Stessa forma che il progetto usa già per l'ora e per la stagione: posizione
+   del cursore più un'inclinazione che l'utente non muove. La differenza è che
+   quelle due inclinazioni vengono da fuori — un orologio, un calendario —
+   mentre questa viene da dentro: è il pezzo che si sposta.
+
+   Chi legge questi valori legge ciò che suona davvero. `makeIdea` usa
+   `effG.dens`, `buildPlan` usa `effG.head`, `playDrop` usa `effG.spread`:
+   il cursore da solo non basta più a sapere che cosa succederà.
+
+   Le ampiezze sono la parte da regolare a orecchio. Troppo piccole e la
+   deriva non si sente; troppo grandi e il cursore smette di contare, cioè lo
+   strumento smette di essere suonato dall'utente.                          */
+const effG = { spread: 45, dens: 5, head: 30 };
+
+function effettiviGlobali() {
+  effG.spread = clamp(G.spread + deriva.spread * 20, 0, 100);
+  effG.dens   = clamp(G.dens   + deriva.dens   * 3.2, 1, 20);
+  effG.head   = clamp(G.head   + deriva.head   * 12, 5, 100);
+}
 
 /* --- le quattro frasi ------------------------------------------------------ */
 const PERIOD_MIN = 3, PERIOD_MAX = 30;
@@ -74,24 +89,35 @@ const loops = [7, 11, 13, 17].map((p, i) => ({
   planHead: 0.30,     // addensamento con cui il piano è stato costruito
   offset: Math.random(), // da dove parte la zona attiva sulla circonferenza
   muted: false,
+  prossimoRicambio: 0,   // quando questa frase cambierà una goccia
   pan: (i - 1.5) / 1.5 * 0.65, // ogni frase ha la sua posizione stereo
 }));
 
 /* Un'idea: N gocce concentrate nella testa della frase.
    ev.t  ∈ 0..1  posizione entro la zona attiva
    ev.rel ∈ -1..1 registro relativo, poi dilatato da "ampiezza registro"   */
+function nuovaGoccia() {
+  return {
+    t: Math.pow(Math.random(), 1.25),    // lievemente addensate verso l'inizio
+    rel: Math.random() * 2 - 1,
+    vel: 0.7 + Math.random() * 0.3,
+    flash: -99,                          // istante in cui è stata suonata
+  };
+}
+
 function makeIdea() {
-  const n = 1 + Math.floor(Math.random() * Math.max(1, Math.round(G.dens)));
+  const n = 1 + Math.floor(Math.random() * Math.max(1, Math.round(effG.dens)));
   const ev = [];
-  for (let k = 0; k < n; k++) {
-    ev.push({
-      t: Math.pow(Math.random(), 1.25),  // lievemente addensate verso l'inizio
-      rel: Math.random() * 2 - 1,
-      vel: 0.7 + Math.random() * 0.3,
-      flash: -99,                        // istante in cui è stata suonata
-    });
-  }
+  for (let k = 0; k < n; k++) ev.push(nuovaGoccia());
   return ev.sort((a, b) => a.t - b.t);
+}
+
+/* Quante gocce dovrebbe avere una frase, con la densità efficace di adesso.
+   `makeIdea` ne sorteggia da 1 a dens, quindi in media poco più della metà:
+   il ricambio insegue quella stessa media, altrimenti ogni rigenerazione
+   riporterebbe indietro ciò che il ricambio ha appena costruito.          */
+function gocceVolute() {
+  return clamp(Math.round((1 + effG.dens) / 2), 1, 20);
 }
 
 function regenerate(L) {
@@ -106,7 +132,7 @@ function regenerate(L) {
    ciclo le fasi rientrano dall'inizio: per questo vanno riordinate, così lo
    scheduler le percorre sempre in sequenza crescente.                      */
 function buildPlan(L) {
-  const head = G.head / 100;
+  const head = effG.head / 100;
   L.planHead = head;          // il quadrante disegnerà questo, non il valore live
   L.plan = L.idea
     .map(ev => ({ ph: (L.offset + ev.t * head) % 1, ev }))
@@ -139,11 +165,161 @@ function rebuildPlans(now) {
   loops.forEach(L => {
     buildPlan(L);
     if (now === null) { L.idx = 0; return; }
-    const horizon = Math.max(now + LOOKAHEAD, bookedUntil);
-    const k = L.plan.findIndex(p => (L.cycleStart + p.ph * L.period) >= horizon);
-    L.idx = (k < 0) ? L.plan.length : k;
+    riposizionaIdx(L, orizzonteSicuro(now));
   });
 }
+
+/* Il confine oltre il quale si può ancora toccare il piano senza far risuonare
+   qualcosa di già consegnato al motore audio. Estratto perché adesso lo usano
+   in due — la ricostruzione a caldo e il ricambio — e due copie di questo
+   conto divergerebbero al primo ritocco, con l'unico sintomo di qualche goccia
+   sentita due volte.                                                       */
+function orizzonteSicuro(now) { return Math.max(now + LOOKAHEAD, bookedUntil); }
+
+function riposizionaIdx(L, horizon) {
+  const k = L.plan.findIndex(p => (L.cycleStart + p.ph * L.period) >= horizon);
+  L.idx = (k < 0) ? L.plan.length : k;
+}
+
+/* =============================================================================
+   IL RICAMBIO
+
+   In Rada un'idea restava sé stessa finché non premevi ↻: quattro frasi
+   riconoscibili, ripetute identiche per ore. Un pezzo che va da qualche parte
+   non può essere fatto di frasi ferme — ma sostituirle intere si sentirebbe
+   come un taglio, e la deriva sta tutta nel non avere tagli.
+
+   Quindi si cambia UNA GOCCIA PER VOLTA. Momento per momento la frase è ancora
+   quella; qualche minuto dopo non ne è rimasta nessuna, e non c'è stato un
+   istante in cui si potesse indicare il cambio. È lo stesso principio del passo
+   di quinta — la nota comune — applicato al materiale invece che all'armonia.
+
+   Il ricambio è anche l'unica via per cui la deriva della densità arriva
+   all'orecchio: `makeIdea` legge `effG.dens` una volta sola, alla nascita
+   dell'idea, e senza ricambio una densità che si muove non si sentirebbe mai.
+
+   I quattro tempi sono incommensurabili fra loro come le velocità della
+   deriva: se le frasi si rinnovassero insieme il ricambio diventerebbe un
+   evento, cioè esattamente la cosa che non deve essere.                    */
+/* Gli eventi ancora liberi sono quelli che nel giro corrente cadono oltre
+   l'orizzonte di prenotazione, e che non stanno suonando adesso: toccare i
+   primi li farebbe sentire due volte — una dal motore audio che li ha già in
+   canna e una dal piano riscritto — e toccare i secondi farebbe saltare di
+   registro una tenuta aperta, che può restare aperta anche mezzo minuto.
+
+   La condizione è scritta al negativo, `!(ev.fino > now)`, perché le gocce
+   `fino` non ce l'hanno affatto: per loro il confronto cade su `undefined` ed
+   è giusto che risulti "libera".
+
+   Il vettore si riusa fra una chiamata e l'altra. Il ricambio scatta ogni
+   ventisei secondi e passa, quindi non sarebbe un dramma — ma in questo
+   progetto non si alloca per abitudine.                                    */
+const libere = [];
+
+function raccogliLibere(L, horizon, now) {
+  libere.length = 0;
+  for (const p of L.plan)
+    if (L.cycleStart + p.ph * L.period >= horizon && !(p.ev.fino > now)) libere.push(p.ev);
+  return libere;
+}
+
+/* Le due classi si ricambiano con lo stesso codice, per la stessa ragione per
+   cui si prenotano con lo stesso codice: differiscono per che cos'è un evento,
+   non per come lo si sostituisce. `prenota` in audio.js ha già questa forma.
+
+     nuovo   fabbrica un evento della specie, guardando la linea
+     voluti  quanti ne servono adesso
+     piano   quale delle due ricostruzioni di piano usare
+     tempi   ogni quanto si ricambia, una linea per elemento              */
+function ricambia(L, now, sp) {
+  /* Il piano si porta al passo PRIMA di toccarlo. Serve ai tessuti:
+     `buildPlanDrone` riscala le durate quando l'Intreccio si è mosso, e se lo
+     facesse dopo l'inserimento riscalerebbe anche la tenuta appena nata —
+     che è già stata costruita con l'Intreccio di adesso. Chiamarlo due volte
+     costa un ordinamento di tre elementi e toglie l'insidia.              */
+  sp.piano(L);
+
+  const horizon = orizzonteSicuro(now);
+  const lib = raccogliLibere(L, horizon, now);
+  const voluto = sp.voluti();
+
+  /* Una sola unità cambia per volta, e quale delle tre cose accada dipende da
+     quante ne servono adesso: se sono poche se ne aggiunge una, se sono
+     troppe se ne toglie una, altrimenti se ne rifà una da capo.
+
+     Si torna `false` quando non c'è nessun evento libero: capita con la
+     finestra di prenotazione larga — pagina nascosta — e allora si riprova al
+     giro dopo invece di forzare la mano.                                  */
+  if (L.idea.length < voluto) {
+    L.idea.push(sp.nuovo(L));
+  } else if (L.idea.length > voluto) {
+    if (!lib.length) return false;
+    L.idea.splice(L.idea.indexOf(lib[Math.floor(Math.random() * lib.length)]), 1);
+  } else {
+    if (!lib.length) return false;
+    const ev = lib[Math.floor(Math.random() * lib.length)];
+    const n = sp.nuovo(L);
+    /* Si copiano i campi invece di sostituire l'oggetto: `L.plan` e le code
+       del disegno tengono riferimenti a questo evento, e scambiarlo sotto di
+       loro lascerebbe in giro il vecchio.                                 */
+    for (const k in n) ev[k] = n[k];
+  }
+
+  L.idea.sort((a, b) => a.t - b.t);
+  sp.piano(L);
+  riposizionaIdx(L, horizon);
+  return true;
+}
+
+/* Una tenuta nuova va nel vuoto più largo che la linea abbia. `makeTenute` le
+   distribuisce in partenza perché le costruisce tutte insieme e sa quante
+   sono; qui ne nasce una alla volta, e sorteggiarne la posizione le farebbe
+   col tempo ammucchiare. Cercare il vuoto conserva quella distribuzione senza
+   doverla ricostruire.                                                     */
+function nuovaTenuta(L) {
+  const n = Math.max(1, L.idea.length);
+  let t = Math.random();
+  if (L.idea.length) {
+    let largo = -1;
+    for (let k = 0; k < L.idea.length; k++) {
+      const a = L.idea[k].t;
+      /* L'ultimo vuoto si chiude sul primo del giro dopo: il giro è un cerchio,
+         non un segmento.                                                   */
+      const b = (k + 1 < L.idea.length) ? L.idea[k + 1].t : L.idea[0].t + 1;
+      if (b - a > largo) { largo = b - a; t = ((a + b) / 2) % 1; }
+    }
+  }
+  return {
+    t,
+    dur: (D.sovr / n) * (0.7 + Math.random() * 0.6),
+    rel: Math.random() * 2 - 1,
+    vel: 0.75 + Math.random() * 0.25,
+    flash: -99,
+    fino: -99,
+  };
+}
+
+/* I tempi di ricambio delle due classi pescano da radicali DIVERSI, non solo
+   da una base diversa: con le stesse radici scalate, ogni coppia di linee
+   omologhe starebbe in rapporto razionale fra le due classi, ed è la cosa da
+   cui questo progetto si tiene lontano da sempre.
+
+   I tessuti si rinnovano tre volte più lentamente delle gocce. Sono uno
+   sfondo, e uno sfondo che si rifà alla stessa velocità del primo piano
+   smette di stare dietro.                                                  */
+const SPECIE_GOCCE = {
+  nuovo:  nuovaGoccia,
+  voluti: gocceVolute,
+  piano:  buildPlan,
+  tempi:  [1, Math.SQRT2, Math.sqrt(3), Math.sqrt(5)].map(r => 26 * r),
+};
+
+const SPECIE_TENUTE = {
+  nuovo:  nuovaTenuta,
+  voluti: () => Math.max(1, Math.round(D.dens)),
+  piano:  buildPlanDrone,
+  tempi:  [7, 11, 13, 19].map(r => 27 * Math.sqrt(r)),
+};
 
 /* =============================================================================
    LA SECONDA CLASSE: LE TENUTE
@@ -249,7 +425,7 @@ let currentSeason = { id: "", spreadBias: 0, respiro: 1, battitoBias: 0 };
    stagione. Li legge `playTone`, e li rilegge la riga dei valori per mostrare
    i due numeri quando differiscono — la stessa promessa che i cursori del
    calore e dello spazio fanno per le gocce.                               */
-const effD = { spread: 55, apri: 3.0, chiudi: 4.3, battito: 0.57 };
+const effD = { spread: 55, apri: 3.0, chiudi: 4.3, battito: 0.57, liv: 32 };
 
 function effettiviTessuti() {
   const s = currentSeason;
@@ -257,6 +433,12 @@ function effettiviTessuti() {
   effD.apri    = clamp(D.apri    * s.respiro,     0.3,  12);
   effD.chiudi  = clamp(D.chiudi  * s.respiro,     0.3,  15);
   effD.battito = clamp(D.battito + s.battitoBias, 0.05, 2);
+  /* Il corpo dei tessuti è l'unica cosa che la deriva muove in questa classe,
+     e la muove piano: quanto sta sotto lo sfondo è il carattere del mood, e
+     un fondale che va e viene smetterebbe di essere un fondale. Nessun cursore
+     lo governa, quindi qui non c'è una posizione da rispettare — solo il
+     preset, inclinato.                                                     */
+  effD.liv     = clamp(D.liv     + deriva.corpo * 9,  8,  60);
 }
 
 const droni = DRONI_MOODS.velo.periods.map((p, i) => ({
@@ -271,6 +453,7 @@ const droni = DRONI_MOODS.velo.periods.map((p, i) => ({
   planSovr: 1.10,     // intreccio con cui le durate sono state calcolate
   offset: Math.random(),
   muted: false,
+  prossimoRicambio: 0,   // quando questa linea cambierà una tenuta
   pan: (1.5 - i) / 1.5 * 0.5,   // stereo opposto a quello delle gocce: si allargano a vicenda
 }));
 
