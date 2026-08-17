@@ -1,59 +1,99 @@
-# Rada
+# Rada2
 
-**Quattro frasi sonore di lunghezza diversa che non tornano mai insieme allo stesso modo.**
+**Un pezzo che non finisce, non culmina, e non ripassa mai dove è già stato.**
 
-Rada è uno strumento generativo che vive nel browser. Non riproduce un brano
-registrato: costruisce il suono in tempo reale, ora per ora, e non si ripete mai.
+Rada2 è uno strumento generativo che vive nel browser, ramo divergente di
+[Rada](https://github.com/valeriobelloni78/rada). Non riproduce un brano
+registrato: costruisce il suono in tempo reale — e, a differenza di Rada,
+va da qualche parte. L'armonia migra, il materiale si rinnova una goccia per
+volta, e dopo un'ora lo strumento non è dov'era.
 
-→ **[Ascolta Rada](https://valeriobelloni78.github.io/rada/)** · [Guida](https://valeriobelloni78.github.io/rada/guida.html)
+→ **[Ascolta Rada2](https://valeriobelloni78.github.io/rada2/)** · [Guida](https://valeriobelloni78.github.io/rada2/guida.html)
 
 ---
 
 ## L'idea
 
-Quattro frasi musicali girano ciascuna col proprio periodo — 7, 11, 13 e 17
-secondi nella configurazione di partenza. Ogni frase concentra le sue note nella
-**testa** del giro; tutto il resto è silenzio, e quel silenzio non è un
-riempitivo: **è il meccanismo**. Sfasando i periodi, le frasi si incontrano ogni
-volta in una combinazione diversa.
+Otto linee sonore — quattro frasi di gocce, quattro tessuti tenuti — girano
+ciascuna col proprio periodo, e i periodi sono **coprimi a due a due**: nessuna
+coppia condivide un divisore, quindi le linee si incontrano ogni volta in una
+combinazione diversa. È l'eredità di Rada, e il debito verso il *Music for
+Airports* di Brian Eno resta dichiarato.
 
-Perché funzioni, i quattro periodi devono essere **coprimi a due a due**. Se due
-frasi condividessero un divisore — 6 e 9, poniamo — tornerebbero insieme ogni 18
-secondi e il collage collasserebbe in un motivo riconoscibile. Con 7, 11, 13 e 17
-la combinazione completa si ripete dopo quasi cinque ore. L'interfaccia mostra
-sempre questo tempo di riallineamento: è il numero che dice quanto a lungo lo
-strumento resterà imprevedibile.
+Ma in Rada quello era tutto: la combinazione non si ripeteva, e intanto lo
+strumento restava immobile — stessa scala, stessi parametri, stesse quattro
+frasi per ore. Rada2 aggiunge il **tempo lungo**, molto più lento di quello
+delle frasi, e su di esso tre movimenti:
 
-Il debito verso il *Music for Airports* di Brian Eno è dichiarato: là erano
-spezzoni di nastro di lunghezze diverse, qui sono oscillatori e uno scheduler.
+- **L'armonia migra.** Il campo delle altezze gira sul circolo delle quinte,
+  un passo ogni due minuti e mezzo circa; fra una collezione e la successiva
+  cambia una nota su cinque, il passo più piccolo che esista fra due collezioni
+  consonanti, e il cambio non ha un bordo udibile. Intanto la tonica scivola
+  con continuità, entro poche centinaia di centesimi: dodici passi chiudono il
+  giro delle quinte, ma la tonica nel frattempo si è spostata di una quantità
+  che non è frazione di nulla, e il secondo giro non è il primo.
+- **Il materiale si rinnova.** Ogni frase cambia una goccia per volta, a tempi
+  incommensurabili fra le otto linee: momento per momento la frase è ancora
+  quella, qualche minuto dopo non ne è rimasta nessuna — e non c'è stato un
+  istante in cui si potesse indicare il cambio.
+- **I parametri respirano.** Registro, densità e addensamento pendono da sei
+  canali che girano a velocità in rapporto √2 : √3 : √5 : √7 : √11 : 1 —
+  razionalmente indipendenti, quindi per il teorema di Kronecker l'orbita è
+  densa e non si chiude mai. La coprimalità fra interi, salita di un piano.
+
+L'interfaccia dichiara entrambe le promesse: la riga grigia dice quando le
+**fasi** tornano nella stessa combinazione, la riga arancione dice quanta
+strada il **pezzo** ha fatto — quanti passi di quinta, quanti centesimi di
+deriva. La prima torna, la seconda no.
 
 ## Come si usa
 
-| Gesto | Effetto |
+Il reticolo al centro è puro display: tutti i comandi sono elementi HTML
+nativi, e funzionano identici con il puntatore, con il dito, con il tasto Tab
+e con un lettore di schermo.
+
+| Comando | Effetto |
 |---|---|
-| Trascina un quadrante in verticale | cambia la durata di quella frase (3–30 s) |
-| Clic su un quadrante | silenzia o riattiva quella frase |
-| ↻ sopra un quadrante | genera una nuova idea musicale per quella frase |
-| Barra spaziatrice | avvia e ferma |
-| Tasto Tab | raggiunge gli stessi comandi in forma nativa, per chi non usa il puntatore |
+| Scala graduata di una riga | cambia la durata di quella linea (entra al giro successivo) |
+| Quadratino di una riga | silenzia o riattiva quella linea (pieno suona, vuoto tace) |
+| ↻ di una riga | genera una nuova idea musicale per quella linea |
+| Barra spaziatrice | avvia e ferma tutto; ogni classe ha anche il suo pulsante |
 
-I cinque cursori governano il suono d'insieme: ampiezza del registro, calore
-timbrico, spazio riverberante, densità delle idee e addensamento (quanta parte
-del giro è attiva). Gli otto **mood** sono preset completi — timbro *e*
-configurazione temporale — e rigenerano tutte le idee.
+I cinque cursori delle frasi e i cinque dei tessuti governano il suono
+d'insieme. Quasi tutti mostrano **due numeri** quando serve: il primo è dove
+hai messo il cursore, il secondo è ciò che sta davvero suonando — perché tre
+influenze inclinano i valori senza toccare i cursori: l'ora del giorno (sulle
+gocce), la stagione (sui tessuti) e la deriva (su entrambe, da dentro).
 
-Tutta l'interazione dei quadranti esiste anche come comandi HTML nativi,
-fuori campo ma raggiungibili col tasto Tab: il canvas da solo sarebbe muto
-per una tastiera e per un lettore di schermo.
+Gli otto **mood** per classe sono preset completi — timbro *e* configurazione
+temporale — e rigenerano le idee.
 
-L'app legge inoltre **l'ora del sistema** e inclina di conseguenza registro,
-calore e riverbero: alle 23 suona più cupa e spaziosa che a mezzogiorno. È
-l'unica influenza esterna, e non richiede alcun permesso.
+## Che cosa si vede
+
+- **Otto anelli concentrici**: le frasi dentro, i tessuti fuori. Le gocce sono
+  tacche radiali — la lunghezza è il registro, e il profilo melodico di ogni
+  idea si legge a colpo d'occhio; i tessuti sono archi che durano. Otto punti
+  arancioni percorrono gli anelli: sono le fasi udibili, lette dai cicli reali
+  dello scheduler.
+- **Sul bordo, il tempo lungo**: dodici tacche per il circolo delle quinte con
+  la posizione corrente marcata, e un arco pesante che rolla con la tonica —
+  un giro intero è un'ottava. È il segno più lento della pagina.
+- **La fascia, due scale dichiarate**: gli ultimi 30 secondi delle otto linee
+  (tacche per le gocce, segmenti per i tessuti — lo sfasamento reale, visto),
+  e gli ultimi 30 minuti della deriva, dove la tonica sedimenta la sua
+  traiettoria e i passi di quinta cadono come croci. All'apertura è vuota:
+  si riempie ascoltando.
+- Quando due gocce di frasi diverse suonano quasi insieme, un filo sottile le
+  unisce per un istante attraverso gli anelli: è il collage còlto sul fatto.
+
+**L'interfaccia parla quattro lingue** — italiano, francese, inglese e
+giapponese — e sceglie da sé quella del browser alla prima apertura. Si cambia
+dalle sigle in alto, anche mentre suona; si può imporre con `?lang=ja`.
 
 ## Come funziona, tecnicamente
 
 Nessuna dipendenza da installare, nessun passaggio di compilazione: si apre
-`index.html` e funziona.
+`index.html` e funziona, anche senza rete.
 
 ```
 index.html          lo strumento: struttura e collegamenti
@@ -62,90 +102,78 @@ css/style.css       palette, tipografia, impaginazione
 css/guida.css       impaginazione della sola guida
 js/i18n.js          le quattro lingue. Non dipende da nulla
 js/guida-i18n.js    le parole della guida, sempre nelle quattro lingue
-js/model.js         lo stato: frasi, idee, piani. Non dipende da nulla
-js/audio.js         Web Audio API: sintesi e scheduler
-js/frasi.js         disegno dei quadranti, interazione e ciclo di fotogrammi
-js/droni.js         la seconda tela: il riquadro dei tessuti
-js/ui.js            cursori, mood, lingua, riga di stato
+js/deriva.js        il tempo lungo: i sei canali e il campo armonico. Non dipende da nulla
+js/model.js         lo stato: frasi, idee, piani, ricambio
+js/audio.js         Web Audio API: sintesi, scheduler e memorie per il disegno
+js/disegno.js       il reticolo e la fascia, su un solo canvas
+js/ui.js            righe di linea, cursori, mood, lingua, righe di stato
 testi-guida.md      tavolo di lavoro dei testi italiani della guida
 ```
 
-**L'interfaccia parla quattro lingue** — italiano, francese, inglese e
-giapponese — e sceglie da sé quella del browser alla prima apertura,
-ripiegando sull'inglese per tutte le altre. Le sigle in alto a destra
-cambiano lingua al volo, anche mentre suona, e la scelta viene ricordata.
-Si può anche imporre dall'indirizzo, con `?lang=ja`.
+**Il suono usa la Web Audio API direttamente.** Il cuore è uno *scheduler a
+lookahead*: ogni 25 ms prenota le note sul clock del motore audio, preciso al
+singolo campione. La finestra è adattiva — 150 ms quando la pagina si vede,
+tre secondi in secondo piano, fino a dodici a schermo bloccato. La deriva
+avanza dentro lo scheduler, sul tempo del motore audio: in pausa il pezzo
+aspetta, non corre di nascosto.
 
-**Il suono usa la Web Audio API direttamente, non p5.sound.** Il cuore di Rada è
-uno *scheduler a lookahead*: ogni 25 ms prenota le note sul clock del motore
-audio, preciso al singolo campione. La finestra è adattiva — 150 ms quando la
-pagina si vede, tre secondi quando è in secondo piano, dove il browser rallenta
-i timer ma non il thread audio. I timer di JavaScript sono
-troppo imprecisi per frasi che devono restare in fase per ore, e p5.sound è pensato
-per gesti immediati più che per pianificazione rigorosa. La precisione temporale
-qui è il progetto, non un dettaglio.
+**Il tempo lungo sta tutto in `js/deriva.js`.** Le velocità dei canali sono
+radici quadrate di interi liberi da quadrati: con 1 sono linearmente
+indipendenti sui razionali, ed è questo — non una speranza — a garantire che
+l'orbita non si richiuda. Sostituirle con numeri qualunque perde il teorema.
 
-**La grafica usa l'API 2D del browser**, con tutti e quattro i quadranti delle
-frasi su un unico canvas. Un solo piano di disegno permette effetti che le
-attraversano — già oggi il filo che unisce due gocce quasi simultanee, e in
-futuro scie, relazioni, campi che reagiscono all'insieme. C'era p5.js, ed è
-stata tolta: se ne usava una ventina di nomi, tutti con un equivalente di una
-riga, e in cambio arrivava una dipendenza da CDN.
-
-Un dettaglio che chi mette mano al codice apprezzerà: la palette è definita
-**una volta sola**, nelle variabili CSS di `style.css`. Anche il canvas le legge.
-Cambiarle lì cambia tutto.
+**La grafica usa l'API 2D del browser, su un solo canvas** che non ascolta
+nulla: l'interazione passa dagli elementi nativi, e la pagina scorre da sé.
+La palette è definita una volta sola, nelle variabili CSS di `style.css`:
+anche il canvas la legge.
 
 ## Modificarlo
 
-Il punto d'ingresso più interessante è `js/frasi.js`, dove ogni quadrante è
-disegnato in proporzioni relative al raggio: il disegno regge a qualunque
-dimensione. Provare a sostituire i trattini con qualcos'altro è il modo più
-rapido per capire come funziona.
-
-Per cambiare le configurazioni temporali, guarda `MOODS` in `js/model.js` — e
-ricordati la regola dei periodi coprimi, altrimenti perdi lo sfasamento. Le
-chiavi lì sono identificatori: i nomi che si leggono sui bottoni stanno in
-`js/i18n.js`, uno per lingua.
+Il punto d'ingresso più interessante è `js/deriva.js`: ampiezze, velocità e
+passo delle quinte sono lì, in un file corto che non dipende da nulla. Per le
+configurazioni temporali guarda `MOODS` in `js/model.js` — e ricordati la
+regola dei periodi coprimi. Le chiavi sono identificatori: i nomi visibili
+stanno in `js/i18n.js`, uno per lingua.
 
 ## Limiti noti
 
 - In secondo piano il browser rallenta i timer, ma il thread audio no: lo
-  scheduler se ne accorge e prenota le gocce più avanti — tre secondi, e fino
-  a dodici se i timer vengono strozzati sul serio, come a schermo bloccato.
-- Su iOS Rada si dichiara al sistema come riproduzione musicale, così da
-  restare viva a schermo bloccato e comparire fra i comandi della schermata di
-  blocco. Ne consegue che suona anche con l'interruttore del silenzioso
-  inserito. Se il sistema congela del tutto la pagina non c'è comunque
-  finestra che tenga: servirebbe spostare lo scheduler in un AudioWorklet.
+  scheduler se ne accorge e prenota più avanti — tre secondi, fino a dodici a
+  schermo bloccato.
+- Su iOS Rada2 si dichiara al sistema come riproduzione musicale, così da
+  restare viva a schermo bloccato; ne consegue che suona anche con
+  l'interruttore del silenzioso inserito. Se il sistema congela del tutto la
+  pagina non c'è finestra che tenga: servirebbe un AudioWorklet.
 
 ## Licenza
 
-Codice rilasciato sotto licenza **MIT** — vedi [LICENSE](LICENSE). In pratica:
-puoi usarlo, modificarlo e ridistribuirlo, anche in progetti commerciali,
-mantenendo l'avviso di copyright. Non c'è codice di terzi: nessuna libreria,
-nessuna licenza da rispettare oltre a questa.
+Codice rilasciato sotto licenza **MIT** — vedi [LICENSE](LICENSE). Non c'è
+codice di terzi: nessuna libreria, nessuna licenza da rispettare oltre a
+questa.
 
 ---
 
 ## In English
 
-**Rada** is a generative sound instrument that runs in the browser. Four musical
-phrases loop at different periods (7, 11, 13, 17 seconds by default), each
-concentrating its notes at the head of its cycle with silence filling the rest.
-Because the periods are pairwise coprime, the phrases never realign the same way
-— the full combination repeats only after nearly five hours.
+**Rada2** is a generative sound instrument in the browser — a diverging branch
+of [Rada](https://github.com/valeriobelloni78/rada). Eight lines (four phrases
+of drops, four sustained weaves) loop at pairwise-coprime periods, so they
+never meet the same way twice. That much is inherited; what's new is that the
+piece **goes somewhere and never comes back**: the harmonic field migrates
+around the circle of fifths one common-tone step at a time while the tonic
+drifts by a few hundred cents; each phrase renews itself one drop at a time;
+and register, density and clustering breathe on six channels whose rates are
+√2 : √3 : √5 : √7 : √11 : 1 — rationally independent, so by Kronecker's
+theorem the orbit never closes. An hour in, the instrument is somewhere else.
 
-Drag a dial to change its phrase length, click to mute, press ↻ for a new
-musical idea. Five faders shape the overall sound; eight presets change both
-timbre and temporal configuration. The instrument also reads your system clock
-and shifts its character across the day.
+The display is a single reticle: eight concentric rings (tick length = pitch,
+arcs = held tones, amber dots = audible phase), the circle of fifths and a
+heavy tonic arc on the rim, and a two-scale strip below — the last 30 seconds
+of all eight lines, and the last 30 minutes of the drift. All controls are
+native HTML (the canvas listens to nothing), so pointer, touch, keyboard and
+screen readers share one path. Four languages, switchable live, `?lang=ja` to
+force one.
 
-The interface speaks Italian, French, English and Japanese, picking up your
-browser's language on first visit and falling back to English. Switch it from
-the top right, or force it with `?lang=ja`.
-
-Audio uses the Web Audio API directly with a lookahead scheduler (sample-accurate
-timing matters here); graphics use the browser's own 2D canvas API. No build
-step, no libraries, nothing to install — open `index.html` and it runs, even
-offline. MIT licensed.
+Audio is direct Web Audio API with a sample-accurate lookahead scheduler; the
+drift advances on the audio clock, so pausing pauses the piece. No build step,
+no libraries — open `index.html` and it runs, even offline. MIT licensed.

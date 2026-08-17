@@ -60,36 +60,65 @@ Questa è l'idea alla base di “Music for Airports” di ==Brian Eno== e questo
 
 Perché la combinazione resti imprevedibile, i periodi devono essere *coprimi* a due a due: presi a coppie, non devono avere alcun divisore in comune.
 Se due frasi durassero ad esempio sei e nove secondi condividerebbero il tre come divisore, e tornerebbero a coincidere ogni diciotto secondi. L'orecchio sentirebbe subito questa ripetizione e il collage collasserebbe in un motivo riconoscibile. Con sette, undici, tredici e diciassette — primi fra loro — la combinazione completa si ripete solo dopo 17.017 secondi, quasi cinque ore.
+Ma questa promessa riguarda le **fasi**, non il pezzo: dice quando le linee tornano nella stessa combinazione, non che cosa nel frattempo è cambiato. In Rada non cambiava niente. Qui sì, ed è la sezione che segue.
+
+---
+
+## [riquadro 3a — La deriva]
+
+**Titolo:** La deriva
+
+**Dicitura in arancione, in alto a destra:** √2 · √3 · √5 · √7 · √11
+
+Sotto le otto linee c'è un tempo più lento di tutti, e non torna indietro.
+
+L'armonia migra: il campo delle altezze gira sul circolo delle ==quinte==, un passo ogni due minuti e mezzo circa, e fra una collezione e la successiva cambia una nota su cinque — il passo più piccolo che esista fra due collezioni consonanti. Per questo il cambio non ha un bordo che si senta: te ne accorgi dopo, come della luce che cambia in una stanza. Intanto la tonica scivola con continuità, entro poche centinaia di centesimi. Dodici passi chiuderebbero il giro delle quinte, ma la tonica nel frattempo si è spostata di una quantità che non è frazione di nulla: il secondo giro non è il primo.
+
+Anche il materiale si rinnova, una goccia per volta: momento per momento la frase è ancora quella, qualche minuto dopo non ne è rimasta nessuna — e non c'è stato un istante in cui si potesse indicare il cambio. I tempi del ricambio, come le velocità della deriva, stanno in rapporti *irrazionali*: è la stessa idea dei periodi coprimi, salita di un piano, e garantisce che il pezzo non ripassi mai esattamente dove è già stato.
+
+La riga arancione sopra il reticolo tiene il conto: quanti passi di quinta, quanti centesimi di deriva. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era, non corre di nascosto.
+
+---
+
+## [riquadro 3c — Il reticolo]
+
+**Titolo:** Il reticolo
+
+Le otto linee sono anelli concentrici di un solo strumento: le frasi all'interno, i tessuti all'esterno, un centro solo. Le gocce sono tacche che attraversano l'anello, e la loro **lunghezza è il registro** — corta grave, lunga acuta: il profilo melodico di ogni idea si legge a colpo d'occhio. I tessuti sono archi, perché durano; un punto ==arancione== percorre ogni anello, ed è la fase che stai sentendo.
+
+Sul bordo gira il tempo lungo: dodici tacche per il circolo delle quinte, con la posizione corrente marcata, e un arco pesante che rolla lentissimo con la tonica — un giro intero è un'ottava. È il segno più lento della pagina.
+
+Il reticolo si guarda e basta: tutti i comandi stanno nelle due righe di colonna accanto, dallo stesso lato delle loro etichette dentro il disegno.
 
 ---
 
 ## [etichetta di sezione 1]
 
-I gesti
+I comandi di linea
 
 ## [gesto 1]
 
-**Etichetta:** Trascina in verticale
+**Etichetta:** La scala della durata
 
-Cambia la durata di quella frase, fra 3 e 30 secondi. La nuova durata entra in vigore al giro successivo, mai a metà di uno in corso.
+Ogni linea ha la sua riga accanto al reticolo, e la scala ne cambia la durata: fra 3 e 30 secondi per le frasi, fra 7 e 60 per i tessuti. La nuova durata entra in vigore al giro successivo, mai a metà di uno in corso.
 
 ## [gesto 2]
 
-**Etichetta:** Clic su un quadrante
+**Etichetta:** Il quadratino
 
-Silenzia quella frase, o la riattiva. Il quadrante impallidisce ma continua a girare in silenzio: quando la riaccendi è già dove sarebbe stata, non riparte da capo.
+Silenzia quella linea, o la riattiva: pieno suona, vuoto tace. L'anello impallidisce ma continua a girare in silenzio: quando la riaccendi è già dove sarebbe stata, non riparte da capo.
 
 ## [gesto 3]
 
-**Etichetta:** ↻ sopra un quadrante
+**Etichetta:** ↻
 
-Genera una nuova idea musicale per quella frase soltanto: altre note, altro numero di gocce, altra posizione dell'arco.
+Genera una nuova idea musicale per quella linea soltanto: altre note, altro numero di eventi, altra posizione sull'anello.
 
 ## [gesto 4]
 
 **Etichetta:** Barra spaziatrice
 
-Avvia e ferma tutto. Ogni riquadro ha però anche il suo pulsante, che governa solo la propria classe. Alla ripresa il collage riparte esattamente da dov'era.
+Avvia e ferma tutto. Ogni classe ha però anche il suo pulsante, che governa solo la propria metà. Alla ripresa il collage riparte esattamente da dov'era — e anche la deriva.
 
 ---
 
@@ -129,7 +158,7 @@ Modifica quanta parte del giro è occupata dalle note. Al 30% le gocce stanno ne
 
 ## [nota in fondo ai cursori]
 
-I cursori del calore e dello spazio mostrano due numeri quando l'ora del giorno li inclina: il primo è dove l'hai messo tu, il secondo è il valore che sta davvero suonando.
+Quasi tutti i cursori mostrano due numeri quando qualcosa li inclina — l'ora del giorno, la stagione o la deriva: il primo è dove l'hai messo tu, il secondo è il valore che sta davvero suonando.
 
 ---
 
@@ -203,7 +232,7 @@ Densità massima, riverbero quasi al limite e timbro vetroso: tante gocce dure d
 
 **Titolo:** I tessuti
 
-Sotto le quattro frasi ce ne sono altre quattro, e non fanno la stessa cosa. Le gocce accadono: un attacco, una coda, e la nota è già passata. I tessuti invece durano — si aprono lentamente, restano aperti anche mezzo minuto, si dissolvono. Sovrapponendosi fra loro e alle gocce formano le tessiture, ed è la ragione per cui esistono. Anche qui i periodi sono coprimi a due a due, e lo sono anche con quelli delle frasi: le linee che non tornano mai insieme sono otto, non due gruppi da quattro. Non devono essere numeri primi — basta che non abbiano fattori in comune — ed è per questo che si scende fino a otto secondi. Ogni riquadro ha il suo pulsante: si possono lasciare i tessuti e mettere in pausa le frasi, o il contrario. La barra spaziatrice invece vale per entrambi.
+Sotto le quattro frasi ce ne sono altre quattro, e non fanno la stessa cosa. Le gocce accadono: un attacco, una coda, e la nota è già passata. I tessuti invece durano — si aprono lentamente, restano aperti anche mezzo minuto, si dissolvono. Sovrapponendosi fra loro e alle gocce formano le tessiture, ed è la ragione per cui esistono. Anche qui i periodi sono coprimi a due a due, e lo sono anche con quelli delle frasi: le linee che non tornano mai insieme sono otto, non due gruppi da quattro. Non devono essere numeri primi — basta che non abbiano fattori in comune — ed è per questo che si scende fino a otto secondi. Ogni classe ha il suo pulsante: si possono lasciare i tessuti e mettere in pausa le frasi, o il contrario. La barra spaziatrice invece vale per entrambi.
 
 ---
 
@@ -233,7 +262,7 @@ I secondi che impiega a sparire. Insieme all'affioramento decide quanta parte de
 
 **Nome:** Intreccio
 
-Quanti tessuti restano aperti insieme, in media, su ciascuna linea. Sotto uno restano dei silenzi; sopra due la trama non si interrompe mai. È il numero che si vede nella fascia in fondo al riquadro.
+Quanti tessuti restano aperti insieme, in media, su ciascuna linea. Sotto uno restano dei silenzi; sopra due la trama non si interrompe mai.
 
 ## [cursore tessuti 5]
 
@@ -325,7 +354,9 @@ Ai tessuti parla invece la stagione: l'autunno raccoglie appena il registro e al
 
 **Titolo:** La fascia temporale
 
-Ogni riquadro ne ha una: da destra verso sinistra scorrono gli ultimi trenta secondi. Sotto le frasi ogni punto è una goccia; sotto i tessuti ogni segmento è un suono che dura, e la sua lunghezza è il tempo per cui resta aperto. Puoi guardarlo come se fosse uno ==spartito== in movimento, o un sovrapporsi di strati sonori che scorrono con viscosità differenti.
+Sotto il reticolo scorrono due righe del tempo, ciascuna col suo cartello. La prima contiene gli ultimi trenta secondi di tutte e otto le linee: ogni tacca è una goccia, ogni segmento un tessuto che dura — pieno finché suona, puntini quando ha finito. È il modo più diretto per vedere lo sfasamento reale. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
+
+La seconda contiene gli ultimi trenta minuti: la traiettoria della tonica che sedimenta piano, e i passi di quinta che cadono come croci. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
 
 ---
 
@@ -333,7 +364,7 @@ Ogni riquadro ne ha una: da destra verso sinistra scorrono gli ultimi trenta sec
 
 **Titolo:** Un dettaglio sulla sincronia
 
-Un dettaglio che si nota solo guardando: quando due gocce di frasi diverse suonano a meno di due decimi di secondo l'una dall'altra, un sottile filo ==rosso== le unisce per un istante.
+Un dettaglio che si nota solo guardando: quando due gocce di frasi diverse suonano a meno di due decimi di secondo l'una dall'altra, un sottile filo ==rosso== le unisce per un istante, attraverso gli anelli.
 
 ---
 
@@ -369,4 +400,4 @@ Titolo della scheda del browser: Rada · Guida
 Descrizione per le anteprime social, in inglese come nell'interfaccia
 principale, perché i crawler la leggono prima che il JavaScript giri:
 
-How Rada works and how to use it: four phrases, coprime periods, and the collage that happens between them.
+How Rada2 works and how to use it: eight lines with coprime periods, and a slow drift that never comes back.

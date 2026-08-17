@@ -60,7 +60,7 @@ function onRealignChange() {
   else if (l < 86400) t = fmtOne(l / 3600)           + sep + T("unit.hours");
   else                t = fmtOne(l / 86400)          + sep + T("unit.days");
   $("realign").textContent = T("realign", { t });
-  syncA11y();          // il trascinamento sul canvas deve riscrivere i cursori
+  syncLinee();         // i mood riscrivono le durate: le righe devono seguirli
 }
 
 /* --- le due righe di stato ------------------------------------------------
@@ -101,11 +101,8 @@ function refreshStagione() {
 function refreshTutteLeRighe() { refreshStatus(); refreshStagione(); }
 setInterval(refreshTutteLeRighe, 15000);
 
-/* Annunci dal canvas: il disegno segnala che qualcosa è cambiato senza
-   sapere chi lo ascolta. */
-function onLoopsChange() { refreshTutteLeRighe(); syncA11y(); }
-addEventListener("rada:loops",   onLoopsChange);
-addEventListener("rada:realign", () => onRealignChange());
+/* Gli annunci dal canvas non esistono più: la tela è puro display, e tutti i
+   comandi passano dagli elementi nativi qui sotto. */
 /* Il pulsante è un COMANDO, non un indicatore: la scritta dice che cosa
    accadrà premendolo, non che cosa sta accadendo. Lo stato è già raccontato
    dal punto che pulsa e dalla riga in alto.                                */
@@ -226,37 +223,39 @@ function onDroniChange() {
   else                t = fmtOne(l / 86400)          + sep + T("unit.days");
   $("realignDroni").textContent = T("realign", { t });
   refreshTutteLeRighe();
-  syncA11y();          // il trascinamento sulla tela deve riscrivere i cursori
+  syncLinee();
 }
 
-/* --- comandi equivalenti da tastiera --------------------------------------
-   I quadranti vivono nel canvas, che per una tastiera e per un lettore di
-   schermo è una superficie muta: trascinare, silenziare e rigenerare erano
-   gesti raggiungibili solo col puntatore. Qui gli stessi tre comandi
-   esistono come elementi HTML nativi, fuori campo ma nel documento.
+/* --- le otto righe di linea -------------------------------------------------
+   In Rada questi comandi esistevano due volte: i gesti sul canvas per chi
+   guarda, e un doppione nativo fuori campo per chi naviga con la tastiera o
+   con un lettore di schermo. Il reticolo unico ha chiuso la questione nel
+   modo giusto: gli anelli concentrici sarebbero bersagli impossibili per un
+   dito, quindi il doppione È DIVENTATO l'interfaccia. Otto righe visibili,
+   nelle due colonne accanto al reticolo — sigla, scala della durata, valore,
+   quadratino di stato, ↻ — e un solo binario per tutti.
 
-   Le due classi si costruiscono con lo stesso codice, come le due tele e
-   come i due scheduler: cambiano gli estremi della durata, le parole e la
-   funzione che rigenera — non il modo in cui i comandi stanno insieme. Due
-   copie divergerebbero al primo ritocco, e la seconda sarebbe quella
-   dimenticata (i tessuti sono rimasti senza tastiera per tutta la loro
-   prima vita, appunto).
+   Le due classi si costruiscono con lo stesso codice, come i due scheduler:
+   cambiano gli estremi della durata, le parole e la funzione che rigenera —
+   non il modo in cui i comandi stanno insieme.
 
-   La sincronia va in DUE direzioni: questi comandi cambiano il modello, e il
-   trascinamento sul canvas riscrive questi comandi (vedi syncA11y, chiamata
-   da onRealignChange, onLoopsChange e onDroniChange).                      */
+   Il quadratino dice lo stato (pieno suona, vuoto tace) e l'aria-label dice
+   l'azione, come vuole la regola delle etichette: per un comando-icona con
+   aria-pressed è la convenzione giusta, e le parole restano nel dizionario. */
 const ROMAN = ["I", "II", "III", "IV"];
 
-function costruisciA11y(boxId, linee, min, max, chiavi, cambiata, rigenera) {
+function costruisciLinee(boxId, linee, min, max, chiavi, cambiata, rigenera) {
   const box = $(boxId), els = [];
   linee.forEach((L, i) => {
     const row = document.createElement("div");
-    row.className = "a11yRow";
+    row.className = "linea";
 
-    const lab = document.createElement("label");
-    lab.htmlFor = boxId + "Dur" + i;
+    const sig = document.createElement("span");
+    sig.className = "lineaSigla";
+    sig.textContent = ROMAN[i];
+
     const dur = document.createElement("input");
-    dur.type = "range"; dur.id = boxId + "Dur" + i;
+    dur.type = "range"; dur.className = "lineaDur";
     dur.min = min; dur.max = max; dur.step = 0.5;
     dur.value = L.target;
     dur.addEventListener("input", e => {
@@ -264,43 +263,49 @@ function costruisciA11y(boxId, linee, min, max, chiavi, cambiata, rigenera) {
       cambiata();
     });
 
+    const val = document.createElement("span");
+    val.className = "lineaVal";
+
     const mute = document.createElement("button");
-    mute.type = "button";
+    mute.type = "button"; mute.className = "lineaMute";
     mute.addEventListener("click", () => { L.muted = !L.muted; cambiata(); refreshTutteLeRighe(); });
 
     const regen = document.createElement("button");
-    regen.type = "button";
+    regen.type = "button"; regen.className = "lineaRegen";
+    regen.textContent = "↻";
     regen.addEventListener("click", () => rigenera(L));
 
-    row.append(lab, dur, mute, regen);
+    row.append(sig, dur, val, mute, regen);
     box.appendChild(row);
-    els.push({ lab, dur, mute, regen, L });
+    els.push({ dur, val, mute, regen, L });
   });
   return { els, chiavi };
 }
 
-const A11Y = [
-  costruisciA11y("a11yLoops", loops, PERIOD_MIN, PERIOD_MAX,
+const LINEE = [
+  costruisciLinee("lineeFrasi", loops, PERIOD_MIN, PERIOD_MAX,
     { dur: "a11y.duration", mute: "a11y.mute", unmute: "a11y.unmute", regen: "a11y.regen" },
     () => onRealignChange(), regenerate),
-  costruisciA11y("a11yDroni", droni, DRONE_MIN, DRONE_MAX,
+  costruisciLinee("lineeTessuti", droni, DRONE_MIN, DRONE_MAX,
     { dur: "a11y.dDuration", mute: "a11y.dMute", unmute: "a11y.dUnmute", regen: "a11y.dRegen" },
     () => onDroniChange(), regeneraTenute),
 ];
 
-/* Riallinea etichette e valori: le prime cambiano con la lingua, i secondi
-   col trascinamento sul canvas.                                            */
-function syncA11y() {
-  for (const gruppo of A11Y) {
+/* Riallinea parole e valori: le prime cambiano con la lingua, i secondi con
+   i mood, che riscrivono le durate di tutte le linee in un colpo.          */
+function syncLinee() {
+  for (const gruppo of LINEE) {
     const k = gruppo.chiavi;
     gruppo.els.forEach((e, i) => {
       const n = ROMAN[i], L = e.L;
-      e.lab.textContent = T(k.dur, { n });
       e.dur.value = L.target;
+      e.dur.setAttribute("aria-label", T(k.dur, { n }));
       e.dur.setAttribute("aria-valuetext", fmtOne(L.target) + " " + T("canvas.seconds"));
-      e.mute.textContent = T(L.muted ? k.unmute : k.mute, { n });
+      e.val.textContent = fmtOne(L.target) + T("unit.sep") + T("unit.s");
+      e.mute.classList.toggle("muta", L.muted);
+      e.mute.setAttribute("aria-label", T(L.muted ? k.unmute : k.mute, { n }));
       e.mute.setAttribute("aria-pressed", L.muted ? "true" : "false");
-      e.regen.textContent = T(k.regen, { n });
+      e.regen.setAttribute("aria-label", T(k.regen, { n }));
     });
   }
 }
@@ -321,7 +326,7 @@ function onLanguageChange() {
   onPowerChange();
   onRealignChange();
   readouts();
-  syncA11y();
+  syncLinee();
   document.querySelectorAll("#droniMoods .mood").forEach(b => {
     b.textContent = droneMoodName(b.dataset.droneMood);
   });
@@ -382,7 +387,7 @@ onDroniChange();
 DPARAMS.forEach(k => { $("d_" + k).value = D[k]; });
 letturaTessuti();
 readouts();
-syncA11y();
+syncLinee();
 
 /* Finché il cancello è chiuso, tutto ciò che sta dietro è fuori gioco: senza
    questo il Tab uscirebbe dalla soglia e andrebbe a dare fuoco a comandi che

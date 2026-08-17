@@ -31,7 +31,6 @@ const STRINGS = {
     "ui.guide":         "Guida",
     "ui.guideAria":     "Guida (si apre in una nuova scheda)",
     "foot.credits":     "questo è un progetto open source ideato da Valerio Belloni",
-    "a11y.title":       "Comandi equivalenti da tastiera",
     "a11y.duration":    "Frase {n} · durata in secondi",
     "a11y.mute":        "Silenzia la frase {n}",
     "a11y.unmute":      "Riattiva la frase {n}",
@@ -44,7 +43,6 @@ const STRINGS = {
     "gate.text":        "Uno spazio sonoro nel quale si può indugiare nei propri ricordi mentre si guarda fuori dalla finestra.",
     "gate.enter":       "Entra",
     "card.title":       "Le quattro frasi",
-    "card.hint":        "trascina: durata · clic: silenzia · ↻ nuova idea",
     "ctl.spread":       "Ampiezza registro",
     "ctl.warmth":       "Calore",
     "ctl.rev":          "Spazio / coda",
@@ -64,9 +62,7 @@ const STRINGS = {
     "unit.min":         "min",
     "unit.hours":       "ore",
     "unit.days":        "giorni",
-    "canvas.phrase":    "FRASE",
     "canvas.seconds":   "s",
-    "canvas.drone":     "TESSUTO",
     "drone.title":      "I quattro tessuti",
     "dctl.spread":      "Estensione",
     "dctl.apri":        "Affioramento",
@@ -76,7 +72,6 @@ const STRINGS = {
     "unit.oct":         "ott.",
     "unit.s":           "s",
     "unit.hz":          "Hz",
-    "drone.hint":       "trascina: durata · clic: silenzia · ↻ nuova idea",
     mood: { sereno: "Sereno", pioggia: "Pioggia", vespro: "Vespro", carillon: "Carillon",
             arcipelago: "Arcipelago", collina: "Collina", finestra: "Finestra", nuvola: "Nuvola" },
         droneMood: { velo: "Velo", fondale: "Fondale", lino: "Lino", respiro: "Respiro",
@@ -92,7 +87,6 @@ const STRINGS = {
     "ui.guide":         "Guide",
     "ui.guideAria":     "Guide (s'ouvre dans un nouvel onglet)",
     "foot.credits":     "ce projet libre est une idée de Valerio Belloni",
-    "a11y.title":       "Commandes équivalentes au clavier",
     "a11y.duration":    "Phrase {n} · durée en secondes",
     "a11y.mute":        "Mettre en silence la phrase {n}",
     "a11y.unmute":      "Réveiller la phrase {n}",
@@ -105,7 +99,6 @@ const STRINGS = {
     "gate.text":        "Un espace sonore où l'on peut s'attarder dans ses souvenirs en regardant par la fenêtre.",
     "gate.enter":       "Entrer",
     "card.title":       "Les quatre phrases",
-    "card.hint":        "glisser" + NNBSP + ": durée · clic" + NNBSP + ": silence · ↻ nouvelle idée",
     "ctl.spread":       "Étendue du registre",
     "ctl.warmth":       "Chaleur",
     "ctl.rev":          "Espace / traîne",
@@ -125,9 +118,7 @@ const STRINGS = {
     "unit.min":         "min",
     "unit.hours":       "heures",
     "unit.days":        "jours",
-    "canvas.phrase":    "PHRASE",
     "canvas.seconds":   "s",
-    "canvas.drone":     "TISSU",
     "drone.title":      "Les quatre tissus",
     "dctl.spread":      "Étendue",
     "dctl.apri":        "Émergence",
@@ -137,7 +128,6 @@ const STRINGS = {
     "unit.oct":         "oct.",
     "unit.s":           "s",
     "unit.hz":          "Hz",
-    "drone.hint":       "glisser" + NNBSP + ": durée · clic" + NNBSP + ": silence · ↻ nouvelle idée",
     mood: { sereno: "Serein", pioggia: "Pluie", vespro: "Vêpres", carillon: "Carillon",
             arcipelago: "Archipel", collina: "Colline", finestra: "Fenêtre", nuvola: "Nuage" },
         droneMood: { velo: "Voile", fondale: "Fond", lino: "Lin", respiro: "Souffle",
@@ -153,7 +143,6 @@ const STRINGS = {
     "ui.guide":         "Guide",
     "ui.guideAria":     "Guide (opens in a new tab)",
     "foot.credits":     "this is an open source project by Valerio Belloni",
-    "a11y.title":       "Keyboard equivalents",
     "a11y.duration":    "Phrase {n} · length in seconds",
     "a11y.mute":        "Mute phrase {n}",
     "a11y.unmute":      "Unmute phrase {n}",
@@ -166,7 +155,6 @@ const STRINGS = {
     "gate.text":        "A sound space where you can linger among your own memories while looking out of the window.",
     "gate.enter":       "Enter",
     "card.title":       "The four phrases",
-    "card.hint":        "drag: duration · click: mute · ↻ new idea",
     "ctl.spread":       "Register range",
     "ctl.warmth":       "Warmth",
     "ctl.rev":          "Space / decay",
@@ -186,9 +174,7 @@ const STRINGS = {
     "unit.min":         "min",
     "unit.hours":       "hours",
     "unit.days":        "days",
-    "canvas.phrase":    "PHRASE",
     "canvas.seconds":   "s",
-    "canvas.drone":     "WEAVE",
     "drone.title":      "The four weaves",
     "dctl.spread":      "Expanse",
     "dctl.apri":        "Surfacing",
@@ -198,7 +184,6 @@ const STRINGS = {
     "unit.oct":         "oct",
     "unit.s":           "s",
     "unit.hz":          "Hz",
-    "drone.hint":       "drag: duration · click: mute · ↻ new idea",
     mood: { sereno: "Clear", pioggia: "Rain", vespro: "Vespers", carillon: "Carillon",
             arcipelago: "Archipelago", collina: "Hillside", finestra: "Window", nuvola: "Cloud" },
         droneMood: { velo: "Veil", fondale: "Backdrop", lino: "Linen", respiro: "Breath",
@@ -214,7 +199,6 @@ const STRINGS = {
     "ui.guide":         "手引き",
     "ui.guideAria":     "手引き（新しいタブで開きます）",
     "foot.credits":     "Valerio Belloniによる、オープンソースの企画です。",
-    "a11y.title":       "キーボードでの操作",
     "a11y.duration":    "フレーズ{n}・長さ（秒）",
     "a11y.mute":        "フレーズ{n}を消音する",
     "a11y.unmute":      "フレーズ{n}をふたたび鳴らす",
@@ -227,7 +211,6 @@ const STRINGS = {
     "gate.text":        "窓の外を眺めながら、自分の記憶のなかに佇んでいられる音の空間。",
     "gate.enter":       "入る",
     "card.title":       "四つのフレーズ",
-    "card.hint":        "ドラッグ：長さ · クリック：消音 · ↻ 新しい楽想",
     "ctl.spread":       "音域の幅",
     "ctl.warmth":       "温かみ",
     "ctl.rev":          "空間と余韻",
@@ -247,9 +230,7 @@ const STRINGS = {
     "unit.min":         "分",
     "unit.hours":       "時間",
     "unit.days":        "日",
-    "canvas.phrase":    "フレーズ",
     "canvas.seconds":   "秒",
-    "canvas.drone":     "織り",
     "drone.title":      "四つの織り",
     "dctl.spread":      "広がり",
     "dctl.apri":        "立ち上がり",
@@ -259,7 +240,6 @@ const STRINGS = {
     "unit.oct":         "oct",
     "unit.s":           "秒",
     "unit.hz":          "Hz",
-    "drone.hint":       "ドラッグ：長さ · クリック：消音 · ↻ 新しい楽想",
     mood: { sereno: "凪", pioggia: "雨", vespro: "晩鐘", carillon: "風鈴",
             arcipelago: "島々", collina: "稜線", finestra: "窓辺", nuvola: "霞" },
         droneMood: { velo: "薄衣", fondale: "底", lino: "亜麻", respiro: "息",
@@ -347,17 +327,16 @@ const seasonName  = id => (STRINGS[lang].season  || {})[id] || id;
 /* --- cache per il canvas --------------------------------------------------
    Le etichette dei quadranti non cambiano mai fra un fotogramma e l'altro:
    solo al cambio di lingua. Si preparano qui e `draw` le legge e basta.     */
-const CANVAS = { phrase: [], drone: [], seconds: "", trackMul: 1 };
+const CANVAS = { linea: ["I", "II", "III", "IV"], seconds: "", f30s: "", f30min: "" };
 
 function buildCanvasCache() {
-  const roman = ["I", "II", "III", "IV"];
-  CANVAS.phrase = roman.map(r => T("canvas.phrase") + " " + r);
-  CANVAS.drone  = roman.map(r => T("canvas.drone")  + " " + r);
+  /* I numerali degli anelli sono notazione, non parole: identici in tutte le
+     lingue, come le sigle delle colonne. Restano nella cache perché il
+     disegno legge da un posto solo.                                        */
   CANVAS.seconds = T("canvas.seconds");
-
-  /* Il giapponese non si spazia come il latino: i glifi sono già a piena
-     larghezza, e il tracking ampio delle etichette minute li slaccerebbe.  */
-  CANVAS.trackMul = (lang === "ja") ? 0.35 : 1;
+  /* i cartelli delle due scale della fascia: quanto tempo contiene la riga */
+  CANVAS.f30s   = "30" + T("unit.sep") + T("unit.s");
+  CANVAS.f30min = "30" + T("unit.sep") + T("unit.min");
 }
 
 /* --- il selettore di lingua ------------------------------------------------

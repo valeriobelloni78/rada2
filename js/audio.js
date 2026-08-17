@@ -34,9 +34,55 @@ const TIMELINE_SEC = 30;
 const dropHistory = [];
 
 /* La stessa cosa per i tessuti, ma con due tempi invece di uno: un tessuto
-   non accade, dura. La fascia in fondo al suo riquadro disegna segmenti, e
-   per farlo deve sapere dove ciascuno comincia e dove finisce.           */
+   non accade, dura. La fascia disegna segmenti, e per farlo deve sapere dove
+   ciascuno comincia e dove finisce.                                        */
 const toneHistory = [];
+
+/* --- la storia della deriva ------------------------------------------------
+   Terza memoria, per la corsia lunga della fascia: la tonica campionata ogni
+   due secondi sull'ultima mezz'ora, più i tempi dei passi di quinta. Stesso
+   principio delle altre due — lo scheduler scrive, il disegno legge — e la
+   stessa ragione di stare qui: è lo scheduler a girare sempre, anche quando
+   i fotogrammi si fermano perché la pagina non si vede.
+
+   La tonica sta in un ANELLO preallocato, non in una coda: novecento campioni
+   sono novecento, per tutta la sessione, e una coda con push e shift a regime
+   sposterebbe l'intero array a ogni campione. Si memorizza anche il tempo di
+   ciascun campione, perché i giri dello scheduler non sono equidistanti — a
+   schermo bloccato passano anche dodici secondi — e il disegno deve sapere
+   dove i buchi sono veri.                                                  */
+const DERIVA_FINESTRA = 1800;                       // trenta minuti
+const DERIVA_PASSO    = 2;                          // secondi fra due campioni
+const DERIVA_N        = DERIVA_FINESTRA / DERIVA_PASSO;
+const derivaStoria = {
+  t: new Float32Array(DERIVA_N),
+  c: new Float32Array(DERIVA_N),                    // centesimi
+  testa: 0,                                         // prossima posizione di scrittura
+  pieni: 0,                                         // quanti campioni esistono davvero
+};
+let ultimoCampione = -99;
+
+/* I passi di quinta sono rari — uno ogni due minuti e mezzo — quindi qui una
+   coda va benissimo. `ultimiPassi` ricorda l'ultimo passiQuinta visto: è così
+   che lo scheduler si accorge che deriva.js ha fatto un passo.             */
+const quinteHistory = [];
+let ultimiPassi = 0;
+
+function registraDeriva(now) {
+  if (now - ultimoCampione >= DERIVA_PASSO) {
+    ultimoCampione = now;
+    derivaStoria.t[derivaStoria.testa] = now;
+    derivaStoria.c[derivaStoria.testa] = derivaCents();
+    derivaStoria.testa = (derivaStoria.testa + 1) % DERIVA_N;
+    if (derivaStoria.pieni < DERIVA_N) derivaStoria.pieni++;
+  }
+  if (passiQuinta !== ultimiPassi) {
+    ultimiPassi = passiQuinta;
+    quinteHistory.push(now);
+  }
+  while (quinteHistory.length && quinteHistory[0] < now - DERIVA_FINESTRA)
+    quinteHistory.shift();
+}
 
 /* --- come il sistema deve considerare questo suono ------------------------
    Di suo, un AudioContext è "suono d'ambiente": iOS lo zittisce con
@@ -360,6 +406,7 @@ function schedule() {
      l'app in secondo piano la congelerebbe — e si tornerebbe dopo mezz'ora
      esattamente dove la si era lasciata, cioè al difetto di Rada.         */
   avanzaDeriva(now);
+  registraDeriva(now);
 
   const horizon = now + LOOKAHEAD;
   /* Solo in avanti: al ritorno in primo piano la finestra si stringe, ma le

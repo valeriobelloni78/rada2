@@ -38,9 +38,15 @@
     </div>
   </div>
 
+  <!-- ------------------------------------------------------- lo strumento
+       Una card sola: le otto linee sono anelli concentrici di un reticolo
+       unico, e le due colonne ai lati portano i comandi di linea — sigla,
+       durata, silenzia, nuova idea — in HTML nativo. Il canvas è puro
+       display e non ascolta nulla: il doppio binario di Rada (gesti sul
+       canvas più doppione fuori campo per la tastiera) è diventato un
+       binario solo, visibile.                                            -->
   <div class="loopCard">
     <div class="cardHead">
-      <span class="t" data-i18n="card.title">Le quattro frasi</span>
       <!-- Due numeri diversi, e conviene non confonderli: `realign` dice
            quando le FASI tornano nella stessa combinazione, `deriva` dice
            quanto si è spostato il pezzo. Il primo è l'eredità di Rada, e da
@@ -49,8 +55,17 @@
       <span class="realign" id="deriva">—</span>
       <span class="realign" id="realign">—</span>
     </div>
-    <div class="loopHint" data-i18n="card.hint">trascina: durata · clic: silenzia · ↻ nuova idea</div>
-    <div id="canvas-holder"></div>
+    <div class="strumento">
+      <div class="colLinee colFrasi">
+        <span class="colTitolo" data-i18n="card.title">Le quattro frasi</span>
+        <div id="lineeFrasi"></div>
+      </div>
+      <div id="canvas-holder"></div>
+      <div class="colLinee colTessuti">
+        <span class="colTitolo" data-i18n="drone.title">I quattro tessuti</span>
+        <div id="lineeTessuti"></div>
+      </div>
+    </div>
   </div>
 
   <div class="controls">
@@ -83,30 +98,17 @@
     </button>
   </div>
 
-  <!-- ----------------------------------------------- la seconda classe
-       Stesso impianto del riquadro sopra, ma gli eventi qui durano invece di
-       accadere: tenute che si sovrappongono fra loro e alle gocce. Il canvas
-       è separato perché due riquadri con bordo proprio non possono condividere
-       la stessa tela; lo disegna js/droni.js, dentro lo stesso ciclo di
-       fotogrammi dell'altro.
-
-       Sopra al riquadro, la riga della stagione: gemella di quella in testa
-       alla pagina, e diversa nella scala del tempo. Là l'ora del giorno, qui
-       il mese dell'anno.                                                 -->
+  <!-- ----------------------------------------------- i comandi dei tessuti
+       La seconda classe non ha più un riquadro proprio: vive negli anelli
+       esterni del reticolo. Restano i suoi comandi d'insieme, e sopra di
+       loro la riga della stagione — gemella di quella in testa alla pagina,
+       diversa nella scala del tempo: là l'ora del giorno, qui il mese.   -->
   <div class="statusDroni">
+    <span class="realign" id="realignDroni">—</span>
     <div class="status" id="statusStagione">
       <span class="pulse"></span>
       <span id="statusStagioneText">in attesa</span>
     </div>
-  </div>
-
-  <div class="loopCard droneCard">
-    <div class="cardHead">
-      <span class="t" data-i18n="drone.title">Le quattro tenute</span>
-      <span class="realign" id="realignDroni">—</span>
-    </div>
-    <div class="loopHint" data-i18n="drone.hint">trascina: durata · clic: silenzia · ↻ nuova idea</div>
-    <div id="drone-holder"></div>
   </div>
 
   <div class="controls controlsTessuti">
@@ -137,23 +139,6 @@
     <button class="power" id="powerTessuti">
       <span class="dot"></span><span id="powerTessutiLabel">Avvia</span>
     </button>
-  </div>
-
-  <!-- ------------------------------------------------------------------
-       I quadranti vivono nel canvas, che per una tastiera e per un lettore
-       di schermo è una superficie muta: qui sotto stanno gli STESSI comandi
-       in HTML nativo, invisibili ma raggiungibili con Tab. Restano in sincronia
-       col disegno in entrambe le direzioni (vedi bindA11y in ui.js).
-  ------------------------------------------------------------------ -->
-  <div class="srOnly" id="a11y">
-    <h2 data-i18n="a11y.title">Comandi equivalenti da tastiera</h2>
-    <!-- Le due classi hanno due elenchi separati, e i titoli sono gli stessi
-         dei riquadri visibili: chi ascolta la pagina e chi la guarda devono
-         sentirsi nello stesso posto. -->
-    <h3 data-i18n="card.title">Le quattro frasi</h3>
-    <div id="a11yLoops"></div>
-    <h3 data-i18n="drone.title">I quattro tessuti</h3>
-    <div id="a11yDroni"></div>
   </div>
 
   <div class="foot">
@@ -203,8 +188,7 @@
 <script src="js/deriva.js"></script>
 <script src="js/model.js"></script>
 <script src="js/audio.js"></script>
-<script src="js/droni.js"></script>
-<script src="js/frasi.js"></script>
+<script src="js/disegno.js"></script>
 <script src="js/ui.js"></script>
 </body>
 </html>

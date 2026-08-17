@@ -73,7 +73,7 @@ l'uno, e in cambio arrivava una dipendenza da CDN che impediva alla pagina di
 aprirsi senza rete. Non rimetterne una.
 
 **La palette è definita una volta sola**, nelle variabili CSS di
-`css/style.css`. Anche il canvas le legge (`readPalette` in `frasi.js`).
+`css/style.css`. Anche il canvas le legge (`readPalette` in `disegno.js`).
 Non introdurre colori scritti direttamente nel JavaScript.
 
 **La deriva NON è una terza influenza esterna.** L'ora e la stagione vengono da
@@ -176,22 +176,18 @@ esattamente altrettanto avanti: se lo scheduler prenotasse a tre secondi e
 dell'addensamento riposizionerebbe gocce già prenotate e le sentiresti due
 volte. Cambiando l'una, cambiare l'altra.
 
-**Con i pointer event lo scorrimento della pagina lo decide SOLO
-`touch-action`.** `preventDefault` su `pointerdown` non lo ferma: non esiste
-modo di decidere da JavaScript, gesto per gesto, se la pagina debba scorrere.
-
-Da qui gli **otto riquadri trasparenti** (`.dialZone`), quattro per riquadro,
-sopra i quadranti: le tele lasciano scorrere la pagina (`touch-action:pan-y
-pinch-zoom`), i riquadri no. È l'unica leva che esiste — cambiare quale
-elemento riceve il tocco — e per questo tutta l'interazione passa di lì e
-nessun ascoltatore sta sulla tela.
-
-Questa pagina è costata fatica quando c'era p5, che scriveva `touch-action:
-none` **nell'attributo style di ogni canvas presente** — la propria tela e
-anche quella dei tessuti, che non aveva creato — e batteva così le regole
-normali del foglio di stile. Servivano due `!important`. Tolta la libreria
-non lo scrive più nessuno: se un giorno una regola di `touch-action` sembrasse
-non avere effetto, la prima cosa da guardare resta comunque lo stile in linea.
+**Il canvas è puro display: NON ascolta nulla, e deve restare così.** In Rada
+la tela era una superficie di comando, con otto riquadri trasparenti
+(`.dialZone`) a governare `touch-action` — perché con i pointer event lo
+scorrimento della pagina lo decide SOLO `touch-action`, e `preventDefault` su
+`pointerdown` non lo ferma — più un doppione di comandi nativi fuori campo per
+la tastiera. Il reticolo unico ha chiuso la questione: gli anelli concentrici
+sarebbero bersagli impossibili per un dito, quindi **il doppione è diventato
+l'interfaccia** — le otto righe di linea nelle colonne accanto al reticolo,
+elementi HTML nativi, un binario solo per puntatore, tastiera e lettore di
+schermo. Con questo sono spariti i dialZone, le regole di `touch-action` e la
+sincronia bidirezionale canvas↔comandi. Chi rimette un ascoltatore sulla tela
+si ricompra tutti e tre i problemi.
 
 **Ogni goccia lascia sette nodi audio, e vanno scollegati a mano.**
 `playDrop` costruisce tre oscillatori più guadagni e panner. Il rilascio
@@ -223,11 +219,11 @@ filo di continua a 10⁻¹⁵ iniettato negli anelli: tiene i valori sopra la
 soglia dei denormali, che su molti processori costano decine di volte tanto
 proprio quando la coda sta svanendo.
 
-**Un solo set di ascoltatori per il trascinamento.** Non registrarne uno per
-quadrante: ogni movimento del puntatore ne sveglierebbe quattro volte tanti.
-
 **Attenzione alle allocazioni nei cicli a 60 fps.** Niente nuovi buffer o
-array dentro `disegna`, che è il corpo del fotogramma.
+array dentro `disegna`, che è il corpo del fotogramma. Vale anche per la
+storia della deriva: la tonica sta in un ANELLO preallocato (`derivaStoria`
+in `audio.js`, novecento campioni per mezz'ora), non in una coda — una coda
+a regime sposterebbe l'intero array a ogni campione, per sempre.
 
 **Le soglie del ciclo stanno appena SOTTO il periodo voluto.** `PASSO_VIVO` è
 1/61 di secondo e `PASSO_FERMO` 1/13, non 1/60 e 1/12: i fotogrammi arrivano
@@ -236,16 +232,18 @@ millisecondo saltando un giro su due — trenta al secondo invece di sessanta.
 Misurato dopo la correzione: 12,0 fotogrammi al secondo a motore fermo.
 
 **Le stringhe del canvas si preparano al cambio di lingua, non a ogni
-fotogramma.** `CANVAS.phrase` e `CANVAS.drone` sono costruite una volta da
-`buildCanvasCache`; il disegno le legge e basta. Vale soprattutto per i
-formattatori: costruire un `Intl.NumberFormat` dentro il fotogramma costa più di
-tutto il resto del disegno. Ne esistono tre, creati una volta per lingua.
+fotogramma.** La cache `CANVAS` è costruita una volta da `buildCanvasCache`;
+il disegno la legge e basta. Le parole vere sono uscite dalla tela col
+reticolo — restano numerali e cartelli di scala (`30 s`, `30 min`) — ma la
+regola vale soprattutto per i formattatori: costruire un `Intl.NumberFormat`
+dentro il fotogramma costa più di tutto il resto del disegno. Ne esistono
+tre, creati una volta per lingua.
 
 **Il giapponese non ha maiuscolo.** La gerarchia delle etichette minute
 poggia su MAIUSCOLO più tracking ampio, un dispositivo che in giapponese
 semplicemente non esiste: le regole `:lang(ja)` in `style.css` la
-ricostruiscono con corpo e 字間, e sul canvas c'è `CANVAS.trackMul`, perché
-i glifi a piena larghezza vanno spaziati molto meno di quelli latini.
+ricostruiscono con corpo e 字間. (Il canvas non c'entra più: da quando le
+parole sono uscite dalla tela, il tracking del testo è affare del solo CSS.)
 
 **Nei tessuti lo scarto fra le due voci è ADDITIVO, non proporzionale.**
 Due sinusoidi distanti d hertz battono a d hertz qualunque sia la loro
@@ -273,12 +271,13 @@ e quella che suona un evento. Le gocce e le tenute differiscono per come
 suonano, non per come vengono collocate nel tempo — e due copie dello
 scheduler divergerebbero al primo ritocco.
 
-**Il riquadro dei tessuti ha una tela propria.** Due riquadri con bordo
-proprio non possono condividerne una. Il ciclo di fotogrammi resta però **uno
-solo** — `ciclo` in `frasi.js` disegna le frasi e poi chiama `drawDroni` —
-perché due animazioni indipendenti si sfaserebbero e su un telefono
-costerebbero il doppio. Vale anche per gli aiutanti: `lerp`, `fontPila`,
-`trackedText` e la palette stanno in `frasi.js` e le usano tutt'e due.
+**La tela è UNA, e il ciclo di fotogrammi pure.** Le otto linee sono anelli
+concentrici di un solo reticolo, disegnato da `disegno.js` su un solo canvas
+dentro un solo `requestAnimationFrame`. In Rada le tele erano due perché due
+riquadri con bordo proprio non potevano condividerne una; caduti i riquadri è
+caduta la ragione, e `droni.js` è confluito qui. Due animazioni indipendenti
+si sfaserebbero e su un telefono costerebbero il doppio: chi aggiunge una
+superficie disegnata la fa disegnare da `disegna`, non da un secondo ciclo.
 
 **Una tenuta accesa non può restare arancione.** Una goccia lampeggia per
 meno di mezzo secondo; una tenuta resta aperta anche trenta. Tenerla accesa
@@ -287,18 +286,27 @@ solo nell'istante in cui si apre, poi inchiostro pieno finché suona.
 
 ## Convenzioni
 
-**Il modello non dipende da nulla.** `model.js` non conosce né l'audio né la
+**Il modello dipende solo dalla deriva.** `deriva.js` non conosce nessuno;
+`model.js` conosce solo la deriva; nessuno dei due sa dell'audio o della
 grafica. Le dipendenze scorrono in una direzione sola:
-model ← audio ← disegno/ui. Mantenere questa separazione.
+deriva ← model ← audio ← disegno/ui. Mantenere questa separazione.
 
 **Le proporzioni del disegno sono frazioni del raggio**, mai pixel fissi:
-i quadranti devono reggere a qualunque dimensione.
+il reticolo deve reggere a qualunque dimensione. Con un'eccezione imparata a
+spese proprie: **gli spessori di tratto sono in pixel assoluti**, non in
+frazioni del raggio — sul reticolo R è quattro volte quello dei vecchi
+quadranti, e la frazione che là faceva un filo qui faceva una fascia nera.
 
 **Tipografia**: una sola famiglia (grottesco di sistema), gerarchia data da
 peso e spaziatura. Peso 200 per i display, 300 per il testo, 400 con
-tracking ampio per le etichette minute. Il contesto 2D non conosce la
-spaziatura fra lettere: per il testo su canvas usare `trackedText`, che la
-compone lettera per lettera.
+tracking ampio per le etichette minute. Sul canvas vivono solo numerali e
+unità; ogni parola con tracking è HTML, e la spaziatura la fa il CSS.
+
+**La lingua visiva è quella dei disegni tecnici**: niente scatole — le
+sezioni le separano i fili — e niente angoli tondi né pillole; l'unico tondo
+è quello dei segni del reticolo. I cursori sono scale graduate con l'indice
+rettangolare, i mood etichette numerate (il numero lo mette un counter CSS:
+è notazione, non lingua, e non passa dal dizionario).
 
 **Le etichette dei comandi descrivono l'azione, non lo stato**
 ("Pausa", non "In ascolto"). Lo stato è raccontato dalla riga in alto e dal
@@ -319,29 +327,32 @@ getta in Node, con i nodi audio sostituiti da stub, e controllare che ogni
 goccia suoni una volta per ciclo, senza duplicati e con tempi crescenti.
 È così che sono stati trovati i disallineamenti passati.
 
-Ogni push su `main` ricostruisce automaticamente il sito su GitHub Pages:
-https://valeriobelloni78.github.io/rada/
+Ogni push su `main` ricostruisce il sito su GitHub Pages:
+https://valeriobelloni78.github.io/rada2/ (da abilitare nelle impostazioni
+del repo al primo push — l'automatismo è ereditato da Rada, non è ancora
+stato verificato su rada2).
 
 ## Direzioni di lavoro
 
-La priorità ora è **far crescere la parte visiva**. Idee già discusse, in
-ordine di interesse:
+Le quattro direzioni visive di Rada sono state percorse dal reticolo e dalla
+fascia: l'altezza si legge nella lunghezza delle tacche, il collage negli
+anelli concentrici e nei legami effimeri, il tempo lungo nella corsia dei
+trenta minuti dove la tonica sedimenta. Restano aperte, in ordine di
+interesse:
 
-1. **Rendere visibile l'altezza delle gocce.** Ogni evento ha un `rel` che
-   ne decide il registro, oggi del tutto invisibile: tutte le gocce appaiono
-   identiche. Mapparlo rivelerebbe il profilo melodico di ogni idea.
-2. **Estendere la palette oraria al visivo.** L'ora del giorno oggi agisce
-   solo sul suono: alle 23 Rada suona cupa ma appare identica a mezzogiorno.
-3. **Rendere visibile il collage.** I quattro quadranti sono isole, ma il
-   pezzo è ciò che accade *fra* loro. Ipotesi: una fascia temporale che
-   mostri gli ultimi trenta secondi di tutti e quattro insieme (il modo più
-   diretto per vedere lo sfasamento); legami effimeri fra frasi che suonano
-   ravvicinate; un campo condiviso dove le gocce lasciano traccia.
-4. **Rendere visibile il tempo lungo.** Una sedimentazione che accumuli i
-   segni della sessione, e magari l'esportazione di un'immagine finale.
+1. **Estendere le palette al visivo.** L'ora e la stagione oggi agiscono solo
+   sul suono: alle 23 Rada2 suona cupa ma appare identica a mezzogiorno. Il
+   reticolo unico rende l'idea più facile di prima — un'inclinazione sola,
+   non otto.
+2. **L'esportazione di un'immagine finale.** La corsia lunga già accumula la
+   sessione; il passo successivo è poterla portare via — la traiettoria di
+   un ascolto come congedo.
+3. **La deriva più udibile che leggibile.** Le ampiezze in `effettiviGlobali`
+   e il passo delle quinte sono tarati a tavolino: vanno ascoltati a lungo,
+   e ritoccati a orecchio.
 
-Tutti e quattro i quadranti stanno su **un unico canvas** proprio per
-rendere possibili gli effetti che li attraversano: non separarli.
+Tutto sta su **un unico canvas** proprio per rendere possibili gli effetti
+che attraversano le linee: non separarlo.
 
 ## Limiti noti
 
