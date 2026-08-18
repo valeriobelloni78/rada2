@@ -327,21 +327,27 @@ caduta la ragione, e `droni.js` è confluito qui. Due animazioni indipendenti
 si sfaserebbero e su un telefono costerebbero il doppio: chi aggiunge una
 superficie disegnata la fa disegnare da `disegna`, non da un secondo ciclo.
 
-**Una sola tenuta arancione per linea: la più recente.** Le altre ancora
-aperte sono inchiostro pieno, le tacenti filo tenue; lo spessore doppio invece
-vale per tutte quelle che suonano. È una misura fra due estremi entrambi
-provati: accendere tutto ciò che suona portava l'arancione al 71% della
-circonferenza degli anelli esterni con l'Intreccio appena sopra l'uno — e alla
-saturazione alzandolo — mentre il lampo di mezzo secondo dell'apertura, com'era
-in origine, non diceva nulla su che cosa stesse suonando adesso. **Il tetto è
-quattro archi**, uno per linea, e resta tale a qualunque Intreccio.
+**UNA sola tenuta arancione in tutta la pagina: la più recente fra le otto
+linee**, non una per linea. Le altre che suonano sono inchiostro pieno, le
+tacenti filo tenue; lo spessore doppio invece vale per tutte quelle che suonano.
 
-Il reticolo e la guida usano la STESSA gerarchia e gli STESSI due colori —
-arancione la più recente, inchiostro le altre che suonano — e leggono lo stesso
-`correnti` in `disegno.js`, calcolato una volta per fotogramma. Chi ne cambia la
-definizione da una parte la cambi anche dall'altra, e chi introduce un terzo
-grigio per una delle due fa sembrare due informazioni diverse quello che è un
-solo stato.
+Il tetto dell'accento è passato per tre valori, e conviene sapere perché è
+finito a uno. Accendere tutto ciò che suona portava l'arancione al 71% della
+circonferenza degli anelli esterni con l'Intreccio appena sopra l'uno, e alla
+saturazione alzandolo. Una per linea lo riportava al 58%: meglio, ma ancora
+quattro accenti simultanei. Una sola scende al 13%, e soprattutto guadagna un
+significato preciso — non «queste stanno suonando» ma **«questa è appena
+entrata»**.
+
+**Le linee silenziate non concorrono**, e non è un dettaglio: la più recente in
+assoluto può cadere su una linea muta, prendersi l'arancione e lasciare la
+pagina senza acceso mentre qualcosa suona davvero. Vale anche a classe spenta.
+
+Il reticolo e la guida usano la STESSA gerarchia e gli STESSI due colori, e
+leggono lo stesso `corrente` in `disegno.js`, calcolato una volta per
+fotogramma. Chi ne cambia la definizione da una parte la cambi anche
+dall'altra, e chi introduce un terzo grigio per una delle due fa sembrare due
+informazioni diverse quello che è un solo stato.
 
 Le gocce invece no: lampeggiano per meno di mezzo secondo e poi tornano
 inchiostro. Lì la regola dell'accento raro vale intera.

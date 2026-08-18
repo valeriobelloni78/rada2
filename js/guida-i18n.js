@@ -86,9 +86,9 @@ const GUIDA = {
 
     "g.strip.t": "La fascia temporale",
     "g.strip1": "Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia: è il modo più diretto per vedere lo sfasamento reale.",
-    "g.strip1b": "La seconda non scorre affatto: quattro file ferme di puntini, una per tessuto. I puntini <em class=\"amb\">accesi</em> dicono quanto è avanzata ogni tenuta in corso — arancione la più recente della linea, inchiostro le altre ancora aperte, come sugli anelli. Le corsie delle gocce ricordano, queste dicono adesso: per un suono che dura mezzo minuto è la domanda che ci si fa davvero guardando.",
+    "g.strip1b": "La seconda non scorre affatto: quattro file ferme di puntini, una per tessuto. I puntini <em class=\"amb\">accesi</em> dicono quanto è avanzata ogni tenuta in corso. L'arancione tocca a una sola in tutta la pagina — l'ultima entrata fra tutt'e quattro le linee — e le altre restano inchiostro, come sugli anelli. Le corsie delle gocce ricordano, queste dicono adesso: per un suono che dura mezzo minuto è la domanda che ci si fa davvero guardando.",
     "g.strip2": "Puoi guardarla come uno <em class=\"amb\">spartito</em> in movimento, o un sovrapporsi di strati sonori che scorrono con viscosità differenti.",
-    "g.strip3": "La seconda contiene gli ultimi trenta minuti: la traiettoria della tonica che sedimenta piano, e i passi di quinta che cadono come croci. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.",
+    "g.strip3": "La terza contiene gli ultimi trenta minuti, ed è un istogramma: ogni colonnina è un'altezza del baricentro, da zero a quattro puntini sopra l'asse se il pezzo sta alto, altrettanti sotto se sta basso. Una colonnina ogni mezzo minuto circa. Quella in cui cade un passo di quinta è <em class=\"amb\">arancione</em>: il cambio d'armonia non è un segno appoggiato sopra al movimento, è una delle sue colonnine — i due orologi girano indipendenti, e si vede. All'apertura la corsia è vuota: si riempie ascoltando, ed è la memoria della sessione.",
 
     "g.name.t": "Il nome",
     "g.name1": "Una <em>rada</em> è il tratto di mare riparato dove le navi sostano al riparo dai venti e dalle onde.",
@@ -200,9 +200,9 @@ const GUIDA = {
 
     "g.strip.t": "La bande temporelle",
     "g.strip1": "Sous le réticule il y a trois lectures. La première contient les trente dernières secondes des quatre phrases, une encoche par goutte~: c'est la façon la plus directe de voir le déphasage réel.",
-    "g.strip1b": "La deuxième ne défile pas du tout~: quatre rangées immobiles de points, une par tissu. Les points <em class=\"amb\">allumés</em> disent où en est chaque tenue en cours — en orange la plus récente de la ligne, à l'encre les autres encore ouvertes, comme sur les anneaux. Les couloirs des gouttes se souviennent, ceux-ci disent maintenant~: pour un son qui dure une demi-minute, c'est la question qu'on se pose vraiment en regardant.",
+    "g.strip1b": "La deuxième ne défile pas du tout~: quatre rangées immobiles de points, une par tissu. Les points <em class=\"amb\">allumés</em> disent où en est chaque tenue en cours. L'orange ne revient qu'à une seule dans toute la page — la dernière entrée parmi les quatre lignes — et les autres restent à l'encre, comme sur les anneaux. Les couloirs des gouttes se souviennent, ceux-ci disent maintenant~: pour un son qui dure une demi-minute, c'est la question qu'on se pose vraiment en regardant.",
     "g.strip2": "Tu peux la regarder comme une <em class=\"amb\">partition</em> en mouvement, ou comme des couches sonores qui s'écoulent avec des viscosités différentes.",
-    "g.strip3": "La seconde contient les trente dernières minutes~: la trajectoire de la tonique qui sédimente lentement, et les pas de quinte qui tombent comme des croix. À l'ouverture elle est vide — elle se remplit en écoutant, et c'est la mémoire de la session.",
+    "g.strip3": "La troisième contient les trente dernières minutes, et c'est un histogramme~: chaque colonne est une hauteur du barycentre, de zéro à quatre points au-dessus de l'axe si la pièce est haute, autant en dessous si elle est basse. Une colonne toutes les demi-minutes environ. Celle où tombe un pas de quinte est <em class=\"amb\">orange</em>~: le changement d'harmonie n'est pas un signe posé sur le mouvement, c'est l'une de ses colonnes — les deux horloges tournent indépendamment, et cela se voit. À l'ouverture le couloir est vide~: il se remplit en écoutant, et c'est la mémoire de la session.",
 
     "g.name.t": "Le nom",
     "g.name1": "Une <em>rade</em> est cette portion de mer abritée où les navires mouillent, à l'abri des vents et des vagues.",
@@ -314,9 +314,9 @@ const GUIDA = {
 
     "g.strip.t": "The time strip",
     "g.strip1": "Below the reticle there are three readings. The first holds the last thirty seconds of the four phrases, one notch per drop: it is the most direct way to see the real phase shift.",
-    "g.strip1b": "The second does not scroll at all: four still rows of dots, one per weave. The <em class=\"amb\">lit</em> dots say how far each sounding weave has got — amber for the most recent on that line, ink for the others still open, exactly as on the rings. The drop lanes remember; these say now, which for a sound lasting half a minute is the question you actually ask while watching.",
+    "g.strip1b": "The second does not scroll at all: four still rows of dots, one per weave. The <em class=\"amb\">lit</em> dots say how far each sounding weave has got. Only one on the whole page is amber — the last to enter across all four lines — and the others stay in ink, exactly as on the rings. The drop lanes remember; these say now, which for a sound lasting half a minute is the question you actually ask while watching.",
     "g.strip2": "You can read it as a <em class=\"amb\">score</em> in motion, or as layers of sound sliding over one another at different viscosities.",
-    "g.strip3": "The second holds the last thirty minutes: the trajectory of the tonic slowly settling, and the steps of a fifth falling like crosses. It is empty when you arrive — it fills as you listen, and it is the memory of the session.",
+    "g.strip3": "The third holds the last thirty minutes, and it is a histogram: each little column is a height of the centre of gravity, from zero to four dots above the axis if the piece sits high, as many below if it sits low. One column roughly every half minute. The one a step of a fifth falls into is <em class=\"amb\">amber</em>: the change of harmony is not a mark laid over the movement, it is one of its own columns — the two clocks run independently, and you can see it. The lane is empty when you arrive: it fills as you listen, and it is the memory of the session.",
 
     "g.name.t": "The name",
     "g.name1": "A <em>roadstead</em> — <em>rada</em> in Italian — is the sheltered stretch of sea where ships lie at anchor, out of the wind and the waves.",
@@ -428,9 +428,9 @@ const GUIDA = {
 
     "g.strip.t": "時間の帯",
     "g.strip1": "レティクルの下には三つの読み方があります。最初の帯は四つのフレーズの直近三十秒で、刻みのひとつひとつが滴です。実際の位相のずれを見る、いちばん直接的な方法です。",
-    "g.strip1b": "二つめはまったく流れません。動かない四列の点、織りごとに一列です。<em class=\"amb\">灯った</em>点が、鳴っているそれぞれの織りがどこまで進んだかを告げます——その線でいちばん新しいものが橙、まだ開いている他のものは墨。輪の上とまったく同じです。滴の帯は憶えていますが、こちらは「いま」を言います。三十秒続く音にとっては、見ながら本当に知りたいのはそちらです。",
+    "g.strip1b": "二つめはまったく流れません。動かない四列の点、織りごとに一列です。<em class=\"amb\">灯った</em>点が、鳴っているそれぞれの織りがどこまで進んだかを告げます。橙になるのはページ全体でひとつだけ——四つの線をとおして最後に入ってきたもの——で、ほかは墨のままです。輪の上とまったく同じです。滴の帯は憶えていますが、こちらは「いま」を言います。三十秒続く音にとっては、見ながら本当に知りたいのはそちらです。",
     "g.strip2": "動く<em class=\"amb\">楽譜</em>として眺めることもできますし、それぞれ異なる粘りで流れる音の層の重なりとして見ることもできます。",
-    "g.strip3": "二本目の帯は直近三十分。主音の軌跡がゆっくりと沈殿し、五度の歩みが十字となって落ちていきます。開いたときは空です——聴くほどに満ちていく、セッションの記憶です。",
+    "g.strip3": "三つめは直近三十分で、これは柱状のグラフです。ひとつひとつの小さな柱が重心の高さで、曲が高いところにあれば軸の上に、低ければ下に、〇から四つの点が並びます。柱はおよそ三十秒にひとつ。五度の歩みが落ちた柱は<em class=\"amb\">橙</em>です——和声の変化は運動の上に置かれた印ではなく、運動そのものの柱のひとつ。二つの時計が独立に回っていることが、そこに見えます。開いたときこの帯は空です。聴くほどに満ちていく、セッションの記憶です。",
 
     "g.name.t": "名前",
     "g.name1": "イタリア語の<em>rada</em>とは、風と波を避けて船が停泊する、囲われた海の一帯のことです。",

@@ -370,9 +370,9 @@ Ai tessuti parla invece la stagione: l'autunno raccoglie appena il registro e al
 
 Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia: è il modo più diretto per vedere lo sfasamento reale. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
 
-La seconda non scorre affatto: quattro file ferme di puntini, una per tessuto. I puntini **accesi** dicono quanto è avanzata ogni tenuta in corso — arancione la più recente della linea, inchiostro le altre ancora aperte, come sugli anelli. Le corsie delle gocce ricordano, queste dicono adesso: per un suono che dura mezzo minuto è la domanda che ci si fa davvero guardando.
+La seconda non scorre affatto: quattro file ferme di puntini, una per tessuto. I puntini **accesi** dicono quanto è avanzata ogni tenuta in corso. L'arancione tocca a una sola in tutta la pagina — l'ultima entrata fra tutt'e quattro le linee — e le altre restano inchiostro, come sugli anelli. Le corsie delle gocce ricordano, queste dicono adesso: per un suono che dura mezzo minuto è la domanda che ci si fa davvero guardando.
 
-La terza contiene gli ultimi trenta minuti: la traiettoria del baricentro che sedimenta piano, e i passi di quinta che cadono come croci, regolarmente spaziate. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
+La terza contiene gli ultimi trenta minuti, ed è un istogramma: ogni colonnina è un'altezza del baricentro, da zero a quattro puntini sopra l'asse se il pezzo sta alto, altrettanti sotto se sta basso. Una colonnina ogni mezzo minuto circa. Quella in cui cade un passo di quinta è ==arancione==: il cambio d'armonia non è un segno appoggiato sopra al movimento, è una delle sue colonnine — i due orologi girano indipendenti, e si vede. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
 
 ---
 

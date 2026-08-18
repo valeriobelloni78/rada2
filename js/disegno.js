@@ -46,25 +46,37 @@ const HOT_MAX = 96;
 const hotPool = Array.from({ length: HOT_MAX }, () => ({ x: 0, y: 0, t: 0, loop: 0 }));
 let hotCount = 0;
 
-/* La tenuta che sta suonando ADESSO su ciascuna linea, e se ce n'è più d'una
-   la più recente. La calcola `aggiornaCorrenti` una volta per fotogramma, e
-   la leggono in due: l'anello, per decidere quale arco è arancione, e la
-   fascia, per sapere di quale tenuta mostrare l'avanzamento. Devono parlare
-   della stessa: l'arco acceso sul reticolo e i puntini accesi sulla guida
-   sono due letture dello stesso suono, e se divergessero mentirebbero.
+/* LA tenuta più recente fra tutt'e quattro le linee: una sola in tutta la
+   pagina, non una per linea. È l'ultimo tessuto entrato, quello che si è
+   appena aggiunto alla trama, e l'arancione dice esattamente quello.
 
-   Preallocato: quattro caselle riscritte a ogni giro, nessun array nuovo.  */
-const correnti = droni.map(() => null);
+   Il tetto dell'accento scende così da quattro archi a UNO. Con quattro —
+   uno per linea — l'arancione arrivava al 58% della circonferenza degli
+   anelli esterni; con uno resta il segno raro che il progetto vuole, e
+   guadagna un significato più preciso: non «queste stanno suonando» ma
+   «questa è appena entrata».
 
-function aggiornaCorrenti(now) {
-  for (let i = 0; i < droni.length; i++) {
-    const L = droni[i];
-    let vinci = null;
+   Le linee SILENZIATE non concorrono, e non è un dettaglio: la più recente
+   in assoluto potrebbe cadere su una linea muta, prendersi l'arancione e
+   lasciare la pagina senza acceso mentre qualcosa suona davvero. Vale anche
+   a classe spenta — se i tessuti sono in pausa non c'è nessuna più recente.
+
+   La calcola `aggiornaCorrente` una volta per fotogramma, e la leggono in
+   due: l'anello, per decidere quale arco è arancione, e la guida, per sapere
+   di quale tenuta mostrare l'avanzamento in arancione. Devono parlare della
+   stessa, o le due letture dello stesso suono mentirebbero.               */
+let corrente = null;
+
+function aggiornaCorrente(now) {
+  corrente = null;
+  if (!tessutiOn) return;
+  for (const L of droni) {
+    if (L.muted) continue;
     for (const p of L.plan) {
       const ev = p.ev;
-      if (now >= ev.flash && now < ev.fino && (!vinci || ev.flash > vinci.flash)) vinci = ev;
+      if (now >= ev.flash && now < ev.fino && (!corrente || ev.flash > corrente.flash))
+        corrente = ev;
     }
-    correnti[i] = vinci;
   }
 }
 
@@ -143,7 +155,7 @@ function disegna() {
 
   const now = audioNow();
   hotCount = 0;
-  aggiornaCorrenti(now);
+  aggiornaCorrente(now);
   drawReticolo(s, now);
   drawFascia(s, now);
 }
@@ -320,7 +332,7 @@ function drawAnelloTessuto(g, L, cx, cy, r, R, now) {
   for (const p of L.plan) {
     const ev = p.ev;
     const suona = now >= ev.flash && now < ev.fino;
-    const recente = ev === correnti[L.i];
+    const recente = ev === corrente;
     const a0 = -Math.PI / 2 + p.ph * Math.PI * 2;
     g.strokeStyle = recente ? COL.amber : suona ? COL.ink : COL.ink2;
     /* Tratto in pixel assoluti, non in frazioni del raggio: sul reticolo R è
@@ -398,14 +410,17 @@ function drawLinks(g, now) {
 function drawFascia(s, now) {
   const g = cv2d;
   const left = s.w * 0.03, right = s.w * 0.97;
-  const top   = s.ret + s.stripH * 0.07;
-  const hA    = s.stripH * 0.25;          // quattro corsie di gocce
+  const top   = s.ret + s.stripH * 0.06;
+  const hA    = s.stripH * 0.22;          // quattro corsie di gocce
   const laneH = hA / 4;
-  const topR  = top + hA + s.stripH * 0.10;
-  const hR    = s.stripH * 0.25;          // quattro guide di tessuti
+  const topR  = top + hA + s.stripH * 0.09;
+  const hR    = s.stripH * 0.22;          // quattro guide di tessuti
   const railH = hR / 4;
-  const topB  = topR + hR + s.stripH * 0.12;
-  const hB    = s.stripH * 0.16;          // la corsia dei trenta minuti
+  const topB  = topR + hR + s.stripH * 0.11;
+  /* La corsia lunga è la più alta delle tre: deve contenere quattro livelli
+     sopra l'asse e quattro sotto, e a puntini troppo vicini la colonnina si
+     legge come un trattino invece che come un'altezza.                    */
+  const hB    = s.stripH * 0.26;
 
   g.save();
 
@@ -442,7 +457,11 @@ function drawFascia(s, now) {
   }
   g.stroke();
 
+  /* Le due chiamate stanno PRIMA della guardia su `ctx`: hanno la loro, e
+     disegnano comunque il telaio — le file di puntini spenti e l'asse della
+     corsia lunga — così la fascia esiste anche prima di premere Avvia.   */
   disegnaGuideTessuti(g, left, right, topR, railH, now);
+  disegnaCorsiaLunga(g, left, right, topB, hB, now);
 
   if (!ctx) { g.restore(); return; }
 
@@ -461,46 +480,6 @@ function drawFascia(s, now) {
     g.moveTo(x, ly - mezza); g.lineTo(x, ly + mezza);
     g.stroke();
   }
-
-  /* la corsia lunga: il baricentro sedimenta la sua traiettoria. L'anello si
-     percorre dal campione più vecchio al più recente; un buco più largo di
-     qualche passo — schermo bloccato — spezza la linea invece di mentire
-     con un ponte dritto.                                                   */
-  const yB = topB + hB / 2;
-  const xLungo = t => lerp(right, left, (now - t) / DERIVA_FINESTRA);
-  g.strokeStyle = COL.hair;
-  g.lineWidth = 0.75;
-  g.beginPath(); g.moveTo(left, yB); g.lineTo(right, yB); g.stroke();
-
-  g.strokeStyle = COL.ink2;
-  g.lineWidth = 1;
-  g.beginPath();
-  let inLinea = false, tPrec = 0;
-  const st = derivaStoria;
-  for (let k = 0; k < st.pieni; k++) {
-    const idx = (st.testa - st.pieni + k + DERIVA_N) % DERIVA_N;
-    const t = st.t[idx];
-    if (t < now - DERIVA_FINESTRA) continue;
-    const x = xLungo(t);
-    const y = yB - st.c[idx] * hB * 0.46;
-    if (!inLinea || t - tPrec > DERIVA_PASSO * 4) { g.moveTo(x, y); inLinea = true; }
-    else g.lineTo(x, y);
-    tPrec = t;
-  }
-  g.stroke();
-
-  /* i passi di quinta: croci sulla corsia, il segno di un evento discreto
-     dentro un movimento continuo                                           */
-  g.strokeStyle = COL.ink;
-  g.lineWidth = 1;
-  g.beginPath();
-  for (const t of quinteHistory) {
-    if (t < now - DERIVA_FINESTRA) continue;
-    const x = xLungo(t);
-    g.moveTo(x - 3, yB); g.lineTo(x + 3, yB);
-    g.moveTo(x, yB - 3); g.lineTo(x, yB + 3);
-  }
-  g.stroke();
 
   g.restore();
 }
@@ -525,8 +504,9 @@ function drawFascia(s, now) {
    ma con una corsa da 2,5 a 90 secondi quella fila traboccherebbe quasi
    sempre, e non si leggerebbe più nulla.
 
-   La tenuta è la stessa che sul reticolo ha l'arco arancione: `correnti`,
-   calcolata una volta per fotogramma.
+   La tenuta arancione è la stessa che sul reticolo ha l'arco arancione:
+   `corrente`, calcolata una volta per fotogramma — e ce n'è UNA in tutta la
+   pagina, non una per linea. Le altre che suonano restano inchiostro.
 
    I puntini si disegnano in DUE sole campiture, una per i grigi e una per gli
    accesi: un `fill` per cerchietto sarebbe un centinaio di campiture per
@@ -580,7 +560,7 @@ function accendiTenute(g, colore, soloRecente, now, left, topR, railH, n, passo,
     const y = topR + (i + 0.5) * railH;
     for (const p of droni[i].plan) {
       const ev = p.ev;
-      if ((ev === correnti[i]) !== soloRecente) continue;
+      if ((ev === corrente) !== soloRecente) continue;
       if (!(now >= ev.flash && now < ev.fino)) continue;
       const durata = ev.fino - ev.flash;
       if (!(durata > 0)) continue;
@@ -590,6 +570,103 @@ function accendiTenute(g, colore, soloRecente, now, left, topR, railH, n, passo,
         g.moveTo(x + raggio, y);
         g.arc(x, y, raggio, 0, Math.PI * 2);
       }
+    }
+  }
+  g.fill();
+}
+
+/* ---------------------------------------------------------------------------
+   LA CORSIA DEI TRENTA MINUTI
+
+   Un istogramma di puntini, non più una poligonale. Ogni colonnina è
+   un'altezza: da zero a quattro puntini sopra l'asse se il baricentro sta
+   alto, altrettanti sotto se sta basso. Quattro livelli e non di più perché
+   sono quanti se ne contano a colpo d'occhio senza rileggere.
+
+   La colonnina in cui cade un PASSO DI QUINTA è arancione, e prende il posto
+   delle croci che c'erano prima: il cambio d'armonia non è più un segno
+   estraneo appoggiato sopra al movimento, è una delle colonnine del movimento
+   stesso — che è quello che è, visto che i due orologi girano indipendenti.
+   Una colonnina arancione al livello zero disegnerebbe il nulla, quindi in
+   quel caso si accende comunque un puntino sull'asse.
+
+   LA GRIGLIA È FISSA, i dati ci scorrono dentro. Novecento campioni su
+   settecento pixel sarebbero una colonnina ogni otto decimi di pixel, cioè
+   una macchia: le colonnine stanno invece sullo stesso passo di nove pixel
+   delle guide dei tessuti — una sessantina in tutto, una ogni mezzo minuto
+   circa — e ciascuna prende il campione più recente che le compete. Una
+   colonnina senza campioni non si disegna, ed è così che i buchi veri —
+   schermo bloccato — restano buchi invece di essere colmati da un ponte.
+
+   I tre vettori sono preallocati: nel fotogramma non si alloca.          */
+const COLONNE_MAX = 256;
+const colVal    = new Float32Array(COLONNE_MAX);
+const colPieno  = new Uint8Array(COLONNE_MAX);
+const colQuinta = new Uint8Array(COLONNE_MAX);
+const LIVELLI = 4;
+
+function disegnaCorsiaLunga(g, left, right, topB, hB, now) {
+  const yB = topB + hB / 2;
+
+  /* l'asse: lo zero da cui le colonnine salgono e scendono */
+  g.strokeStyle = COL.hair;
+  g.lineWidth = 0.75;
+  g.beginPath(); g.moveTo(left, yB); g.lineTo(right, yB); g.stroke();
+
+  if (!ctx) return;
+
+  const n = Math.min(COLONNE_MAX, Math.max(8, Math.floor((right - left) / PASSO_PUNTI)));
+  const passo = (right - left) / (n - 1);
+  const passoV = (hB / 2) / (LIVELLI + 0.5);
+  const raggio = 1.4;
+
+  for (let k = 0; k < n; k++) { colPieno[k] = 0; colQuinta[k] = 0; }
+
+  /* in quale colonnina cade un istante: destra è adesso */
+  const colonnaDi = t => Math.round((1 - (now - t) / DERIVA_FINESTRA) * (n - 1));
+
+  const st = derivaStoria;
+  for (let j = 0; j < st.pieni; j++) {
+    const idx = (st.testa - st.pieni + j + DERIVA_N) % DERIVA_N;
+    const k = colonnaDi(st.t[idx]);
+    if (k < 0 || k >= n) continue;
+    colVal[k] = st.c[idx];      // l'ultimo campione della colonnina vince
+    colPieno[k] = 1;
+  }
+  for (const t of quinteHistory) {
+    const k = colonnaDi(t);
+    if (k >= 0 && k < n) colQuinta[k] = 1;
+  }
+
+  /* Due campiture sole, come per le guide: prima le colonnine ordinarie, poi
+     quelle dei passi di quinta.                                           */
+  colonnine(g, COL.ink2, false, n, left, passo, yB, passoV, raggio);
+  colonnine(g, COL.amber, true,  n, left, passo, yB, passoV, raggio);
+}
+
+function colonnine(g, colore, quinte, n, left, passo, yB, passoV, raggio) {
+  g.fillStyle = colore;
+  g.beginPath();
+  for (let k = 0; k < n; k++) {
+    if (!colPieno[k]) continue;
+    if (!!colQuinta[k] !== quinte) continue;
+    const v = colVal[k];
+    const alti = clamp(Math.round(Math.abs(v) * LIVELLI), 0, LIVELLI);
+    const x = left + k * passo;
+    const verso = v < 0 ? 1 : -1;         // il canvas cresce verso il basso
+    if (alti === 0) {
+      /* Al livello zero non c'è colonnina. Per un passo di quinta si accende
+         comunque un puntino sull'asse, o il cambio d'armonia sparirebbe
+         proprio quando il pezzo passa per il centro.                      */
+      if (!quinte) continue;
+      g.moveTo(x + raggio, yB);
+      g.arc(x, yB, raggio, 0, Math.PI * 2);
+      continue;
+    }
+    for (let j = 1; j <= alti; j++) {
+      const y = yB + verso * j * passoV;
+      g.moveTo(x + raggio, y);
+      g.arc(x, y, raggio, 0, Math.PI * 2);
     }
   }
   g.fill();
