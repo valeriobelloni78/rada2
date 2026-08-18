@@ -35,6 +35,21 @@ const ANELLI_TESSUTI = [0.66, 0.74, 0.82, 0.90];   // il vuoto fra 0,54 e 0,66
 const R_QUINTE_IN  = 0.965, R_QUINTE_OUT = 1.0;    // le dodici tacche
 const R_TONICA     = 1.055;                        // l'arco pesante, fuori da tutto
 const TONICA_SPAN  = Math.PI / 3.2;                // ampiezza dell'arco
+/* I due archi di misura stanno PIÙ FUORI del baricentro, e non è una
+   preferenza: il baricentro rolla fino a 127 gradi dal nord, cioè entra nei
+   quadranti bassi, e alla stessa quota gli passerebbe sopra proprio quando il
+   pezzo è agli estremi. Un raggio diverso li tiene separati sempre.       */
+const R_MISURA     = 1.13;
+/* I due archi sono CENTRATI sulle diagonali — sud-est e sud-ovest — e da lì
+   crescono nei due versi insieme. Al massimo coprono il proprio quadrante,
+   meno due gradi per estremo: quello stacco tiene separati i due archi sul
+   sud, dove altrimenti si toccherebbero a cursori pieni leggendosi come un
+   segno solo spezzato in due colori, e li tiene staccati anche da est e da
+   ovest, così restano due segni chiusi invece di due quarti di cerchio.  */
+const MISURA_PIEDE = Math.PI / 90;                 // due gradi
+const MISURA_MEZZA = Math.PI / 4 - MISURA_PIEDE;   // semi-apertura massima
+const MISURA_SE    = Math.PI / 4;                  // il centro di sud-est
+const MISURA_SO    = Math.PI * 3 / 4;              // e quello di sud-ovest
 const LINK_WINDOW  = 0.18;   // scarto massimo, in secondi, fra due gocce "vicine"
 /* Quanto dura un lampo, in secondi. Un solo numero per tutti gli attacchi —
    le gocce, il centro, l'anello dei tessuti — perché sono lo stesso segno
@@ -235,6 +250,25 @@ function drawReticolo(s, now) {
   g.arc(cx, cy, R_TONICA * R, aTon - TONICA_SPAN / 2, aTon + TONICA_SPAN / 2);
   g.stroke();
 
+  /* I DUE ARCHI DI MISURA, ai piedi del reticolo.
+
+     Non raccontano un evento ma una quantità: quanto è largo il ventaglio
+     delle altezze da cui ciascuna classe pesca. Le gocce a sud-est in
+     arancione, i tessuti a sud-ovest in inchiostro; tutti e due partono dal
+     basso e crescono verso il proprio lato, così si specchiano attorno
+     all'asse verticale come si specchiano le due colonne di comandi.
+
+     Sotto ciascuno resta la guida tenue del quadrante intero: senza, a
+     cursore quasi chiuso l'arco sparirebbe e non si saprebbe più dove
+     guardare né quanto manca al massimo.
+
+     Leggono il valore EFFICACE, non la posizione del cursore — `effG.spread`
+     e `effD.spread` — perché è quello che sta davvero suonando: il cursore li
+     muove, ma li muovono anche la deriva e la stagione, e mostrare il cursore
+     nudo sarebbe mostrare una cosa che non si sente.                      */
+  arcoMisura(g, cx, cy, R, effG.spread / 100, COL.amber, MISURA_SE, gocceOn);
+  arcoMisura(g, cx, cy, R, effD.spread / 100, COL.ink,   MISURA_SO, tessutiOn);
+
   /* Gli otto anelli. Le frasi dentro, i tessuti fuori: le gocce sono tacche
      radiali, i tessuti archi — un istante attraversa l'anello, una durata lo
      percorre.                                                              */
@@ -264,6 +298,40 @@ function drawReticolo(s, now) {
   g.arc(cx, cy, hotCount ? R * 0.020 : R * 0.012, 0, Math.PI * 2);
   g.fill();
 
+  g.restore();
+}
+
+/* Un arco di misura: la guida del quadrante e, sopra, la parte piena. Cresce
+   simmetrico attorno a `centro`, che è la diagonale del proprio quadrante —
+   così il segno si apre come una forbice invece di scorrere da un capo, e a
+   metà corsa sta a metà quadrante invece che a un quarto.
+
+   Il tratto è più sottile di quello del baricentro: sul bordo convivono tre
+   archi, e uno solo può essere il più pesante. Quello resta il baricentro,
+   che è l'unico a dire dove è arrivato il pezzo.                          */
+function arcoMisura(g, cx, cy, R, quota, colore, centro, accesa) {
+  const r = R_MISURA * R;
+
+  g.save();
+  /* A classe spenta impallidisce come i suoi anelli: il valore c'è ancora,
+     ma non sta governando niente che si senta.                           */
+  g.globalAlpha = accesa ? 1 : 0.3;
+
+  g.strokeStyle = COL.hair;
+  g.lineWidth = 1;
+  g.beginPath();
+  g.arc(cx, cy, r, centro - MISURA_MEZZA, centro + MISURA_MEZZA);
+  g.stroke();
+
+  const q = clamp(quota, 0, 1);
+  if (q > 0.004) {
+    const mezza = MISURA_MEZZA * q;
+    g.strokeStyle = colore;
+    g.lineWidth = Math.max(2, R * 0.016);
+    g.beginPath();
+    g.arc(cx, cy, r, centro - mezza, centro + mezza);
+    g.stroke();
+  }
   g.restore();
 }
 

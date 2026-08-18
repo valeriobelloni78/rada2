@@ -104,6 +104,8 @@ Sul bordo gira il tempo lungo: dodici tacche per il circolo delle quinte, con la
 
 Al centro, dove le otto linee si incontrano, ci sono due segni concentrici: il punto lampeggia a ogni goccia, l'anello che lo circonda quando un tessuto si apre. Sono i due attacchi dello strumento, e da lì si sente arrivare tutto senza guardare altrove.
 
+Ai piedi del reticolo due archi dicono quanto è largo il ventaglio delle altezze di ciascuna classe: le gocce a destra in ==arancione==, i tessuti a sinistra in inchiostro. Si aprono come forbici attorno alla diagonale del proprio quadrante, allargandosi nei due versi insieme quando muovi il cursore dell'ampiezza — o quando lo muovono per te la deriva e la stagione.
+
 Il reticolo si guarda e basta: tutti i comandi stanno nelle due righe di colonna accanto, dallo stesso lato delle loro etichette dentro il disegno.
 
 ---

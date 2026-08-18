@@ -360,6 +360,26 @@ e quella che suona un evento. Le gocce e le tenute differiscono per come
 suonano, non per come vengono collocate nel tempo — e due copie dello
 scheduler divergerebbero al primo ritocco.
 
+**I due archi di misura stanno PIÙ FUORI del baricentro, e non è estetica.**
+Il baricentro rolla fino a 127 gradi dal nord, cioè entra nei quadranti bassi:
+alla stessa quota gli passerebbe sopra proprio quando il pezzo è agli estremi.
+Raggi diversi — 1,055 e 1,13 — li tengono separati sempre.
+
+Gli archi dicono l'ampiezza del registro di ciascuna classe: le gocce a
+sud-est in arancione, i tessuti a sud-ovest in inchiostro. Sono **centrati
+sulla diagonale del proprio quadrante** e crescono nei due versi insieme, come
+una forbice che si apre: a metà corsa stanno a metà quadrante, non a un quarto.
+Al massimo si fermano due gradi prima di ciascun estremo — quello stacco tiene
+separati i due archi sul sud, dove altrimenti si toccherebbero a cursori pieni
+leggendosi come un segno solo spezzato in due colori, e li chiude anche verso
+est e ovest. Sotto ciascuno resta la guida tenue del quadrante: a cursore
+quasi chiuso l'arco sparisce, e senza guida non si saprebbe dove guardare.
+
+Leggono `effG.spread` ed `effD.spread`, **non la posizione del cursore** —
+verificato campionando i pixel della tela: scarto massimo un punto percentuale
+su tutta la corsa. Il tratto è più sottile di quello del baricentro perché sul
+bordo convivono tre archi e uno solo può essere il più pesante.
+
 **Il mirino ha due segni, uno per classe.** Il punto al centro lampeggia con
 qualunque goccia, l'anello che lo circonda quando un tessuto si apre: sono i
 due attacchi dello strumento letti nel punto in cui le otto linee si
