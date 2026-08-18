@@ -102,6 +102,8 @@ Le otto linee sono anelli concentrici di un solo strumento: le frasi all'interno
 
 Sul bordo gira il tempo lungo: dodici tacche per il circolo delle quinte, con la posizione corrente marcata, e un arco pesante che rolla lentissimo con il baricentro — a destra il pezzo sta alto, a sinistra basso. È il segno più lento della pagina.
 
+Al centro, dove le otto linee si incontrano, ci sono due segni concentrici: il punto lampeggia a ogni goccia, l'anello che lo circonda quando un tessuto si apre. Sono i due attacchi dello strumento, e da lì si sente arrivare tutto senza guardare altrove.
+
 Il reticolo si guarda e basta: tutti i comandi stanno nelle due righe di colonna accanto, dallo stesso lato delle loro etichette dentro il disegno.
 
 ---

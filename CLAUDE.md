@@ -304,6 +304,18 @@ e quella che suona un evento. Le gocce e le tenute differiscono per come
 suonano, non per come vengono collocate nel tempo — e due copie dello
 scheduler divergerebbero al primo ritocco.
 
+**Il mirino ha due segni, uno per classe.** Il punto al centro lampeggia con
+qualunque goccia, l'anello che lo circonda quando un tessuto si apre: sono i
+due attacchi dello strumento letti nel punto in cui le otto linee si
+incontrano. L'anello **lampeggia e non resta acceso** — la tenuta accesa è già
+raccontata dal suo arco, e qui interessa l'istante d'ingresso, che altrimenti
+non avrebbe segno perché un tessuto si apre troppo lentamente perché l'orecchio
+ne colga il momento.
+
+La durata del lampo è `LAMPO`, **una costante sola** per gocce, centro e
+anello: sono lo stesso segno detto in posti diversi, e tre valori li farebbero
+sembrare tre fenomeni.
+
 **Le guide dei tessuti mostrano uno STATO, non una storia.** Le quattro corsie
 delle gocce scorrono e ricordano trenta secondi; le quattro guide dei tessuti
 sono ferme e dicono a che punto sono le tenute che suonano adesso, in

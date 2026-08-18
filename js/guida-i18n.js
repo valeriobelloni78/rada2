@@ -46,6 +46,7 @@ const GUIDA = {
     "g.ret.t": "Il reticolo",
     "g.ret1": "Le otto linee sono anelli concentrici di un solo strumento: le frasi all'interno, i tessuti all'esterno, un centro solo. Le gocce sono tacche che attraversano l'anello, e la loro <em>lunghezza è il registro</em> — corta grave, lunga acuta: il profilo melodico di ogni idea si legge a colpo d'occhio. I tessuti sono archi, perché durano; un punto <em class=\"amb\">arancione</em> percorre ogni anello, ed è la fase che stai sentendo.",
     "g.ret2": "Sul bordo gira il tempo lungo: dodici tacche per il circolo delle quinte, con la posizione corrente marcata, e un arco pesante che rolla lentissimo con la tonica — un giro intero è un'ottava. È il segno più lento della pagina.",
+    "g.ret.centro": "Al centro, dove le otto linee si incontrano, ci sono due segni concentrici: il punto lampeggia a ogni goccia, l'anello che lo circonda quando un tessuto si apre. Sono i due attacchi dello strumento, e da lì si sente arrivare tutto senza guardare altrove.",
     "g.ret3": "Il reticolo si guarda e basta: tutti i comandi stanno nelle due colonne di righe accanto, dallo stesso lato delle loro etichette dentro il disegno.",
 
     "g.lbl.gestures": "I comandi di linea",
@@ -160,6 +161,7 @@ const GUIDA = {
     "g.ret.t": "Le réticule",
     "g.ret1": "Les huit lignes sont les anneaux concentriques d'un seul instrument~: les phrases à l'intérieur, les tissus à l'extérieur, un seul centre. Les gouttes sont des encoches qui traversent l'anneau, et leur <em>longueur est le registre</em> — courte grave, longue aiguë~: le profil mélodique de chaque idée se lit d'un coup d'œil. Les tissus sont des arcs, parce qu'ils durent~; un point <em class=\"amb\">orange</em> parcourt chaque anneau, et c'est la phase que tu entends.",
     "g.ret2": "Sur le bord tourne le temps long~: douze encoches pour le cycle des quintes, avec la position courante marquée, et un arc épais qui roule très lentement avec la tonique — un tour entier est une octave. C'est le signe le plus lent de la page.",
+    "g.ret.centro": "Au centre, là où les huit lignes se rencontrent, il y a deux signes concentriques~: le point clignote à chaque goutte, l'anneau qui l'entoure quand un tissu s'ouvre. Ce sont les deux attaques de l'instrument, et de là on entend tout arriver sans regarder ailleurs.",
     "g.ret3": "Le réticule se regarde, rien de plus~: toutes les commandes sont dans les deux colonnes de rangées à côté, du même côté que leurs étiquettes dans le dessin.",
 
     "g.lbl.gestures": "Les commandes de ligne",
@@ -274,6 +276,7 @@ const GUIDA = {
     "g.ret.t": "The reticle",
     "g.ret1": "The eight lines are concentric rings of a single instrument: the phrases inside, the weaves outside, one centre. Drops are notches across the ring, and their <em>length is the register</em> — short low, long high: the melodic profile of each idea can be read at a glance. Weaves are arcs, because they last; an <em class=\"amb\">amber</em> dot travels each ring, and it is the phase you are hearing.",
     "g.ret2": "Along the rim runs the long time: twelve notches for the circle of fifths, the current position marked, and a heavy arc rolling very slowly with the tonic — one full turn is an octave. It is the slowest sign on the page.",
+    "g.ret.centro": "At the centre, where the eight lines meet, there are two concentric marks: the dot blinks with every drop, the ring around it whenever a weave opens. They are the instrument's two attacks, and from there you feel everything arrive without looking anywhere else.",
     "g.ret3": "The reticle is for looking only: every control lives in the two columns of rows beside it, on the same side as its labels inside the drawing.",
 
     "g.lbl.gestures": "The line controls",
@@ -388,6 +391,7 @@ const GUIDA = {
     "g.ret.t": "レティクル",
     "g.ret1": "八つの線は、ひとつの楽器の同心円の輪です。内側にフレーズ、外側に織り、中心はひとつ。滴は輪を横切る刻みで、その<em>長さが音域</em>です——短ければ低く、長ければ高い。それぞれの楽想の旋律の輪郭が、ひと目で読み取れます。織りは弧です。続くものだからです。そして<em class=\"amb\">オレンジ</em>の点がそれぞれの輪をめぐります。いま聴こえている位相です。",
     "g.ret2": "縁を回るのは長い時間です。五度圏の十二の刻みには現在の位置が印され、重い弧が主音とともにきわめてゆっくりと転がります——ひと回りがちょうど一オクターヴ。ページでいちばん遅いしるしです。",
+    "g.ret.centro": "中心、八つの線が出会うところには、同心の二つのしるしがあります。点は滴のたびに瞬き、それを囲む輪は織りが開くときに灯ります。この楽器の二つの打ち出しであり、ほかを見ずともすべてがそこに届きます。",
     "g.ret3": "レティクルは見るためだけのものです。すべての操作はその脇の二列の行に置かれています——描画のなかの番号と同じ側に。",
 
     "g.lbl.gestures": "線の操作",

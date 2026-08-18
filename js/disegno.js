@@ -36,6 +36,12 @@ const R_QUINTE_IN  = 0.965, R_QUINTE_OUT = 1.0;    // le dodici tacche
 const R_TONICA     = 1.055;                        // l'arco pesante, fuori da tutto
 const TONICA_SPAN  = Math.PI / 3.2;                // ampiezza dell'arco
 const LINK_WINDOW  = 0.18;   // scarto massimo, in secondi, fra due gocce "vicine"
+/* Quanto dura un lampo, in secondi. Un solo numero per tutti gli attacchi —
+   le gocce, il centro, l'anello dei tessuti — perché sono lo stesso segno
+   detto in posti diversi, e tre valori diversi li farebbero sembrare tre
+   fenomeni. Vale anche per i tessuti, il cui attacco è lento: il lampo non
+   dice «quanto ci mette ad aprirsi», dice «se n'è appena aperto uno».     */
+const LAMPO = 0.45;
 
 let COL = {};                // palette letta dal CSS
 let holder = null, cvEl = null, cv2d = null;
@@ -67,15 +73,28 @@ let hotCount = 0;
    stessa, o le due letture dello stesso suono mentirebbero.               */
 let corrente = null;
 
+/* Vero nei LAMPO secondi che seguono l'apertura di un tessuto qualsiasi. Lo
+   legge il mirino: il punto al centro lampeggia per le gocce, l'anello che lo
+   circonda per i tessuti. Due classi, due segni concentrici nello stesso
+   punto — il cuore comune delle otto linee — e da lì si sente arrivare tutto
+   senza guardare da nessun'altra parte.
+
+   Si calcola qui e non nel disegno perché la scansione delle otto linee è già
+   questa: farne una seconda per la stessa domanda sarebbe lavoro doppio a
+   ogni fotogramma.                                                        */
+let tessutoAppena = false;
+
 function aggiornaCorrente(now) {
   corrente = null;
+  tessutoAppena = false;
   if (!tessutiOn) return;
   for (const L of droni) {
     if (L.muted) continue;
     for (const p of L.plan) {
       const ev = p.ev;
-      if (now >= ev.flash && now < ev.fino && (!corrente || ev.flash > corrente.flash))
-        corrente = ev;
+      if (!(now >= ev.flash && now < ev.fino)) continue;
+      if (now - ev.flash < LAMPO) tessutoAppena = true;
+      if (!corrente || ev.flash > corrente.flash) corrente = ev;
     }
   }
 }
@@ -226,10 +245,17 @@ function drawReticolo(s, now) {
 
   drawLinks(g, now);
 
-  /* Il mirino: un cerchio minimo e il punto centrale, che si accende con
-     qualunque goccia — il cuore comune delle otto linee.                   */
-  g.strokeStyle = COL.hair;
-  g.lineWidth = 1;
+  /* IL MIRINO: due segni concentrici per le due classi, nel punto in cui le
+     otto linee si incontrano. Il punto al centro si accende con qualunque
+     goccia; l'anello che lo circonda si accende quando un tessuto si apre.
+     Sono i due attacchi dello strumento, letti in un posto solo.
+
+     L'anello lampeggia e non resta acceso: la tenuta accesa è già raccontata
+     dal suo arco sull'anello esterno, e qui interessa l'istante in cui
+     entra — che altrimenti non avrebbe nessun segno, perché un tessuto si
+     apre troppo lentamente perché l'orecchio ne colga il momento.        */
+  g.strokeStyle = tessutoAppena ? COL.amber : COL.hair;
+  g.lineWidth = tessutoAppena ? 2 : 1;
   g.beginPath();
   g.arc(cx, cy, R * 0.045, 0, Math.PI * 2);
   g.stroke();
@@ -274,7 +300,7 @@ function drawAnelloFrase(g, L, cx, cy, r, R, now) {
   for (const p of L.plan) {
     const a = -Math.PI / 2 + p.ph * Math.PI * 2;
     const dt = now - p.ev.flash;
-    const hot = dt >= 0 && dt < 0.45;
+    const hot = dt >= 0 && dt < LAMPO;
     const mezza = lerp(0.014, 0.042, (p.ev.rel + 1) / 2) * R * (hot ? 1.35 : 1);
     const ux = Math.cos(a), uy = Math.sin(a);
     g.strokeStyle = hot ? COL.amber : COL.ink;
@@ -380,7 +406,7 @@ function drawLinks(g, now) {
       const gap = Math.abs(a.t - b.t);
       if (gap > LINK_WINDOW) continue;
       const age = now - Math.max(a.t, b.t);
-      const fade = clamp(1 - age / 0.45, 0, 1) * clamp(1 - gap / LINK_WINDOW, 0, 1);
+      const fade = clamp(1 - age / LAMPO, 0, 1) * clamp(1 - gap / LINK_WINDOW, 0, 1);
       if (fade <= 0) continue;
       g.globalAlpha = fade * 0.5;
       g.beginPath();
@@ -472,7 +498,7 @@ function drawFascia(s, now) {
     if (age < 0 || age > TIMELINE_SEC) continue;
     const x = xDi(ev.t);
     const ly = top + (ev.loop + 0.5) * laneH;
-    const hot = age < 0.45;
+    const hot = age < LAMPO;
     const mezza = laneH * (hot ? 0.42 : 0.28);
     g.strokeStyle = hot ? COL.amber : COL.ink2;
     g.lineWidth = hot ? 1.6 : 1;
