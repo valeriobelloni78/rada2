@@ -46,11 +46,27 @@ const HOT_MAX = 96;
 const hotPool = Array.from({ length: HOT_MAX }, () => ({ x: 0, y: 0, t: 0, loop: 0 }));
 let hotCount = 0;
 
-/* I due tratteggi della fascia: pieno per i tessuti in corso, puntini per
-   quelli conclusi. `setLineDash` vuole un array, e nel fotogramma non se ne
-   creano.                                                                  */
-const DASH_PIENO = [];
-const DASH_PUNTI = [0, 3];   // il passo lo riscrive drawFascia
+/* La tenuta che sta suonando ADESSO su ciascuna linea, e se ce n'è più d'una
+   la più recente. La calcola `aggiornaCorrenti` una volta per fotogramma, e
+   la leggono in due: l'anello, per decidere quale arco è arancione, e la
+   fascia, per sapere di quale tenuta mostrare l'avanzamento. Devono parlare
+   della stessa: l'arco acceso sul reticolo e i puntini accesi sulla guida
+   sono due letture dello stesso suono, e se divergessero mentirebbero.
+
+   Preallocato: quattro caselle riscritte a ogni giro, nessun array nuovo.  */
+const correnti = droni.map(() => null);
+
+function aggiornaCorrenti(now) {
+  for (let i = 0; i < droni.length; i++) {
+    const L = droni[i];
+    let vinci = null;
+    for (const p of L.plan) {
+      const ev = p.ev;
+      if (now >= ev.flash && now < ev.fino && (!vinci || ev.flash > vinci.flash)) vinci = ev;
+    }
+    correnti[i] = vinci;
+  }
+}
 
 const lerp = (a, b, t) => a + (b - a) * t;
 const fontPila = () =>
@@ -127,6 +143,7 @@ function disegna() {
 
   const now = audioNow();
   hotCount = 0;
+  aggiornaCorrenti(now);
   drawReticolo(s, now);
   drawFascia(s, now);
 }
@@ -290,19 +307,28 @@ function drawAnelloTessuto(g, L, cx, cy, r, R, now) {
   g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
 
   /* gli archi: ognuno copre la porzione di giro in cui la tenuta è aperta.
-     Tre stati, e l'arancione ne occupa uno solo — l'istante dell'apertura:
-     una tenuta accesa per trenta secondi riempirebbe la pagina dell'unico
-     accento che il progetto vuole raro.                                    */
+     Tre stati. Una tenuta che suona è spessa il doppio per tutto il tempo in
+     cui suona, ma l'arancione lo prende SOLO LA PIÙ RECENTE della linea: le
+     altre ancora aperte restano inchiostro pieno.
+
+     È la misura fra due esigenze. Tenere acceso tutto ciò che suona
+     riempirebbe di accento i quattro anelli esterni — misurato al 71% della
+     circonferenza con l'Intreccio appena sopra l'uno, e verso la saturazione
+     alzandolo; lasciare un lampo di mezzo secondo, com'era prima, non diceva
+     nulla su che cosa stia suonando adesso. Una per linea dice quante linee
+     sono attive e quale suono è entrato per ultimo, e costa quattro archi.  */
   for (const p of L.plan) {
     const ev = p.ev;
-    const suona  = now >= ev.flash && now < ev.fino;
-    const appena = suona && now - ev.flash < 0.45;
+    const suona = now >= ev.flash && now < ev.fino;
+    const recente = ev === correnti[L.i];
     const a0 = -Math.PI / 2 + p.ph * Math.PI * 2;
-    g.strokeStyle = appena ? COL.amber : suona ? COL.ink : COL.ink2;
-    /* Tratto sottile in assoluto, non in frazioni del raggio: sul reticolo
-       R è quattro volte quello dei vecchi quadranti, e la vecchia frazione
-       trasformava gli archi in fasce nere che coprivano tutto.             */
-    g.lineWidth = suona ? Math.max(1.5, R * 0.007) : 1;
+    g.strokeStyle = recente ? COL.amber : suona ? COL.ink : COL.ink2;
+    /* Tratto in pixel assoluti, non in frazioni del raggio: sul reticolo R è
+       quattro volte quello dei vecchi quadranti, e la vecchia frazione
+       trasformava gli archi in fasce nere che coprivano tutto. Doppio
+       mentre suona: il colore dice QUALI stanno suonando, lo spessore lo
+       ribadisce a chi non distingue bene i colori.                        */
+    g.lineWidth = suona ? Math.max(3, R * 0.014) : 1;
     g.globalAlpha = (spento ? 0.3 : 1) * (suona ? 1 : 0.5);
     g.beginPath();
     g.arc(cx, cy, r, a0, a0 + clamp(ev.dur, 0.02, 1) * Math.PI * 2);
@@ -366,21 +392,26 @@ function drawLinks(g, now) {
    disegno più lento della pagina.
 
    Tutto viene dalle memorie scritte dallo scheduler — dropHistory,
-   toneHistory, derivaStoria, quinteHistory: il disegno non ricalcola nulla,
+   derivaStoria, quinteHistory — e dal piano per le guide: il disegno non
+   ricalcola nulla,
    mostra ciò che è stato davvero suonato.                                  */
 function drawFascia(s, now) {
   const g = cv2d;
   const left = s.w * 0.03, right = s.w * 0.97;
-  const top  = s.ret + s.stripH * 0.10;
-  const hA   = s.stripH * 0.52;          // le otto corsie dei trenta secondi
-  const topB = top + hA + s.stripH * 0.16;
-  const hB   = s.stripH * 0.20;          // la corsia dei trenta minuti
-  const laneH = hA / 8;
+  const top   = s.ret + s.stripH * 0.07;
+  const hA    = s.stripH * 0.25;          // quattro corsie di gocce
+  const laneH = hA / 4;
+  const topR  = top + hA + s.stripH * 0.10;
+  const hR    = s.stripH * 0.25;          // quattro guide di tessuti
+  const railH = hR / 4;
+  const topB  = topR + hR + s.stripH * 0.12;
+  const hB    = s.stripH * 0.16;          // la corsia dei trenta minuti
 
   g.save();
 
-  /* i cartelli delle due scale, piccoli e a sinistra: dicono solo quanto
-     tempo la riga contiene                                                 */
+  /* I cartelli: dicono quanto tempo la riga contiene. Le guide dei tessuti
+     non ne hanno uno, e non è una dimenticanza — non contengono tempo, sono
+     lo stato di adesso. Un cartello di durata lì sarebbe una bugia.       */
   g.fillStyle = COL.dust;
   g.font = "400 7px " + fontPila();
   g.textAlign = "left";
@@ -388,19 +419,20 @@ function drawFascia(s, now) {
   g.fillText(CANVAS.f30min, left, topB - 6);
   g.textAlign = "center";
 
-  /* le barre che chiudono ogni gruppo: a destra è adesso, a sinistra il
-     fondo della memoria                                                    */
+  /* le barre che chiudono i due gruppi che scorrono: a destra è adesso, a
+     sinistra il fondo della memoria. Le guide dei tessuti non scorrono,
+     quindi non hanno estremi da dichiarare.                               */
   g.strokeStyle = COL.dust;
   g.lineWidth = 1;
   g.beginPath();
-  g.moveTo(left,  top);        g.lineTo(left,  top + hA);
-  g.moveTo(right, top);        g.lineTo(right, top + hA);
-  g.moveTo(left,  topB);       g.lineTo(left,  topB + hB);
-  g.moveTo(right, topB);       g.lineTo(right, topB + hB);
+  g.moveTo(left,  top);   g.lineTo(left,  top + hA);
+  g.moveTo(right, top);   g.lineTo(right, top + hA);
+  g.moveTo(left,  topB);  g.lineTo(left,  topB + hB);
+  g.moveTo(right, topB);  g.lineTo(right, topB + hB);
   g.stroke();
 
-  /* guide solo per le corsie delle gocce: una tacca isolata galleggerebbe.
-     I tessuti sono già linee orizzontali, e la guida gli passerebbe sotto. */
+  /* guide continue per le sole corsie delle gocce: una tacca isolata
+     galleggerebbe senza una riga che la sostenga.                         */
   g.strokeStyle = COL.hair;
   g.lineWidth = 0.75;
   g.beginPath();
@@ -409,6 +441,8 @@ function drawFascia(s, now) {
     g.moveTo(left, ly); g.lineTo(right, ly);
   }
   g.stroke();
+
+  disegnaGuideTessuti(g, left, right, topR, railH, now);
 
   if (!ctx) { g.restore(); return; }
 
@@ -427,32 +461,6 @@ function drawFascia(s, now) {
     g.moveTo(x, ly - mezza); g.lineTo(x, ly + mezza);
     g.stroke();
   }
-
-  /* i tessuti: segmenti — pieno finché suona, puntini quando ha finito.
-     I puntini sono trattini di lunghezza zero col capo tondo; il punto è più
-     grosso della linea piena perché a parità di spessore sembrerebbe più
-     piccolo, avendo la larghezza del tratto ma non la lunghezza.           */
-  const spessore = Math.max(1, laneH * 0.14);
-  const punto    = Math.max(1.4, spessore * 1.5);
-  DASH_PUNTI[1] = punto * 5;
-  for (const ev of toneHistory) {
-    if (ev.fino < now - TIMELINE_SEC) continue;
-    const x0 = Math.max(left,  xDi(ev.t));
-    const x1 = Math.min(right, xDi(Math.min(ev.fino, now)));
-    if (x1 <= x0) continue;
-    const aperto = ev.fino > now;
-    const spento = droni[ev.loop].muted || !tessutiOn;
-    const ly = top + (4 + ev.loop + 0.5) * laneH;
-    g.strokeStyle = aperto ? COL.ink : COL.ink2;
-    g.globalAlpha = (spento ? 0.3 : 1) * (aperto ? 1 : 0.5);
-    g.lineWidth = aperto ? spessore : punto;
-    g.lineCap = aperto ? "butt" : "round";
-    g.setLineDash(aperto ? DASH_PIENO : DASH_PUNTI);
-    g.beginPath(); g.moveTo(x0, ly); g.lineTo(x1, ly); g.stroke();
-  }
-  g.setLineDash(DASH_PIENO);
-  g.globalAlpha = 1;
-  g.lineCap = "butt";
 
   /* la corsia lunga: il baricentro sedimenta la sua traiettoria. L'anello si
      percorre dal campione più vecchio al più recente; un buco più largo di
@@ -495,6 +503,96 @@ function drawFascia(s, now) {
   g.stroke();
 
   g.restore();
+}
+
+/* ---------------------------------------------------------------------------
+   LE QUATTRO GUIDE DEI TESSUTI
+
+   Quattro file di puntini grigi, ferme: non scorrono e non ricordano niente.
+   Non sono una storia, sono uno STATO — quanto sono avanzate le tenute che
+   stanno suonando adesso su ciascuna linea, lette in puntini accesi.
+
+   Prima qui c'erano segmenti che scorrevano da destra a sinistra come le
+   gocce sopra, e leggevano la memoria `toneHistory`. Dicevano che cosa era
+   stato suonato; queste dicono a che punto si è. Sono due domande diverse, e
+   per un suono che dura mezzo minuto la seconda è quella che si fa davvero
+   guardando.
+
+   L'avanzamento è PROPORZIONALE alla durata della singola tenuta: la fila si
+   riempie da sinistra e arriva in fondo quando la tenuta si chiude, che duri
+   tre secondi o novanta. Non è l'unica lettura possibile — a puntino fisso
+   per secondo si potrebbero confrontare le durate fra una linea e l'altra —
+   ma con una corsa da 2,5 a 90 secondi quella fila traboccherebbe quasi
+   sempre, e non si leggerebbe più nulla.
+
+   La tenuta è la stessa che sul reticolo ha l'arco arancione: `correnti`,
+   calcolata una volta per fotogramma.
+
+   I puntini si disegnano in DUE sole campiture, una per i grigi e una per gli
+   accesi: un `fill` per cerchietto sarebbe un centinaio di campiture per
+   fotogramma, e a sessanta al secondo si sente su un telefono. Il `moveTo`
+   prima di ogni arco serve a non collegare i cerchietti fra loro.        */
+const PASSO_PUNTI = 9;      // px fra un puntino e il successivo
+
+function disegnaGuideTessuti(g, left, right, topR, railH, now) {
+  const n = Math.max(8, Math.floor((right - left) / PASSO_PUNTI));
+  const passo = (right - left) / (n - 1);
+  const rSpento = 1.1, rAcceso = 2.2;
+
+  /* prima tutti i puntini spenti, in una campitura sola */
+  g.fillStyle = COL.hair;
+  g.beginPath();
+  for (let i = 0; i < droni.length; i++) {
+    const y = topR + (i + 0.5) * railH;
+    for (let k = 0; k < n; k++) {
+      const x = left + k * passo;
+      g.moveTo(x + rSpento, y);
+      g.arc(x, y, rSpento, 0, Math.PI * 2);
+    }
+  }
+  g.fill();
+
+  if (!ctx) return;
+
+  /* Poi le tenute che suonano, in DUE campiture e in quest'ordine: prima le
+     altre in inchiostro, poi la più recente in arancione, che così vince dove
+     si sovrappongono. È la stessa gerarchia degli archi sul reticolo, e sono
+     gli stessi due colori: le due letture dicono la stessa cosa, e un terzo
+     grigio qui le farebbe sembrare due informazioni diverse.
+
+     La sovrapposizione non è un caso limite ma la norma con l'Intreccio sopra
+     l'uno, e si legge: se la più recente è indietro rispetto a una più
+     vecchia, la fila mostra prima l'arancione e poi l'inchiostro che prosegue
+     — cioè quanto manca a chiudersi al tessuto che era già aperto.        */
+  accendiTenute(g, COL.ink,   false, now, left, topR, railH, n, passo, rAcceso);
+  accendiTenute(g, COL.amber, true,  now, left, topR, railH, n, passo, rAcceso);
+}
+
+/* Una passata sola sulle quattro linee. `soloRecente` sceglie di quale metà
+   occuparsi: la tenuta corrente, o tutte le altre che stanno suonando.    */
+function accendiTenute(g, colore, soloRecente, now, left, topR, railH, n, passo, raggio) {
+  g.fillStyle = colore;
+  g.beginPath();
+  for (let i = 0; i < droni.length; i++) {
+    /* Una linea silenziata non accende niente: il piano continua a girare, e
+       mostrare l'avanzamento di un suono che non esce sarebbe una bugia.  */
+    if (droni[i].muted || !tessutiOn) continue;
+    const y = topR + (i + 0.5) * railH;
+    for (const p of droni[i].plan) {
+      const ev = p.ev;
+      if ((ev === correnti[i]) !== soloRecente) continue;
+      if (!(now >= ev.flash && now < ev.fino)) continue;
+      const durata = ev.fino - ev.flash;
+      if (!(durata > 0)) continue;
+      const accesi = Math.round(clamp((now - ev.flash) / durata, 0, 1) * n);
+      for (let k = 0; k < accesi; k++) {
+        const x = left + k * passo;
+        g.moveTo(x + raggio, y);
+        g.arc(x, y, raggio, 0, Math.PI * 2);
+      }
+    }
+  }
+  g.fill();
 }
 
 /* Qui stava `trackedText`, la composizione lettera per lettera che dava alle

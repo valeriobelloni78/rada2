@@ -93,11 +93,13 @@ temporale — e rigenerano le idee.
   la posizione corrente marcata, e un arco pesante che rolla col baricentro —
   a destra il pezzo sta alto, a sinistra basso. È il segno più lento della
   pagina.
-- **La fascia, due scale dichiarate**: gli ultimi 30 secondi delle otto linee
-  (tacche per le gocce, segmenti per i tessuti — lo sfasamento reale, visto),
-  e gli ultimi 30 minuti della deriva, dove il baricentro sedimenta la sua
-  traiettoria e i passi di quinta cadono come croci, regolarmente spaziati. All'apertura è vuota:
-  si riempie ascoltando.
+- **La fascia, tre letture**: gli ultimi 30 secondi delle quattro frasi, una
+  tacca per goccia — lo sfasamento reale, visto; quattro file ferme di puntini
+  per i tessuti, dove i puntini accesi dicono quanto è avanzata ogni tenuta in
+  corso (arancione la più recente della linea, inchiostro le altre); e gli
+  ultimi 30 minuti della deriva, dove il baricentro sedimenta la sua
+  traiettoria e i passi di quinta cadono come croci regolarmente spaziate.
+  Le prime scorrono e ricordano, le seconde stanno ferme e dicono adesso.
 - Quando due gocce di frasi diverse suonano quasi insieme, un filo sottile le
   unisce per un istante attraverso gli anelli: è il collage còlto sul fatto.
 
@@ -192,8 +194,9 @@ follow. An hour in, the piece is somewhere else.
 
 The display is a single reticle: eight concentric rings (tick length = pitch,
 arcs = held tones, amber dots = audible phase), the circle of fifths and a
-heavy tonic arc on the rim, and a two-scale strip below — the last 30 seconds
-of all eight lines, and the last 30 minutes of the drift. All controls are
+heavy centre-of-gravity arc on the rim, and a strip below — the last 30
+seconds of the four phrases, four still rails of dots showing how far each
+sounding weave has got, and the last 30 minutes of the drift. All controls are
 native HTML (the canvas listens to nothing), so pointer, touch, keyboard and
 screen readers share one path. Four languages, switchable live, `?lang=ja` to
 force one.

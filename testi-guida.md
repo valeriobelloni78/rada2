@@ -368,9 +368,11 @@ Ai tessuti parla invece la stagione: l'autunno raccoglie appena il registro e al
 
 **Titolo:** La fascia temporale
 
-Sotto il reticolo scorrono due righe del tempo, ciascuna col suo cartello. La prima contiene gli ultimi trenta secondi di tutte e otto le linee: ogni tacca è una goccia, ogni segmento un tessuto che dura — pieno finché suona, puntini quando ha finito. È il modo più diretto per vedere lo sfasamento reale. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
+Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia: è il modo più diretto per vedere lo sfasamento reale. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
 
-La seconda contiene gli ultimi trenta minuti: la traiettoria del baricentro che sedimenta piano, e i passi di quinta che cadono come croci, regolarmente spaziate. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
+La seconda non scorre affatto: quattro file ferme di puntini, una per tessuto. I puntini **accesi** dicono quanto è avanzata ogni tenuta in corso — arancione la più recente della linea, inchiostro le altre ancora aperte, come sugli anelli. Le corsie delle gocce ricordano, queste dicono adesso: per un suono che dura mezzo minuto è la domanda che ci si fa davvero guardando.
+
+La terza contiene gli ultimi trenta minuti: la traiettoria del baricentro che sedimenta piano, e i passi di quinta che cadono come croci, regolarmente spaziate. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
 
 ---
 

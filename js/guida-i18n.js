@@ -85,7 +85,8 @@ const GUIDA = {
     "g.hour3": "Ai tessuti parla invece la stagione: l'autunno raccoglie appena il registro e allunga il respiro; l'inverno lo raccoglie molto di più e lo rallenta ancora; la primavera lo riapre e ravviva il battito; l'estate lo allarga più di tutte e lo fa battere più in fretta.",
 
     "g.strip.t": "La fascia temporale",
-    "g.strip1": "Sotto il reticolo scorrono due righe del tempo, ciascuna col suo cartello. La prima contiene gli ultimi trenta secondi di tutte e otto le linee: ogni tacca è una goccia, ogni segmento un tessuto che dura — pieno finché suona, puntini quando ha finito. È il modo più diretto per vedere lo sfasamento reale.",
+    "g.strip1": "Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia: è il modo più diretto per vedere lo sfasamento reale.",
+    "g.strip1b": "La seconda non scorre affatto: quattro file ferme di puntini, una per tessuto. I puntini <em class=\"amb\">accesi</em> dicono quanto è avanzata ogni tenuta in corso — arancione la più recente della linea, inchiostro le altre ancora aperte, come sugli anelli. Le corsie delle gocce ricordano, queste dicono adesso: per un suono che dura mezzo minuto è la domanda che ci si fa davvero guardando.",
     "g.strip2": "Puoi guardarla come uno <em class=\"amb\">spartito</em> in movimento, o un sovrapporsi di strati sonori che scorrono con viscosità differenti.",
     "g.strip3": "La seconda contiene gli ultimi trenta minuti: la traiettoria della tonica che sedimenta piano, e i passi di quinta che cadono come croci. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.",
 
@@ -198,7 +199,8 @@ const GUIDA = {
     "g.hour3": "Aux tissus parle la saison~: l'automne resserre à peine le registre et allonge la respiration~; l'hiver le resserre bien davantage et la ralentit encore~; le printemps le rouvre et ravive le battement~; l'été l'élargit plus que toutes et le fait battre plus vite.",
 
     "g.strip.t": "La bande temporelle",
-    "g.strip1": "Sous le réticule défilent deux lignes du temps, chacune avec son écriteau. La première contient les trente dernières secondes des huit lignes~: chaque encoche est une goutte, chaque segment un tissu qui dure — plein tant qu'il sonne, pointillé quand il a fini. C'est la façon la plus directe de voir le déphasage réel.",
+    "g.strip1": "Sous le réticule il y a trois lectures. La première contient les trente dernières secondes des quatre phrases, une encoche par goutte~: c'est la façon la plus directe de voir le déphasage réel.",
+    "g.strip1b": "La deuxième ne défile pas du tout~: quatre rangées immobiles de points, une par tissu. Les points <em class=\"amb\">allumés</em> disent où en est chaque tenue en cours — en orange la plus récente de la ligne, à l'encre les autres encore ouvertes, comme sur les anneaux. Les couloirs des gouttes se souviennent, ceux-ci disent maintenant~: pour un son qui dure une demi-minute, c'est la question qu'on se pose vraiment en regardant.",
     "g.strip2": "Tu peux la regarder comme une <em class=\"amb\">partition</em> en mouvement, ou comme des couches sonores qui s'écoulent avec des viscosités différentes.",
     "g.strip3": "La seconde contient les trente dernières minutes~: la trajectoire de la tonique qui sédimente lentement, et les pas de quinte qui tombent comme des croix. À l'ouverture elle est vide — elle se remplit en écoutant, et c'est la mémoire de la session.",
 
@@ -311,7 +313,8 @@ const GUIDA = {
     "g.hour3": "The weaves listen to the season instead: autumn draws the register in a little and lengthens the breathing; winter draws it in much further and slows it more; spring opens it again and revives the beating; summer widens it most of all and makes it beat fastest.",
 
     "g.strip.t": "The time strip",
-    "g.strip1": "Below the reticle run two lines of time, each with its own sign. The first holds the last thirty seconds of all eight lines: every notch is a drop, every segment a weave that lasts — solid while it sounds, dotted once it has finished. It is the most direct way to see the real phase shift.",
+    "g.strip1": "Below the reticle there are three readings. The first holds the last thirty seconds of the four phrases, one notch per drop: it is the most direct way to see the real phase shift.",
+    "g.strip1b": "The second does not scroll at all: four still rows of dots, one per weave. The <em class=\"amb\">lit</em> dots say how far each sounding weave has got — amber for the most recent on that line, ink for the others still open, exactly as on the rings. The drop lanes remember; these say now, which for a sound lasting half a minute is the question you actually ask while watching.",
     "g.strip2": "You can read it as a <em class=\"amb\">score</em> in motion, or as layers of sound sliding over one another at different viscosities.",
     "g.strip3": "The second holds the last thirty minutes: the trajectory of the tonic slowly settling, and the steps of a fifth falling like crosses. It is empty when you arrive — it fills as you listen, and it is the memory of the session.",
 
@@ -424,7 +427,8 @@ const GUIDA = {
     "g.hour3": "織りに語りかけるのは季節です。秋は音域をわずかに狭め、呼吸を長くします。冬はさらに狭め、いっそうゆるめます。春はふたたび開き、うなりを活気づけます。夏はもっとも広く開き、もっとも速く打たせます。",
 
     "g.strip.t": "時間の帯",
-    "g.strip1": "レティクルの下には、それぞれ札のついた二本の時間の帯が流れています。最初の帯は八つの線の直近三十秒。刻みのひとつひとつが滴、線分のひとつひとつが続いている織りです——鳴っているあいだは実線、終わると点線。実際の位相のずれを見る、いちばん直接的な方法です。",
+    "g.strip1": "レティクルの下には三つの読み方があります。最初の帯は四つのフレーズの直近三十秒で、刻みのひとつひとつが滴です。実際の位相のずれを見る、いちばん直接的な方法です。",
+    "g.strip1b": "二つめはまったく流れません。動かない四列の点、織りごとに一列です。<em class=\"amb\">灯った</em>点が、鳴っているそれぞれの織りがどこまで進んだかを告げます——その線でいちばん新しいものが橙、まだ開いている他のものは墨。輪の上とまったく同じです。滴の帯は憶えていますが、こちらは「いま」を言います。三十秒続く音にとっては、見ながら本当に知りたいのはそちらです。",
     "g.strip2": "動く<em class=\"amb\">楽譜</em>として眺めることもできますし、それぞれ異なる粘りで流れる音の層の重なりとして見ることもできます。",
     "g.strip3": "二本目の帯は直近三十分。主音の軌跡がゆっくりと沈殿し、五度の歩みが十字となって落ちていきます。開いたときは空です——聴くほどに満ちていく、セッションの記憶です。",
 

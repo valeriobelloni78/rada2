@@ -304,6 +304,21 @@ e quella che suona un evento. Le gocce e le tenute differiscono per come
 suonano, non per come vengono collocate nel tempo — e due copie dello
 scheduler divergerebbero al primo ritocco.
 
+**Le guide dei tessuti mostrano uno STATO, non una storia.** Le quattro corsie
+delle gocce scorrono e ricordano trenta secondi; le quattro guide dei tessuti
+sono ferme e dicono a che punto sono le tenute che suonano adesso, in
+puntini accesi. Per un suono che dura mezzo minuto è la domanda che ci si fa davvero
+guardando. L'avanzamento è **proporzionale** alla durata della singola tenuta —
+la fila si riempie tutta, che duri tre secondi o novanta: a puntino fisso per
+secondo si potrebbero confrontare le durate fra linee, ma con una corsa da 2,5
+a 90 secondi la fila traboccherebbe quasi sempre. Le guide non hanno un
+cartello di durata, e non è una svista: non contengono tempo.
+
+**I puntini si disegnano in due sole campiture.** Un `fill` per cerchietto
+sarebbe un centinaio di campiture per fotogramma, e a sessanta al secondo si
+sente su un telefono: si accumulano tutti i grigi in un percorso e tutti gli
+accesi in un altro, con un `moveTo` prima di ogni arco perché non si colleghino.
+
 **La tela è UNA, e il ciclo di fotogrammi pure.** Le otto linee sono anelli
 concentrici di un solo reticolo, disegnato da `disegno.js` su un solo canvas
 dentro un solo `requestAnimationFrame`. In Rada le tele erano due perché due
@@ -312,10 +327,24 @@ caduta la ragione, e `droni.js` è confluito qui. Due animazioni indipendenti
 si sfaserebbero e su un telefono costerebbero il doppio: chi aggiunge una
 superficie disegnata la fa disegnare da `disegna`, non da un secondo ciclo.
 
-**Una tenuta accesa non può restare arancione.** Una goccia lampeggia per
-meno di mezzo secondo; una tenuta resta aperta anche trenta. Tenerla accesa
-riempirebbe la pagina dell'unico accento che il progetto vuole raro: arancione
-solo nell'istante in cui si apre, poi inchiostro pieno finché suona.
+**Una sola tenuta arancione per linea: la più recente.** Le altre ancora
+aperte sono inchiostro pieno, le tacenti filo tenue; lo spessore doppio invece
+vale per tutte quelle che suonano. È una misura fra due estremi entrambi
+provati: accendere tutto ciò che suona portava l'arancione al 71% della
+circonferenza degli anelli esterni con l'Intreccio appena sopra l'uno — e alla
+saturazione alzandolo — mentre il lampo di mezzo secondo dell'apertura, com'era
+in origine, non diceva nulla su che cosa stesse suonando adesso. **Il tetto è
+quattro archi**, uno per linea, e resta tale a qualunque Intreccio.
+
+Il reticolo e la guida usano la STESSA gerarchia e gli STESSI due colori —
+arancione la più recente, inchiostro le altre che suonano — e leggono lo stesso
+`correnti` in `disegno.js`, calcolato una volta per fotogramma. Chi ne cambia la
+definizione da una parte la cambi anche dall'altra, e chi introduce un terzo
+grigio per una delle due fa sembrare due informazioni diverse quello che è un
+solo stato.
+
+Le gocce invece no: lampeggiano per meno di mezzo secondo e poi tornano
+inchiostro. Lì la regola dell'accento raro vale intera.
 
 ## Convenzioni
 

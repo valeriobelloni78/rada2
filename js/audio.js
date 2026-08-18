@@ -33,10 +33,14 @@ const TIMELINE_SEC = 30;
    toccare la cronologia nella pagina principale il guasto sarebbe muto.   */
 const dropHistory = [];
 
-/* La stessa cosa per i tessuti, ma con due tempi invece di uno: un tessuto
-   non accade, dura. La fascia disegna segmenti, e per farlo deve sapere dove
-   ciascuno comincia e dove finisce.                                        */
-const toneHistory = [];
+/* Qui stava `toneHistory`, la memoria dei tessuti suonati di recente: la
+   fascia ne disegnava dei segmenti che scorrevano. Da quando le guide dei
+   tessuti mostrano l'AVANZAMENTO di ciò che suona adesso, e non più la
+   storia di ciò che è stato suonato, quella memoria non la leggeva più
+   nessuno — e una coda che lo scheduler alimenta a ogni giro senza che
+   nessuno la consulti è codice morto, non un costo trascurabile.
+
+   Il disegno prende ora la tenuta corrente da `L.plan`, che è il piano vero. */
 
 /* --- la storia della deriva ------------------------------------------------
    Terza memoria, per la corsia lunga della fascia: il baricentro campionato
@@ -417,10 +421,6 @@ function schedule() {
   if (horizon > bookedUntil) bookedUntil = horizon;
 
   while (dropHistory.length && dropHistory[0].t < now - TIMELINE_SEC) dropHistory.shift();
-  /* Qui si guarda la FINE, non l'inizio: un tessuto lungo mezzo minuto è
-     ancora in corso molto dopo essere cominciato, e buttarlo via per l'età
-     del suo attacco lo cancellerebbe mentre sta ancora suonando.        */
-  while (toneHistory.length && toneHistory[0].fino < now - TIMELINE_SEC) toneHistory.shift();
 
   /* I cicli avanzano comunque, anche a classe spenta: così riaccendendola
      riparte da dov'era invece che da capo — la stessa promessa che la pausa
@@ -521,7 +521,6 @@ function suonaTenuta(at, ev, L) {
   const dur = playTone(at, ev, L);
   ev.flash = at;
   ev.fino  = at + dur;
-  toneHistory.push({ t: at, fino: at + dur, loop: L.i, rel: ev.rel });
 }
 
 /* --- VOCE: una goccia -----------------------------------------------------
