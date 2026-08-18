@@ -72,6 +72,13 @@ let ultimoCampione = -99;
 const quinteHistory = [];
 let ultimiPassi = 0;
 
+/* Alzata quando la deriva ha appena fatto un passo di quinta, e abbassata da
+   chi la consuma dopo `prenota`. Non si rinnova il materiale qui dentro: la
+   registrazione della storia gira PRIMA della prenotazione, e rigenerare lì
+   vorrebbe dire riscrivere il piano mentre `bookedUntil` è ancora quello del
+   giro scorso.                                                            */
+let quintaScattata = false;
+
 function registraDeriva(now) {
   if (now - ultimoCampione >= DERIVA_PASSO) {
     ultimoCampione = now;
@@ -83,6 +90,7 @@ function registraDeriva(now) {
   if (passiQuinta !== ultimiPassi) {
     ultimiPassi = passiQuinta;
     quinteHistory.push(now);
+    quintaScattata = true;
   }
   while (quinteHistory.length && quinteHistory[0] < now - DERIVA_FINESTRA)
     quinteHistory.shift();
@@ -438,9 +446,35 @@ function schedule() {
      passato, non quello di prima messo in frigo.                          */
   ricambiaClasse(loops, SPECIE_GOCCE,  now);
   ricambiaClasse(droni, SPECIE_TENUTE, now);
+
+  rinnovaSuQuinta(now);
+}
+
+/* --- il rinnovo alla modulazione -------------------------------------------
+   In modo «deriva», al passo di quinta le idee si rifanno da capo: nuova
+   tonalità, nuovo materiale. È la scala grossa del rinnovo, e sta accanto a
+   quella fine del ricambio — fra una modulazione e l'altra la frase evolve
+   una goccia per volta, alla modulazione cambia tutta.
+
+   `regenerate` azzera l'indice, e da solo non basta: gli eventi già prenotati
+   suonerebbero comunque, e quelli del piano nuovo si aggiungerebbero nella
+   stessa finestra. A pagina visibile sarebbero 150 ms di sovrapposizione, ma
+   a schermo bloccato la finestra arriva a dodici secondi e si sentirebbe una
+   raffica. `riposizionaIdx` sull'orizzonte sicuro è la stessa medicina che
+   usano `rebuildPlans` e il ricambio.                                      */
+function rinnovaSuQuinta(now) {
+  if (!quintaScattata) return;
+  quintaScattata = false;
+  const horizon = orizzonteSicuro(now);
+  if (MODI.gocce === "deriva")
+    loops.forEach(L => { regenerate(L); riposizionaIdx(L, horizon); });
+  if (MODI.tessuti === "deriva")
+    droni.forEach(L => { regeneraTenute(L); riposizionaIdx(L, horizon); });
 }
 
 function ricambiaClasse(lista, sp, now) {
+  /* In modo «ancora» il materiale non si tocca: è la promessa del modo. */
+  if (MODI[sp.classe] !== "deriva") return;
   lista.forEach(L => {
     if (now < L.prossimoRicambio) return;
     /* Il ±15% non è cosmetico: senza, i tempi resterebbero esatti e due linee

@@ -238,6 +238,30 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 }
 .ctl label b{color:var(--amber);font-weight:400;font-variant-numeric:tabular-nums}
 
+/* --------------------------------------------------- il modo del materiale
+   Una riga sola: il nome del gruppo a sinistra, i due stati a destra. Stessa
+   grammatica dei mood — bordo di filo, angoli vivi, quello scelto in grigio
+   scuro — ma senza numerazione: non è un elenco, è un bivio.              */
+.modi{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;margin-top:18px;
+}
+.modiTit{
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--dust);
+}
+.modiGruppo{display:flex;gap:7px}
+.modo{
+  appearance:none;
+  border:1px solid var(--hair);
+  background:transparent;color:var(--ink-2);
+  font-family:var(--sans);font-weight:400;
+  font-size:8px;letter-spacing:.16em;text-transform:uppercase;
+  padding:7px 16px;border-radius:0;cursor:pointer;transition:.2s;
+}
+.modo:hover{border-color:var(--ink);color:var(--ink)}
+.modo.sel{color:var(--paper);background:var(--scelto);border-color:var(--scelto)}
+.modo:focus-visible{outline:1.5px solid var(--amber);outline-offset:3px}
+
 /* --------------------------------------------------------- barra inferiore */
 .bar{
   display:flex;align-items:center;justify-content:space-between;
@@ -413,6 +437,8 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 :lang(ja) .ctl label,
 :lang(ja) .realign,
 :lang(ja) .colTitolo,
+:lang(ja) .modiTit,
+:lang(ja) .modo,
 :lang(ja) .mood,
 :lang(ja) .lang,
 :lang(ja) .docLink{
@@ -425,6 +451,8 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 :lang(ja) .colTitolo{font-size:9.5px}
 :lang(ja) .lineaVal{font-size:10px}
 :lang(ja) .mood{font-size:9px;letter-spacing:.04em}
+:lang(ja) .modiTit{font-size:9.5px}
+:lang(ja) .modo{font-size:10px;letter-spacing:.08em}
 :lang(ja) .power{font-size:11px;letter-spacing:.08em}
 :lang(ja) .gate p{line-height:1.9;letter-spacing:.02em}
 :lang(ja) .gate .enter{letter-spacing:.12em}

@@ -307,7 +307,26 @@ function nuovaTenuta(L) {
    I tessuti si rinnovano tre volte più lentamente delle gocce. Sono uno
    sfondo, e uno sfondo che si rifà alla stessa velocità del primo piano
    smette di stare dietro.                                                  */
+/* --- il modo di ciascuna classe -------------------------------------------
+   Due modi, e decidono se il MATERIALE si rinnova o resta.
+
+     ancora   le idee restano quelle scelte dallo stato d'animo. Niente
+              ricambio, niente rigenerazione: si muove tutto il resto — il
+              baricentro, l'armonia, le fasi — ma le frasi sono quelle.
+     deriva   il materiale si rinnova su due scale: una goccia per volta fra
+              una modulazione e l'altra, e da capo a ogni passo di quinta.
+
+   Il nome non è l'avverbio ma il sostantivo marinaro, ed è la parola giusta
+   per questo progetto: una rada è un ancoraggio riparato, e qui si getta
+   l'ancora dentro un pezzo che per il resto continua a spostarsi. Le
+   traduzioni devono tenere quel senso — «ancre», «anchor», «錨» — non quello
+   di «di nuovo».
+
+   Sono IDENTIFICATORI, come i mood: le parole stanno in i18n.js.          */
+const MODI = { gocce: "deriva", tessuti: "deriva" };
+
 const SPECIE_GOCCE = {
+  classe: "gocce",
   nuovo:  nuovaGoccia,
   voluti: gocceVolute,
   piano:  buildPlan,
@@ -315,6 +334,7 @@ const SPECIE_GOCCE = {
 };
 
 const SPECIE_TENUTE = {
+  classe: "tessuti",
   nuovo:  nuovaTenuta,
   voluti: () => Math.max(1, Math.round(D.dens)),
   piano:  buildPlanDrone,

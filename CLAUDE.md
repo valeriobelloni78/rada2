@@ -189,6 +189,25 @@ guardia buona è `t - ev.flash > L.period * 0.5` dentro `prenota`, e copre
 entrambi con un meccanismo solo. **Non toglierla per "semplificare": è l'unica
 cosa che rende sicuro ricostruire un piano mentre il pezzo suona.**
 
+**Due modi per classe, e sono un interruttore sul MATERIALE.** `MODI` in
+`model.js`: in «deriva» le idee si rinnovano su due scale — una goccia per
+volta fra una modulazione e l'altra, e da capo a ogni passo di quinta; in
+«ancora» non si toccano, e restano quelle che lo stato d'animo ha scelto. Tutto
+il resto continua a muoversi in entrambi i modi: baricentro, armonia, fasi.
+Le due classi sono indipendenti, e il modo di partenza è «deriva».
+
+Il nome è il sostantivo marinaro, non l'avverbio — una rada è un ancoraggio
+riparato, e qui si getta l'ancora dentro un pezzo che per il resto continua a
+spostarsi. **Le traduzioni devono tenere quel senso** («ancre», «anchor»,
+「錨」), non quello di «di nuovo».
+
+**Rigenerare fuori dal ↻ vuole `riposizionaIdx`.** `regenerate` azzera
+l'indice, e da solo non basta quando lo chiama lo scheduler: gli eventi già
+prenotati suonano comunque e quelli del piano nuovo si aggiungono nella stessa
+finestra. A pagina visibile sono 150 ms di sovrapposizione, a schermo bloccato
+dodici secondi — una raffica. `rinnovaSuQuinta` in `audio.js` riposiziona
+l'indice sull'orizzonte sicuro, come già fanno `rebuildPlans` e il ricambio.
+
 **Il ricambio tocca solo eventi liberi.** `raccogliLibere` scarta ciò che cade
 prima dell'orizzonte *e* ciò che sta ancora suonando (`!(ev.fino > now)`): la
 seconda condizione esiste per i tessuti, che restano aperti anche mezzo minuto e

@@ -142,6 +142,48 @@ Object.keys(MOODS).forEach((id, i) => {
   moodsEl.appendChild(b);
 });
 
+/* --- il modo del materiale, per classe --------------------------------------
+   Due bottoni per classe, uno solo acceso: «ancora» o «deriva». Non sono un
+   comando che compie un'azione ma una SCELTA fra due stati, e per questo
+   l'etichetta nomina lo stato invece dell'azione — la stessa forma dei mood,
+   e l'eccezione dichiarata alla regola delle etichette del progetto.
+
+   `aria-pressed` racconta a chi non vede quale dei due è in vigore, e il
+   gruppo porta il proprio nome: due bottoni sciolti direbbero «ancora» e
+   «deriva» senza dire di che cosa.                                        */
+function costruisciModi(boxId, classe) {
+  const box = $(boxId), bottoni = [];
+  box.setAttribute("role", "group");
+  ["ancora", "deriva"].forEach(id => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "modo";
+    b.dataset.modo = id;
+    b.onclick = () => { MODI[classe] = id; syncModi(); };
+    box.appendChild(b);
+    bottoni.push(b);
+  });
+  return { box, classe, bottoni };
+}
+
+const MODI_UI = [
+  costruisciModi("modiFrasi",   "gocce"),
+  costruisciModi("modiTessuti", "tessuti"),
+];
+
+function syncModi() {
+  for (const g of MODI_UI) {
+    g.box.setAttribute("aria-label", T("modo.title"));
+    g.bottoni.forEach(b => {
+      const id = b.dataset.modo, scelto = MODI[g.classe] === id;
+      b.textContent = T("modo." + id);
+      b.setAttribute("aria-pressed", scelto ? "true" : "false");
+      b.setAttribute("aria-label", T("modo." + id + "Aria"));
+      b.classList.toggle("sel", scelto);
+    });
+  }
+}
+
 /* --- i cinque cursori dei tessuti -------------------------------------------
    A differenza di quelli delle frasi, questi non hanno bisogno di smussatura:
    un tessuto riceve il suo inviluppo nell'istante in cui viene prenotato, e
@@ -330,6 +372,7 @@ function onLanguageChange() {
   document.querySelectorAll("#droniMoods .mood").forEach(b => {
     b.textContent = droneMoodName(b.dataset.droneMood);
   });
+  syncModi();
   letturaTessuti();       // le unità cambiano con la lingua: "s" diventa "秒"
   onDroniChange();
 }
@@ -388,6 +431,7 @@ DPARAMS.forEach(k => { $("d_" + k).value = D[k]; });
 letturaTessuti();
 readouts();
 syncLinee();
+syncModi();
 
 /* Finché il cancello è chiuso, tutto ciò che sta dietro è fuori gioco: senza
    questo il Tab uscirebbe dalla soglia e andrebbe a dare fuoco a comandi che
