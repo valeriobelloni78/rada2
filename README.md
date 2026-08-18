@@ -109,7 +109,7 @@ che deriva.
   per i tessuti, dove i puntini accesi dicono quanto è avanzata ogni tenuta in
   corso — arancione soltanto la più recente fra tutte, cioè l'ultima entrata
   nella trama, inchiostro le altre; e gli
-  ultimi 30 minuti della deriva come istogramma di puntini — ogni colonnina
+  ultimi 15 minuti della deriva come istogramma di puntini — ogni colonnina
   un'altezza del baricentro, da zero a quattro sopra o sotto l'asse, e
   arancione quella in cui cade un passo di quinta.
   Le prime scorrono e ricordano, le guide stanno ferme e dicono adesso.
@@ -209,7 +209,7 @@ The display is a single reticle: eight concentric rings (tick length = pitch,
 arcs = held tones, amber dots = audible phase), the circle of fifths and a
 heavy centre-of-gravity arc on the rim, and a strip below — the last 30
 seconds of the four phrases, four still rails of dots showing how far each
-sounding weave has got, and the last 30 minutes of the drift as a dot
+sounding weave has got, and the last 15 minutes of the drift as a dot
 histogram (amber where a step of a fifth lands). All controls are
 native HTML (the canvas listens to nothing), so pointer, touch, keyboard and
 screen readers share one path. Four languages, switchable live, `?lang=ja` to

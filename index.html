@@ -26,16 +26,14 @@
 <div class="stage">
  <div class="wrap">
 
+  <!-- La testata porta il nome e le lingue, e basta: le due righe di stato
+       sono scese ciascuna accanto alla propria classe, dove si leggono per
+       quello che sono. Qui restavano asimmetriche — quella delle frasi in
+       cima alla pagina, quella dei tessuti a metà — e da quando le due classi
+       sono gemelle nel reticolo quell'asimmetria non si spiegava più.    -->
   <div class="head">
     <h1>Ra<em>d</em>a</h1>
-    <div class="headRight">
-      <nav class="langs" id="langs" aria-label="Lingua"></nav>
-      <span class="langSep" aria-hidden="true"></span>
-      <div class="status" id="status">
-        <span class="pulse"></span>
-        <span id="statusText">in attesa</span>
-      </div>
-    </div>
+    <nav class="langs" id="langs" aria-label="Lingua"></nav>
   </div>
 
   <!-- ------------------------------------------------------- lo strumento
@@ -46,14 +44,11 @@
        canvas più doppione fuori campo per la tastiera) è diventato un
        binario solo, visibile.                                            -->
   <div class="loopCard">
+    <!-- Sopra il reticolo solo la deriva: è l'unico dato che riguarda il
+         pezzo intero e non una delle due classi. Il riallineamento delle
+         fasi è sceso accanto ai comandi della classe di cui parla. -->
     <div class="cardHead">
-      <!-- Due numeri diversi, e conviene non confonderli: `realign` dice
-           quando le FASI tornano nella stessa combinazione, `deriva` dice
-           quanto si è spostato il pezzo. Il primo è l'eredità di Rada, e da
-           solo non è più la promessa dello strumento; il secondo è la
-           promessa nuova, e non torna a zero mai. -->
       <span class="realign" id="deriva">—</span>
-      <span class="realign" id="realign">—</span>
     </div>
     <div class="strumento">
       <div class="colLinee colFrasi">
@@ -73,6 +68,17 @@
         <div id="lineeTessuti"></div>
         <div class="modi" id="modiTessuti"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Le due classi hanno ora la stessa forma: un filo, la riga di stato —
+       riallineamento a sinistra, ascolto e palette a destra — poi i cursori
+       e i mood. -->
+  <div class="statusClasse">
+    <span class="realign" id="realign">—</span>
+    <div class="status" id="status">
+      <span class="pulse"></span>
+      <span id="statusText">in attesa</span>
     </div>
   </div>
 
@@ -108,7 +114,7 @@
        esterni del reticolo. Restano i suoi comandi d'insieme, e sopra di
        loro la riga della stagione — gemella di quella in testa alla pagina,
        diversa nella scala del tempo: là l'ora del giorno, qui il mese.   -->
-  <div class="statusDroni">
+  <div class="statusClasse">
     <span class="realign" id="realignDroni">—</span>
     <div class="status" id="statusStagione">
       <span class="pulse"></span>
@@ -116,7 +122,7 @@
     </div>
   </div>
 
-  <div class="controls controlsTessuti">
+  <div class="controls">
     <div class="ctl">
       <label for="d_spread"><span data-i18n="dctl.spread">Estensione</span> <b id="v_spread">—</b></label>
       <input type="range" id="d_spread" min="0" max="100" step="1" value="55">

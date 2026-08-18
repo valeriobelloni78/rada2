@@ -456,8 +456,8 @@ function drawFascia(s, now) {
   g.fillStyle = COL.dust;
   g.font = "400 7px " + fontPila();
   g.textAlign = "left";
-  g.fillText(CANVAS.f30s,   left, top - 6);
-  g.fillText(CANVAS.f30min, left, topB - 6);
+  g.fillText(CANVAS.fBreve, left, top - 6);
+  g.fillText(CANVAS.fLunga, left, topB - 6);
   g.textAlign = "center";
 
   /* le barre che chiudono i due gruppi che scorrono: a destra è adesso, a

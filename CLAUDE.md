@@ -125,6 +125,16 @@ non sta suonando**: `makeIdea` usa `effG.dens`, `buildPlan` usa `effG.head`,
 ogni cursore mostra i due numeri appena differiscono, ed è così che lo strumento
 resta onesto su chi comanda che cosa.
 
+**Ogni classe apre con la propria riga di stato, e le due sono speculari.**
+Un filo, poi il riallineamento delle sue fasi a sinistra e a destra se sta
+suonando con quale palette; sotto, i cursori e i mood. Stessa forma per
+tutt'e due. Prima non era così: quella delle frasi stava nella testata di
+pagina e quella dei tessuti a metà, e finché le frasi erano il riquadro
+principale l'asimmetria si spiegava — da quando le due classi sono gemelle nel
+reticolo, non più. **Nella testata restano il nome e le lingue**, e sopra il
+reticolo solo la deriva, che è l'unico dato a riguardare il pezzo intero
+invece di una delle due classi.
+
 **Una influenza esterna per classe, e sono simmetriche.** L'ora del giorno
 inclina le gocce (`timePalette`), la stagione inclina i tessuti
 (`seasonPalette`): tre parametri ciascuna, un `id` che il modello non sa
@@ -301,7 +311,7 @@ proprio quando la coda sta svanendo.
 **Attenzione alle allocazioni nei cicli a 60 fps.** Niente nuovi buffer o
 array dentro `disegna`, che è il corpo del fotogramma. Vale anche per la
 storia della deriva: il baricentro sta in un ANELLO preallocato (`derivaStoria`
-in `audio.js`, novecento campioni per mezz'ora), non in una coda — una coda
+in `audio.js`, un campione ogni due secondi), non in una coda — una coda
 a regime sposterebbe l'intero array a ogni campione, per sempre.
 
 **Le soglie del ciclo stanno appena SOTTO il periodo voluto.** `PASSO_VIVO` è
@@ -313,7 +323,7 @@ Misurato dopo la correzione: 12,0 fotogrammi al secondo a motore fermo.
 **Le stringhe del canvas si preparano al cambio di lingua, non a ogni
 fotogramma.** La cache `CANVAS` è costruita una volta da `buildCanvasCache`;
 il disegno la legge e basta. Le parole vere sono uscite dalla tela col
-reticolo — restano numerali e cartelli di scala (`30 s`, `30 min`) — ma la
+reticolo — restano numerali e cartelli di scala (`30 s`, `15 min`) — ma la
 regola vale soprattutto per i formattatori: costruire un `Intl.NumberFormat`
 dentro il fotogramma costa più di tutto il resto del disegno. Ne esistono
 tre, creati una volta per lingua.
@@ -431,12 +441,14 @@ unità; ogni parola con tracking è HTML, e la spaziatura la fa il CSS.
 **La lingua visiva è quella dei disegni tecnici**: niente scatole — le
 sezioni le separano i fili — e niente angoli tondi né pillole; l'unico tondo
 è quello dei segni del reticolo. I cursori sono scale graduate con l'indice
-rettangolare, i mood etichette numerate (il numero lo mette un counter CSS:
-è notazione, non lingua, e non passa dal dizionario).
+rettangolare, i mood etichette nude. Il CSS anteponeva a ciascuna un numero
+d'ordine con un `counter`; è stato tolto perché non serviva — i mood non si
+scelgono per numero — e liberava la quindicina di pixel per bottone che
+mancava perché otto colonne stessero su una riga sola.
 
 **Le etichette dei comandi descrivono l'azione, non lo stato**
-("Pausa", non "In ascolto"). Lo stato è raccontato dalla riga in alto e dal
-punto che pulsa.
+("Pausa", non "In ascolto"). Lo stato è raccontato dalla riga della classe e
+dal punto che pulsa.
 
 **I numeri che cambiano** usano cifre a larghezza fissa, altrimenti
 tremolano a ogni aggiornamento.
@@ -489,7 +501,7 @@ stato verificato su rada2).
 Le quattro direzioni visive di Rada sono state percorse dal reticolo e dalla
 fascia: l'altezza si legge nella lunghezza delle tacche, il collage negli
 anelli concentrici e nei legami effimeri, il tempo lungo nella corsia dei
-trenta minuti dove il baricentro sedimenta. Restano aperte, in ordine di
+quindici minuti dove il baricentro sedimenta. Restano aperte, in ordine di
 interesse:
 
 1. **Estendere le palette al visivo.** L'ora e la stagione oggi agiscono solo

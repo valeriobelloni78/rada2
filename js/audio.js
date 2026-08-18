@@ -44,18 +44,24 @@ const dropHistory = [];
 
 /* --- la storia della deriva ------------------------------------------------
    Terza memoria, per la corsia lunga della fascia: il baricentro campionato
-   ogni due secondi sull'ultima mezz'ora, più i tempi dei passi di quinta. Stesso
+   ogni due secondi sull'ultimo quarto d'ora, più i tempi dei passi di quinta. Stesso
    principio delle altre due — lo scheduler scrive, il disegno legge — e la
    stessa ragione di stare qui: è lo scheduler a girare sempre, anche quando
    i fotogrammi si fermano perché la pagina non si vede.
 
-   Il baricentro sta in un ANELLO preallocato, non in una coda: novecento campioni
-   sono novecento, per tutta la sessione, e una coda con push e shift a regime
+   Il baricentro sta in un ANELLO preallocato, non in una coda: i campioni
+   sono quelli, per tutta la sessione, e una coda con push e shift a regime
    sposterebbe l'intero array a ogni campione. Si memorizza anche il tempo di
    ciascun campione, perché i giri dello scheduler non sono equidistanti — a
    schermo bloccato passano anche dodici secondi — e il disegno deve sapere
    dove i buchi sono veri.                                                  */
-const DERIVA_FINESTRA = 1800;                       // trenta minuti
+/* Un quarto d'ora. Erano trenta minuti: sei passi di quinta invece di dodici,
+   ma colonnine larghe il doppio nel tempo — ciascuna copre un quarto di
+   minuto invece di mezzo — e una corsia che si riempie in metà tempo, cioè
+   che diventa leggibile molto prima nell'ascolto.
+   Il cartello sopra la corsia lo scrive i18n.js: cambiando qui, cambiare
+   anche `CANVAS.fLunga`.                                                  */
+const DERIVA_FINESTRA = 900;
 const DERIVA_PASSO    = 2;                          // secondi fra due campioni
 const DERIVA_N        = DERIVA_FINESTRA / DERIVA_PASSO;
 const derivaStoria = {

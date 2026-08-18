@@ -367,16 +367,19 @@ const tonalitaName = i => (STRINGS[lang].tonalita || [])[i] || "";
 /* --- cache per il canvas --------------------------------------------------
    Le etichette dei quadranti non cambiano mai fra un fotogramma e l'altro:
    solo al cambio di lingua. Si preparano qui e `draw` le legge e basta.     */
-const CANVAS = { linea: ["I", "II", "III", "IV"], seconds: "", f30s: "", f30min: "" };
+const CANVAS = { linea: ["I", "II", "III", "IV"], seconds: "", fBreve: "", fLunga: "" };
 
 function buildCanvasCache() {
   /* I numerali degli anelli sono notazione, non parole: identici in tutte le
      lingue, come le sigle delle colonne. Restano nella cache perché il
      disegno legge da un posto solo.                                        */
   CANVAS.seconds = T("canvas.seconds");
-  /* i cartelli delle due scale della fascia: quanto tempo contiene la riga */
-  CANVAS.f30s   = "30" + T("unit.sep") + T("unit.s");
-  CANVAS.f30min = "30" + T("unit.sep") + T("unit.min");
+  /* I cartelli delle due scale della fascia: quanto tempo contiene la riga.
+     I numeri sono scritti qui a mano perché i18n.js è il primo file caricato
+     e non può leggere le costanti dello scheduler; chi cambia TIMELINE_SEC o
+     DERIVA_FINESTRA deve cambiare anche questi, o il cartello mente.      */
+  CANVAS.fBreve = "30" + T("unit.sep") + T("unit.s");
+  CANVAS.fLunga = "15" + T("unit.sep") + T("unit.min");
 }
 
 /* --- il selettore di lingua ------------------------------------------------

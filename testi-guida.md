@@ -374,7 +374,7 @@ Un tessuto solo per giro, che può durare fino a cinquanta secondi.
 
 Rada legge l'orologio del sistema e inclina di conseguenza il registro, il calore e lo spazio: alle 23 suona più cupa e riverberata che a mezzogiorno.
 
-Le palette sono sei: **alba**, **mattino**, **pomeriggio**, **tramonto**, **sera** e **notturna**. La riga di stato in alto dice sempre quale è in vigore.
+Le palette sono sei: **alba**, **mattino**, **pomeriggio**, **tramonto**, **sera** e **notturna**. La riga di stato della classe dice sempre quale è in vigore.
 
 Ai tessuti parla invece la stagione: l'autunno raccoglie appena il registro e allunga il respiro; l'inverno lo raccoglie molto di più e lo rallenta ancora; la primavera lo riapre e ravviva il battito; l'estate lo allarga più di tutte e lo fa battere più in fretta.
 
@@ -388,7 +388,7 @@ Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secon
 
 La seconda non scorre affatto: quattro file ferme di puntini, una per tessuto. I puntini **accesi** dicono quanto è avanzata ogni tenuta in corso. L'arancione tocca a una sola in tutta la pagina — l'ultima entrata fra tutt'e quattro le linee — e le altre restano inchiostro, come sugli anelli. Le corsie delle gocce ricordano, queste dicono adesso: per un suono che dura mezzo minuto è la domanda che ci si fa davvero guardando.
 
-La terza contiene gli ultimi trenta minuti, ed è un istogramma: ogni colonnina è un'altezza del baricentro, da zero a quattro puntini sopra l'asse se il pezzo sta alto, altrettanti sotto se sta basso. Una colonnina ogni mezzo minuto circa. Quella in cui cade un passo di quinta è ==arancione==: il cambio d'armonia non è un segno appoggiato sopra al movimento, è una delle sue colonnine — i due orologi girano indipendenti, e si vede. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
+La terza contiene gli ultimi quindici minuti, ed è un istogramma: ogni colonnina è un'altezza del baricentro, da zero a quattro puntini sopra l'asse se il pezzo sta alto, altrettanti sotto se sta basso. Una colonnina ogni quindici secondi circa. Quella in cui cade un passo di quinta è ==arancione==: il cambio d'armonia non è un segno appoggiato sopra al movimento, è una delle sue colonnine — i due orologi girano indipendenti, e si vede. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
 
 ---
 
