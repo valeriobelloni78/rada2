@@ -143,44 +143,59 @@ Object.keys(MOODS).forEach((id, i) => {
 });
 
 /* --- il modo del materiale, per classe --------------------------------------
-   Due bottoni per classe, uno solo acceso: «ancora» o «deriva». Non sono un
-   comando che compie un'azione ma una SCELTA fra due stati, e per questo
-   l'etichetta nomina lo stato invece dell'azione — la stessa forma dei mood,
-   e l'eccezione dichiarata alla regola delle etichette del progetto.
+   Un interruttore solo che mostra lo STATO, non due bottoni fra cui scegliere:
+   quadro arancione e «deriva» quando le idee si rinnovano, quadro d'inchiostro
+   e «ancora» quando restano ferme. È la stessa grammatica del quadratino di
+   ogni linea — il segno dice come stanno le cose, e premerlo le cambia — e per
+   questo qui l'etichetta nomina lo stato invece dell'azione.
 
-   `aria-pressed` racconta a chi non vede quale dei due è in vigore, e il
-   gruppo porta il proprio nome: due bottoni sciolti direbbero «ancora» e
-   «deriva» senza dire di che cosa.                                        */
-function costruisciModi(boxId, classe) {
-  const box = $(boxId), bottoni = [];
-  box.setAttribute("role", "group");
-  ["ancora", "deriva"].forEach(id => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "modo";
-    b.dataset.modo = id;
-    b.onclick = () => { MODI[classe] = id; syncModi(); };
-    box.appendChild(b);
-    bottoni.push(b);
-  });
-  return { box, classe, bottoni };
+   Il nome della classe sta dentro il bottone ma fuori campo: da solo «DERIVA»
+   non direbbe deriva di che cosa, e chi ascolta la pagina sentirebbe due
+   bottoni identici. Il nome accessibile lo compone il browser mettendo in fila
+   i due pezzi — «Materiale delle frasi, deriva» — invece di comporlo il
+   dizionario, che di frasi intere ne vuole una per voce.                   */
+function costruisciModo(boxId, classe, chiaveNome) {
+  const box = $(boxId);
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "modoBtn";
+
+  const quadro = document.createElement("span");
+  quadro.className = "modoQuadro";
+  quadro.setAttribute("aria-hidden", "true");
+
+  const dove = document.createElement("span");
+  dove.className = "modoDove";
+
+  const nome = document.createElement("span");
+  nome.className = "modoNome";
+
+  b.append(quadro, dove, nome);
+  b.onclick = () => {
+    MODI[classe] = MODI[classe] === "deriva" ? "ancora" : "deriva";
+    syncModi();
+  };
+  box.appendChild(b);
+  return { b, dove, nome, classe, chiaveNome };
 }
 
 const MODI_UI = [
-  costruisciModi("modiFrasi",   "gocce"),
-  costruisciModi("modiTessuti", "tessuti"),
+  costruisciModo("modiFrasi",   "gocce",   "modo.frasi"),
+  costruisciModo("modiTessuti", "tessuti", "modo.tessuti"),
 ];
 
 function syncModi() {
-  for (const g of MODI_UI) {
-    g.box.setAttribute("aria-label", T("modo.title"));
-    g.bottoni.forEach(b => {
-      const id = b.dataset.modo, scelto = MODI[g.classe] === id;
-      b.textContent = T("modo." + id);
-      b.setAttribute("aria-pressed", scelto ? "true" : "false");
-      b.setAttribute("aria-label", T("modo." + id + "Aria"));
-      b.classList.toggle("sel", scelto);
-    });
+  for (const m of MODI_UI) {
+    const id = MODI[m.classe], ancorato = id === "ancora";
+    /* Lo spazio in coda non è cosmetico: il nome accessibile è la fila dei
+       testi dei figli, e senza si sentirebbe «Materiale delle frasiDeriva». */
+    m.dove.textContent = T(m.chiaveNome) + " ";
+    m.nome.textContent = T("modo." + id);
+    m.b.classList.toggle("ancora", ancorato);
+    /* Premuto = ancorato: è il gesto che ferma il materiale, e lo stato a
+       riposo dello strumento è quello che deriva.                        */
+    m.b.setAttribute("aria-pressed", ancorato ? "true" : "false");
+    m.b.title = T("modo." + id + "Aria");
   }
 }
 

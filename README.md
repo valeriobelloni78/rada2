@@ -82,7 +82,7 @@ gocce), la stagione (sui tessuti) e la deriva (su entrambe, da dentro).
 Gli otto **mood** per classe sono preset completi — timbro *e* configurazione
 temporale — e rigenerano le idee.
 
-Sotto i cursori di ciascuna classe, il **modo del materiale**. In *deriva* le
+Sotto le scale di durata di ciascuna classe, il **modo del materiale**. In *deriva* le
 idee si rinnovano: una goccia per volta fra una modulazione e l'altra, e da
 capo a ogni cambio di tonalità. In *ancora* restano quelle che il mood ha
 scelto, mentre tutto il resto continua a spostarsi — è il modo per suonarci

@@ -142,11 +142,11 @@ Avvia e ferma tutto. Ogni classe ha però anche il suo pulsante, che governa sol
 
 **Titolo:** Il modo del materiale
 
-Sotto i cursori di ogni classe c'è un bivio, e vale per le frasi e per i tessuti separatamente.
+Sotto le scale di durata di ogni classe c'è un interruttore: un quadro e una parola, che dicono come stanno le cose invece di che cosa faranno. Vale per le frasi e per i tessuti separatamente.
 
-In ==deriva== le idee si rinnovano su due scale: una goccia per volta fra una modulazione e l'altra, e da capo a ogni cambio di tonalità. È il modo in cui il pezzo va da qualche parte anche nel materiale, non solo nell'armonia.
+In ==deriva==, col quadro arancione, le idee si rinnovano su due scale: una goccia per volta fra una modulazione e l'altra, e da capo a ogni cambio di tonalità. È il modo in cui il pezzo va da qualche parte anche nel materiale, non solo nell'armonia.
 
-In **ancora** le idee restano quelle che lo stato d'animo ha scelto, e non si muovono più. Tutto il resto continua: il baricentro sale e scende, la tonalità cambia, le fasi si sfasano. È il modo per suonarci sopra avendo sotto un accompagnamento che non si trasforma mentre lo accompagni.
+In **ancora**, col quadro d'inchiostro, le idee restano quelle che lo stato d'animo ha scelto, e non si muovono più. Tutto il resto continua: il baricentro sale e scende, la tonalità cambia, le fasi si sfasano. È il modo per suonarci sopra avendo sotto un accompagnamento che non si trasforma mentre lo accompagni.
 
 Il nome viene dal mare, come quello dello strumento: una **rada** è un ancoraggio riparato, e qui si getta l'ancora dentro un pezzo che per il resto continua a spostarsi.
 

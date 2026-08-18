@@ -59,11 +59,19 @@
       <div class="colLinee colFrasi">
         <span class="colTitolo" data-i18n="card.title">Le quattro frasi</span>
         <div id="lineeFrasi"></div>
+        <!-- Il modo del materiale sta sotto le scale di durata, cioè accanto
+             alle linee di cui decide la sorte. È un interruttore solo che
+             mostra lo STATO, come il quadratino di ogni linea: quadro
+             arancione e «deriva» quando le idee si rinnovano, quadro
+             d'inchiostro e «ancora» quando restano ferme. Lo costruisce
+             ui.js. -->
+        <div class="modi" id="modiFrasi"></div>
       </div>
       <div id="canvas-holder"></div>
       <div class="colLinee colTessuti">
         <span class="colTitolo" data-i18n="drone.title">I quattro tessuti</span>
         <div id="lineeTessuti"></div>
+        <div class="modi" id="modiTessuti"></div>
       </div>
     </div>
   </div>
@@ -89,13 +97,6 @@
       <label for="head"><span data-i18n="ctl.head">Addensamento</span> <b id="vHead">—</b></label>
       <input type="range" id="head" min="10" max="70" value="30">
     </div>
-  </div>
-
-  <!-- Il modo del materiale, sotto i cursori della classe: dice se le idee
-       restano quelle dello stato d'animo o si rinnovano alla modulazione. -->
-  <div class="modi">
-    <span class="modiTit" data-i18n="modo.title">Materiale</span>
-    <div class="modiGruppo" id="modiFrasi"></div>
   </div>
 
   <div class="bar">
@@ -139,11 +140,6 @@
       <label for="d_battito"><span data-i18n="dctl.battito">Battito</span> <b id="v_battito">—</b></label>
       <input type="range" id="d_battito" min="0.05" max="2" step="0.01" value="0.57">
     </div>
-  </div>
-
-  <div class="modi">
-    <span class="modiTit" data-i18n="modo.title">Materiale</span>
-    <div class="modiGruppo" id="modiTessuti"></div>
   </div>
 
   <div class="bar barDroni">

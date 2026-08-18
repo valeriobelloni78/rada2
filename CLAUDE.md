@@ -194,7 +194,22 @@ cosa che rende sicuro ricostruire un piano mentre il pezzo suona.**
 volta fra una modulazione e l'altra, e da capo a ogni passo di quinta; in
 «ancora» non si toccano, e restano quelle che lo stato d'animo ha scelto. Tutto
 il resto continua a muoversi in entrambi i modi: baricentro, armonia, fasi.
-Le due classi sono indipendenti, e il modo di partenza è «deriva».
+Le due classi sono indipendenti, e il modo di partenza è «deriva». I due
+interruttori stanno **dentro le colonne di linea**, sotto le scale di durata:
+il modo decide la sorte di quelle otto linee, e sta accanto a loro invece che
+in fondo alla pagina coi comandi d'insieme.
+
+**L'interruttore mostra lo STATO, come il quadratino di ogni linea**: quadro
+arancione e «deriva», quadro d'inchiostro e «ancora». È l'unico posto in cui
+l'accento indica uno stato di riposo invece di un evento, ed è voluto — la
+deriva è ciò che lo strumento fa se lo lasci fare. Il quadro sta verso il bordo
+esterno della propria colonna, a sinistra sotto le frasi e a destra sotto i
+tessuti, e i due si guardano da lontano.
+
+Il nome della classe vive dentro il bottone ma fuori campo, e finisce con uno
+spazio: il nome accessibile è la fila dei testi dei figli, e senza si
+sentirebbe «Materiale delle frasiDeriva». Comporlo così lo fa comporre al
+browser invece che al dizionario, che di frasi intere ne vuole una per voce.
 
 Il nome è il sostantivo marinaro, non l'avverbio — una rada è un ancoraggio
 riparato, e qui si getta l'ancora dentro un pezzo che per il resto continua a
