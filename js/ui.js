@@ -107,10 +107,7 @@ setInterval(refreshTutteLeRighe, 15000);
    accadrà premendolo, non che cosa sta accadendo. Lo stato è già raccontato
    dal punto che pulsa e dalla riga in alto.                                */
 function onPowerChange() {
-  $("power").classList.toggle("on", gocceOn);
-  $("powerLabel").textContent = gocceOn ? T("power.pause") : T("power.play");
-  $("powerTessuti").classList.toggle("on", tessutiOn);
-  $("powerTessutiLabel").textContent = tessutiOn ? T("power.pause") : T("power.play");
+  syncModi();
   refreshTutteLeRighe();
 }
 
@@ -154,48 +151,69 @@ Object.keys(MOODS).forEach((id, i) => {
    bottoni identici. Il nome accessibile lo compone il browser mettendo in fila
    i due pezzi — «Materiale delle frasi, deriva» — invece di comporlo il
    dizionario, che di frasi intere ne vuole una per voce.                   */
-function costruisciModo(boxId, classe, chiaveNome) {
-  const box = $(boxId);
+function costruisciSegno(box, classeCss, onClick) {
   const b = document.createElement("button");
   b.type = "button";
-  b.className = "modoBtn";
+  b.className = "segno " + classeCss;
 
   const quadro = document.createElement("span");
-  quadro.className = "modoQuadro";
+  quadro.className = "segnoQuadro";
   quadro.setAttribute("aria-hidden", "true");
 
-  const dove = document.createElement("span");
-  dove.className = "modoDove";
+  const dove = document.createElement("span");   // il nome, fuori campo
+  dove.className = "segnoDove";
 
-  const nome = document.createElement("span");
-  nome.className = "modoNome";
+  const nome = document.createElement("span");   // la parola visibile
+  nome.className = "segnoNome";
 
   b.append(quadro, dove, nome);
-  b.onclick = () => {
-    MODI[classe] = MODI[classe] === "deriva" ? "ancora" : "deriva";
-    syncModi();
-  };
+  b.onclick = onClick;
   box.appendChild(b);
-  return { b, dove, nome, classe, chiaveNome };
+  return { b, dove, nome };
 }
 
-const MODI_UI = [
-  costruisciModo("modiFrasi",   "gocce",   "modo.frasi"),
-  costruisciModo("modiTessuti", "tessuti", "modo.tessuti"),
-];
+/* Due coppie di comandi, una per classe: a sinistra il modo del materiale, a
+   destra l'avvio. Hanno la stessa grafica perché hanno la stessa grammatica —
+   un quadro che mostra lo stato e una parola che lo nomina — e stanno agli
+   estremi opposti della riga perché governano cose opposte: che cosa suona e
+   se suona.                                                                */
+const COPPIE = ["gocce", "tessuti"].map((classe, i) => {
+  const box = $(i === 0 ? "modiFrasi" : "modiTessuti");
+  const chiaveNome = i === 0 ? "modo.frasi" : "modo.tessuti";
+  return {
+    classe, chiaveNome,
+    modo:  costruisciSegno(box, "segnoModo",  () => {
+      MODI[classe] = MODI[classe] === "deriva" ? "ancora" : "deriva";
+      syncModi();
+    }),
+    power: costruisciSegno(box, "segnoPower", () => toggleClasse(classe)),
+  };
+});
 
+/* Una funzione sola tiene allineati i quattro bottoni. Il nome della classe
+   sta dentro ciascuno ma fuori campo, e finisce con uno spazio: il nome
+   accessibile è la fila dei testi dei figli, e senza si sentirebbe
+   «Materiale delle frasiDeriva».                                          */
 function syncModi() {
-  for (const m of MODI_UI) {
-    const id = MODI[m.classe], ancorato = id === "ancora";
-    /* Lo spazio in coda non è cosmetico: il nome accessibile è la fila dei
-       testi dei figli, e senza si sentirebbe «Materiale delle frasiDeriva». */
-    m.dove.textContent = T(m.chiaveNome) + " ";
-    m.nome.textContent = T("modo." + id);
-    m.b.classList.toggle("ancora", ancorato);
+  for (const c of COPPIE) {
+    const id = MODI[c.classe], ancorato = id === "ancora";
+    c.modo.dove.textContent = T(c.chiaveNome) + " ";
+    c.modo.nome.textContent = T("modo." + id);
+    c.modo.b.classList.toggle("spento", ancorato);
     /* Premuto = ancorato: è il gesto che ferma il materiale, e lo stato a
        riposo dello strumento è quello che deriva.                        */
-    m.b.setAttribute("aria-pressed", ancorato ? "true" : "false");
-    m.b.title = T("modo." + id + "Aria");
+    c.modo.b.setAttribute("aria-pressed", ancorato ? "true" : "false");
+    c.modo.b.title = T("modo." + id + "Aria");
+
+    /* Il quadro dell'avvio è arancione mentre la classe suona, e allora la
+       parola dice «Pausa»: l'etichetta nomina l'AZIONE, come vuole la regola
+       del progetto, e il quadro nomina lo stato. Le due cose non si
+       contraddicono — dicono due cose diverse nello stesso segno.        */
+    const suona = c.classe === "gocce" ? gocceOn : tessutiOn;
+    c.power.dove.textContent = T(c.chiaveNome === "modo.frasi" ? "power.frasi" : "power.tessuti") + " ";
+    c.power.nome.textContent = suona ? T("power.pause") : T("power.play");
+    c.power.b.classList.toggle("spento", !suona);
+    c.power.b.setAttribute("aria-pressed", suona ? "true" : "false");
   }
 }
 
@@ -395,9 +413,6 @@ function onLanguageChange() {
 /* --- avvio ---------------------------------------------------------------- */
 /* Ogni riquadro ha il suo interruttore, e governa solo la propria classe:
    due pulsanti che facessero la stessa cosa sarebbero un pulsante di troppo. */
-$("power").addEventListener("click", () => toggleClasse("gocce"));
-$("powerTessuti").addEventListener("click", () => toggleClasse("tessuti"));
-
 // barra spaziatrice: avvia e ferma
 addEventListener("keydown", e => {
   if (e.code === "Space" && !/^(INPUT|BUTTON|TEXTAREA)$/.test(e.target.tagName)) {
@@ -421,7 +436,7 @@ $("gate").addEventListener("click", async () => {
      mouse non se lo aspetta, e l'anello di messa a fuoco sarebbe rumore in
      un'interfaccia costruita sul poco. Chi invece è entrato col tasto Invio
      resterebbe altrimenti con il fuoco su un elemento appena disattivato.  */
-  if (ingressoDaTastiera) $("power").focus();
+  if (ingressoDaTastiera) COPPIE[0].power.b.focus();
   await togglePower();
 });
 /* Il bottone è dentro la soglia: il clic risale da solo. Qui si intercetta
@@ -437,8 +452,6 @@ $("enter").addEventListener("keydown", e => {
 });
 
 applyI18n();
-$("powerLabel").textContent = T("power.play");
-$("powerTessutiLabel").textContent = T("power.play");
 refreshTutteLeRighe();
 onRealignChange();
 onDroniChange();

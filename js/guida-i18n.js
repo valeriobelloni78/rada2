@@ -57,7 +57,7 @@ const GUIDA = {
     "g.gest3.k": "↻",
     "g.gest3": "Genera una nuova idea musicale per quella linea soltanto: altre note, altro numero di eventi, altra posizione sull'anello.",
     "g.gest4.k": "Barra spaziatrice",
-    "g.gest4": "Avvia e ferma tutto. Ogni classe ha però anche il suo pulsante, che governa solo la propria metà. Alla ripresa il collage riparte esattamente da dov'era — e anche la deriva.",
+    "g.gest4": "Avvia e ferma tutto. Ogni classe ha però anche il suo segno, a destra sotto le proprie scale di durata, che governa solo la propria metà: quadro arancione e «Pausa» mentre suona, d'inchiostro e «Avvia» quando tace. Alla ripresa il collage riparte esattamente da dov'era — e anche la deriva.",
 
     "g.lbl.faders": "I cinque cursori per le frasi",
     "g.f1": "Modifica quanto si allarga il ventaglio delle altezze. A zero tutte le gocce cadono sulla stessa nota centrale; al massimo l'idea si distende sulle quattro ottave della scala.",
@@ -68,7 +68,7 @@ const GUIDA = {
     "g.f.note": "Quasi tutti i cursori mostrano due numeri quando qualcosa li inclina — l'ora del giorno, la stagione o la deriva: il primo è dove l'hai messo tu, il secondo è il valore che sta davvero suonando.",
 
     "g.modo.t":  "Il modo del materiale",
-    "g.modo1":   "Sotto le scale di durata di ogni classe c'è un interruttore: un quadro e una parola, che dicono come stanno le cose invece di che cosa faranno. Vale per le frasi e per i tessuti separatamente.",
+    "g.modo1":   "Sotto le scale di durata di ogni classe ci sono due segni gemelli, agli estremi della riga: a destra l'avvio, a sinistra il modo del materiale. Un quadro e una parola, che dicono come stanno le cose invece di che cosa faranno. Vale per le frasi e per i tessuti separatamente.",
     "g.modo2":   "In <em class=\"amb\">deriva</em>, col quadro arancione, le idee si rinnovano su due scale: una goccia per volta fra una modulazione e l'altra, e da capo a ogni cambio di tonalità. È il modo in cui il pezzo va da qualche parte anche nel materiale, non solo nell'armonia.",
     "g.modo3":   "In <em>ancora</em>, col quadro d'inchiostro, le idee restano quelle che lo stato d'animo ha scelto, e non si muovono più. Tutto il resto continua: il baricentro sale e scende, la tonalità cambia, le fasi si sfasano. È il modo per suonarci sopra avendo sotto un accompagnamento che non si trasforma mentre lo accompagni.",
     "g.modo4":   "Il nome viene dal mare, come quello dello strumento: una <em>rada</em> è un ancoraggio riparato, e qui si getta l'ancora dentro un pezzo che per il resto continua a spostarsi.",
@@ -177,7 +177,7 @@ const GUIDA = {
     "g.gest3.k": "↻",
     "g.gest3": "Engendre une nouvelle idée musicale pour cette ligne seulement~: d'autres notes, un autre nombre d'événements, une autre position sur l'anneau.",
     "g.gest4.k": "Barre d'espace",
-    "g.gest4": "Lance et arrête tout. Chaque classe a pourtant aussi son bouton, qui ne gouverne que sa propre moitié. À la reprise, le collage repart exactement d'où il était — et la dérive aussi.",
+    "g.gest4": "Lance et arrête tout. Chaque classe a pourtant aussi son signe, à droite sous ses propres échelles de durée, qui ne gouverne que sa moitié~: carré orange et «~Pause~» tant qu'elle sonne, à l'encre et «~Lancer~» quand elle se tait. À la reprise, le collage repart exactement d'où il était — et la dérive aussi.",
 
     "g.lbl.faders": "Les cinq curseurs des phrases",
     "g.f1": "Modifie l'ouverture de l'éventail des hauteurs. À zéro toutes les gouttes tombent sur la même note centrale~; au maximum l'idée s'étend sur les quatre octaves de la gamme.",
@@ -188,7 +188,7 @@ const GUIDA = {
     "g.f.note": "Presque tous les curseurs affichent deux nombres quand quelque chose les incline — l'heure du jour, la saison ou la dérive~: le premier est là où tu l'as mis, le second est la valeur qui sonne réellement.",
 
     "g.modo.t":  "Le mode de la matière",
-    "g.modo1":   "Sous les échelles de durée de chaque classe il y a un interrupteur~: un carré et un mot, qui disent où en sont les choses plutôt que ce qu'ils feront. Il vaut séparément pour les phrases et pour les tissus.",
+    "g.modo1":   "Sous les échelles de durée de chaque classe il y a deux signes jumeaux, aux extrémités de la ligne~: à droite le lancement, à gauche le mode de la matière. Un carré et un mot, qui disent où en sont les choses plutôt que ce qu'ils feront. Cela vaut séparément pour les phrases et pour les tissus.",
     "g.modo2":   "En <em class=\"amb\">dérive</em>, le carré orange, les idées se renouvellent sur deux échelles~: une goutte à la fois entre deux modulations, et entièrement à chaque changement de tonalité. C'est ainsi que la pièce va quelque part dans la matière aussi, pas seulement dans l'harmonie.",
     "g.modo3":   "En <em>ancre</em>, le carré à l'encre, les idées restent celles que l'humeur a choisies et ne bougent plus. Tout le reste continue~: le barycentre monte et descend, la tonalité change, les phases se déphasent. C'est le mode pour jouer par-dessus, avec un accompagnement qui ne se transforme pas pendant qu'on l'accompagne.",
     "g.modo4":   "Le nom vient de la mer, comme celui de l'instrument~: une <em>rade</em> est un mouillage abrité, et l'on y jette l'ancre à l'intérieur d'une pièce qui, pour le reste, continue de se déplacer.",
@@ -297,7 +297,7 @@ const GUIDA = {
     "g.gest3.k": "↻",
     "g.gest3": "Generates a new musical idea for that line alone: other notes, another number of events, another position on the ring.",
     "g.gest4.k": "Spacebar",
-    "g.gest4": "Starts and stops everything. Each class also has its own button, though, governing only its own half. On resuming, the collage picks up exactly where it was — and so does the drift.",
+    "g.gest4": "Starts and stops everything. Each class also has its own sign, to the right under its own length scales, governing only its half: an amber square and «Pause» while it sounds, ink and «Play» when it is silent. On resuming, the collage picks up exactly where it was — and so does the drift.",
 
     "g.lbl.faders": "The five phrase faders",
     "g.f1": "Changes how wide the fan of pitches opens. At zero every drop falls on the same central note; at maximum the idea spreads across the four octaves of the scale.",
@@ -308,7 +308,7 @@ const GUIDA = {
     "g.f.note": "Almost every fader shows two numbers when something tilts it — the hour of the day, the season, or the drift: the first is where you put it, the second is the value actually sounding.",
 
     "g.modo.t":  "The material mode",
-    "g.modo1":   "Under each class's length scales there is a switch: a square and a word, which say how things stand rather than what they will do. It applies to the phrases and the weaves separately.",
+    "g.modo1":   "Under each class's length scales there are two twin signs, at either end of the row: on the right the start, on the left the material mode. A square and a word, which say how things stand rather than what they will do. It applies to the phrases and the weaves separately.",
     "g.modo2":   "In <em class=\"amb\">drift</em>, with the square amber, the ideas renew on two scales: one drop at a time between modulations, and wholly at every change of key. It is how the piece goes somewhere in its material too, not only in its harmony.",
     "g.modo3":   "In <em>anchor</em>, with the square in ink, the ideas stay as the mood chose them and move no further. Everything else carries on: the centre of gravity rises and falls, the key changes, the phases drift apart. It is the mode for playing along, with an accompaniment that does not transform while you accompany it.",
     "g.modo4":   "The name comes from the sea, like the instrument's own: a <em>rada</em> is a sheltered anchorage, and here you drop anchor inside a piece that otherwise keeps moving.",
@@ -417,7 +417,7 @@ const GUIDA = {
     "g.gest3.k": "↻",
     "g.gest3": "その線だけに新しい楽想を生みます。ちがう音、ちがう数の出来事、輪の上のちがう位置。",
     "g.gest4.k": "スペースキー",
-    "g.gest4": "すべての再生と停止。ただしどちらのクラスにもそれぞれのボタンがあり、そちらは自分の半分だけを受け持ちます。再開したときコラージュはちょうど止まった場所から続きます——漂流もまた。",
+    "g.gest4": "すべての再生と停止。ただしどちらのクラスにも、自分の長さの目盛りの下の右側にそれぞれのしるしがあり、そちらは自分の半分だけを受け持ちます。鳴っているあいだは橙の四角と「一時停止」、黙っているときは墨と「再生」。再開したときコラージュはちょうど止まった場所から続きます——漂流もまた。",
 
     "g.lbl.faders": "フレーズの五つのスライダー",
     "g.f1": "音の高さの広がりを変えます。ゼロではすべての滴が同じ中央の音に落ち、最大では楽想が音階の四オクターヴに広がります。",
@@ -428,7 +428,7 @@ const GUIDA = {
     "g.f.note": "何か——時刻、季節、あるいは漂流——が値を傾けているとき、ほとんどのスライダーには数字が二つ並びます。前がこちらで設定した値、後ろが実際に鳴っている値です。",
 
     "g.modo.t":  "素材のモード",
-    "g.modo1":   "それぞれのクラスの長さの目盛りの下にスイッチがあります。四角ひとつと言葉ひとつ、これから何をするかではなく、いまどうなっているかを告げます。フレーズと織りとで別々に効きます。",
+    "g.modo1":   "それぞれのクラスの長さの目盛りの下には、行の両端に双子のしるしがあります。右が再生、左が素材のモード。四角ひとつと言葉ひとつ、これから何をするかではなく、いまどうなっているかを告げます。フレーズと織りとで別々に効きます。",
     "g.modo2":   "<em class=\"amb\">漂流</em>では——四角は橙——楽想は二つの尺度で作り直されます。転調と転調のあいだは一滴ずつ、調が変わるたびにまるごと。和声だけでなく素材においても、曲がどこかへ向かうのはこのモードです。",
     "g.modo3":   "<em>錨</em>では——四角は墨——楽想は気分が選んだままにとどまり、それ以上動きません。ほかはすべて続きます——重心は昇り降りし、調は変わり、位相はずれていきます。合わせて弾くためのモードです。伴奏が、伴奏しているあいだに姿を変えてしまうことがありません。",
     "g.modo4":   "名前は楽器の名と同じく海から来ています。<em>rada</em>とは風を避けて船が停まる泊地のことで、ここでは、ほかのすべてが動きつづける曲のなかに錨を下ろすのです。",

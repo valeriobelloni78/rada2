@@ -231,61 +231,83 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
   padding-top:20px;
   border-top:1px solid var(--hair);
 }
+/* IL CURSORE STA AL FONDO DELLA CELLA, non sotto la sua etichetta. Le
+   etichette non sono lunghe uguale — «Ampiezza registro» va a capo dove
+   «Calore» no — e appese all'etichetta le scale finivano a quote diverse:
+   undici pixel di scarto misurati a 900 px, su una riga che dovrebbe leggersi
+   come una sola scala continua. La cella diventa una colonna flessibile e
+   l'etichetta si prende lo spazio che avanza, così il cursore parte sempre
+   dallo stesso filo qualunque cosa gli stia scritto sopra, in qualunque
+   lingua.                                                                  */
+.ctl{display:flex;flex-direction:column}
 .ctl label{
   display:flex;justify-content:space-between;gap:8px;
   font-size:9px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-2);margin-bottom:7px;
+  color:var(--ink-2);margin:0 0 7px;
+  flex:1;align-items:flex-start;
 }
 .ctl label b{color:var(--amber);font-weight:400;font-variant-numeric:tabular-nums}
 
-/* --------------------------------------------------- il modo del materiale
-   Un quadro e una parola, senza filo di separazione e senza intestazione: il
-   bottone dice tutto da sé, e nella colonna stretta ogni segno in più era
-   rumore. Il quadro è arancione quando il materiale deriva e d'inchiostro
-   quando è ancorato — l'unico posto della pagina in cui l'accento indica uno
-   stato di riposo invece di un evento, ed è voluto: la deriva è ciò che lo
-   strumento fa se lo lasci fare.
+/* ------------------------------------------------- i due segni della classe
+   Sotto le scale di durata, agli estremi della riga: a sinistra il modo del
+   materiale, a destra l'avvio. Stessa grafica perché stessa grammatica — un
+   quadro che mostra lo stato e una parola che lo nomina — e stessa misura del
+   quadratino di ogni linea, undici pixel.
 
-   Sotto le frasi il quadro sta a sinistra della parola, sotto i tessuti a
-   destra: ogni colonna spinge il proprio segno verso il bordo esterno, e i
-   due bottoni si guardano da lontano come le due colonne che li ospitano.  */
-.modi{display:flex;margin-top:16px}
-.colTessuti .modi{justify-content:flex-end}
-.modoBtn{
+   IL QUADRO STA AL BORDO ESTERNO e la parola guarda verso il centro: a
+   sinistra quadro-parola, a destra parola-quadro. Le due colonne si
+   specchiano, e i quattro quadri fanno i vertici di un rettangolo attorno al
+   reticolo.
+
+   Arancione è acceso — il materiale deriva, la classe suona — e inchiostro è
+   fermo. È l'unico posto in cui l'accento indica uno stato di riposo invece
+   di un evento: la deriva e il suono sono ciò che lo strumento fa se lo lasci
+   fare, e fermarli è il gesto.                                            */
+.modi{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.segno{
   appearance:none;border:0;background:transparent;padding:4px 0;
   display:flex;align-items:center;gap:9px;
   font-family:var(--sans);cursor:pointer;
 }
-.colTessuti .modoBtn{flex-direction:row-reverse}
-.modoQuadro{
+.segnoPower{flex-direction:row-reverse}
+.segnoQuadro{
   width:11px;height:11px;flex:none;
   background:var(--amber);border:1px solid var(--amber);
   transition:.2s;
 }
-.modoBtn.ancora .modoQuadro{background:var(--ink);border-color:var(--ink)}
-.modoNome{
+.segno.spento .segnoQuadro{background:var(--ink);border-color:var(--ink)}
+.segnoNome{
   font-weight:400;font-size:8px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink-2);transition:.2s;
 }
-.modoBtn:hover .modoNome{color:var(--ink)}
-.modoBtn:focus-visible{outline:1.5px solid var(--amber);outline-offset:3px}
+.segno:hover .segnoNome{color:var(--ink)}
+.segno:focus-visible{outline:1.5px solid var(--amber);outline-offset:3px}
 /* Il nome della classe: nel documento per chi ascolta, fuori dallo schermo
    per chi guarda. Non `display:none`, che lo toglierebbe anche a loro.    */
-.modoDove{
+.segnoDove{
   position:absolute;width:1px;height:1px;
   margin:-1px;padding:0;overflow:hidden;
   clip-path:inset(50%);white-space:nowrap;border:0;
 }
 
 /* --------------------------------------------------------- barra inferiore */
-.bar{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:14px;flex-wrap:wrap;margin-top:24px;
-}
+/* Da quando l'avvio è salito accanto alle scale di durata, qui restano solo
+   i mood: la barra non ha più due poli da separare.                       */
+.bar{display:flex;margin-top:24px}
+/* `flex:1` non è un dettaglio: senza, la griglia si dimensiona sul proprio
+   contenuto, e le due righe di mood escono di larghezza diversa perché
+   «Arcipelago» è più lungo di «Fondale» — 79 px contro 63 nella stessa
+   pagina. Crescendo entrambe fino al bordo, i bottoni tornano identici sopra
+   e sotto qualunque siano le parole, in qualunque lingua.               */
 .moods{
   display:grid;
-  grid-template-columns:repeat(8,1fr);
+  /* `minmax(0,1fr)` e non `1fr`: la seconda ha un minimo automatico pari al
+     contenuto, quindi la colonna della parola più lunga si allarga rubando
+     spazio alle altre — in inglese, a 760 px, uscivano 69, 70 e 74 px nella
+     stessa riga. Con lo zero come minimo le otto colonne sono uguali davvero. */
+  grid-template-columns:repeat(8,minmax(0,1fr));
   gap:7px;
+  flex:1;
   min-width:0;
   counter-reset:mood;
 }
@@ -313,25 +335,10 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 .mood.sel::before{color:var(--paper);opacity:.55}
 .mood:focus-visible{outline:1.5px solid var(--amber);outline-offset:3px}
 
-.power{
-  appearance:none;
-  border:1px solid var(--ink);background:transparent;color:var(--ink);
-  font-family:var(--sans);font-weight:400;
-  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-  padding:10px 24px;border-radius:0;cursor:pointer;transition:.25s;
-  display:flex;align-items:center;gap:9px;justify-content:center;
-  flex:none;
-}
-.power:hover{background:rgba(32,33,28,.06)}
-.power.on{background:var(--scelto);border-color:var(--scelto);color:var(--paper)}
-.power:focus-visible{outline:1.5px solid var(--amber);outline-offset:3px}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--dust);transition:.3s;flex:none}
-.power.on .dot{
-  background:var(--amber);
-  box-shadow:0 0 12px 2px var(--glow);
-  animation:breathe 4s ease-in-out infinite;
-}
-@keyframes breathe{0%,100%{opacity:.55}50%{opacity:1}}
+/* Qui stavano `.power` e il suo punto che respirava. L'avvio è diventato uno
+   dei due segni della classe, con la stessa grafica del modo: il respiro non
+   c'è più, e il compito di dire «sta suonando» resta al punto che pulsa nella
+   riga di stato, che quel respiro ce l'aveva già.                         */
 
 /* La riga della stagione, col riallineamento dei tessuti accanto: apre la
    sezione dei comandi della seconda classe.                                */
@@ -434,8 +441,17 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
   .strumento{grid-template-columns:1fr 1fr;gap:20px}
   #canvas-holder{grid-column:1 / -1;grid-row:1}
 }
+/* Otto colonne vogliono circa 90 px per bottone: tanto misura l'etichetta più
+   lunga in inglese («Archipelago») col prefisso numerico che il CSS le
+   antepone. Sotto i 980 px di finestra quello spazio non c'è, e la riga delle
+   frasi andava a capo su due righe mentre quella dei tessuti — che ha parole
+   più corte — restava su una: due barre della stessa pagina alte in modo
+   diverso. La soglia stava a 719 px, ed era sbagliata da sempre; il difetto
+   non si vedeva in italiano, dove le parole stanno appena dentro.        */
+@media (max-width:979px){
+  .moods{grid-template-columns:repeat(4,minmax(0,1fr));width:100%}
+}
 @media (max-width:719px){
-  .moods{grid-template-columns:repeat(4,1fr);width:100%}
   .langSep{display:none}
 }
 @media (max-width:540px){
@@ -452,7 +468,6 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 :lang(ja) .ctl label,
 :lang(ja) .realign,
 :lang(ja) .colTitolo,
-:lang(ja) .modoNome,
 :lang(ja) .mood,
 :lang(ja) .lang,
 :lang(ja) .docLink{
@@ -465,13 +480,12 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 :lang(ja) .colTitolo{font-size:9.5px}
 :lang(ja) .lineaVal{font-size:10px}
 :lang(ja) .mood{font-size:9px;letter-spacing:.04em}
-:lang(ja) .modoNome{font-size:10px;letter-spacing:.08em}
-:lang(ja) .power{font-size:11px;letter-spacing:.08em}
+:lang(ja) .segnoNome{font-size:10px;letter-spacing:.08em}
 :lang(ja) .gate p{line-height:1.9;letter-spacing:.02em}
 :lang(ja) .gate .enter{letter-spacing:.12em}
 
 /* chi preferisce meno movimento: si fermano le animazioni decorative */
 @media (prefers-reduced-motion:reduce){
-  .status.live .pulse,.power.on .dot{animation:none}
+  .status.live .pulse{animation:none}
   .gate{transition:none}
 }

@@ -59,12 +59,12 @@
       <div class="colLinee colFrasi">
         <span class="colTitolo" data-i18n="card.title">Le quattro frasi</span>
         <div id="lineeFrasi"></div>
-        <!-- Il modo del materiale sta sotto le scale di durata, cioè accanto
-             alle linee di cui decide la sorte. È un interruttore solo che
-             mostra lo STATO, come il quadratino di ogni linea: quadro
-             arancione e «deriva» quando le idee si rinnovano, quadro
-             d'inchiostro e «ancora» quando restano ferme. Lo costruisce
-             ui.js. -->
+        <!-- Sotto le scale di durata, i due comandi della classe: a sinistra
+             il modo del materiale, a destra l'avvio. Stessa grafica — un
+             quadro e una parola — e stessa grammatica: il segno mostra lo
+             STATO, come il quadratino di ogni linea, e premerlo lo cambia.
+             Il quadro sta al bordo esterno, la parola verso il centro. Li
+             costruisce ui.js. -->
         <div class="modi" id="modiFrasi"></div>
       </div>
       <div id="canvas-holder"></div>
@@ -101,9 +101,6 @@
 
   <div class="bar">
     <div class="moods" id="moods"></div>
-    <button class="power" id="power">
-      <span class="dot"></span><span id="powerLabel">Avvia</span>
-    </button>
   </div>
 
   <!-- ----------------------------------------------- i comandi dei tessuti
@@ -144,9 +141,6 @@
 
   <div class="bar barDroni">
     <div class="moods" id="droniMoods"></div>
-    <button class="power" id="powerTessuti">
-      <span class="dot"></span><span id="powerTessutiLabel">Avvia</span>
-    </button>
   </div>
 
   <div class="foot">

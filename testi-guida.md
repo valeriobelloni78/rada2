@@ -134,7 +134,7 @@ Genera una nuova idea musicale per quella linea soltanto: altre note, altro nume
 
 **Etichetta:** Barra spaziatrice
 
-Avvia e ferma tutto. Ogni classe ha però anche il suo pulsante, che governa solo la propria metà. Alla ripresa il collage riparte esattamente da dov'era — e anche la deriva.
+Avvia e ferma tutto. Ogni classe ha però anche il suo segno, a destra sotto le proprie scale di durata, che governa solo la propria metà: quadro arancione e «Pausa» mentre suona, d'inchiostro e «Avvia» quando tace. Alla ripresa il collage riparte esattamente da dov'era — e anche la deriva.
 
 ---
 
@@ -142,7 +142,7 @@ Avvia e ferma tutto. Ogni classe ha però anche il suo pulsante, che governa sol
 
 **Titolo:** Il modo del materiale
 
-Sotto le scale di durata di ogni classe c'è un interruttore: un quadro e una parola, che dicono come stanno le cose invece di che cosa faranno. Vale per le frasi e per i tessuti separatamente.
+Sotto le scale di durata di ogni classe ci sono due segni gemelli, agli estremi della riga: a destra l'avvio, a sinistra il modo del materiale. Un quadro e una parola, che dicono come stanno le cose invece di che cosa faranno. Vale per le frasi e per i tessuti separatamente.
 
 In ==deriva==, col quadro arancione, le idee si rinnovano su due scale: una goccia per volta fra una modulazione e l'altra, e da capo a ogni cambio di tonalità. È il modo in cui il pezzo va da qualche parte anche nel materiale, non solo nell'armonia.
 

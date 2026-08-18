@@ -71,7 +71,8 @@ e con un lettore di schermo.
 | Scala graduata di una riga | cambia la durata di quella linea (entra al giro successivo) |
 | Quadratino di una riga | silenzia o riattiva quella linea (pieno suona, vuoto tace) |
 | ↻ di una riga | genera una nuova idea musicale per quella linea |
-| Barra spaziatrice | avvia e ferma tutto; ogni classe ha anche il suo pulsante |
+| Barra spaziatrice | avvia e ferma tutto |
+| I due segni sotto le scale | a sinistra il modo del materiale, a destra l'avvio di quella classe |
 
 I cinque cursori delle frasi e i cinque dei tessuti governano il suono
 d'insieme. Quasi tutti mostrano **due numeri** quando serve: il primo è dove
@@ -82,7 +83,9 @@ gocce), la stagione (sui tessuti) e la deriva (su entrambe, da dentro).
 Gli otto **mood** per classe sono preset completi — timbro *e* configurazione
 temporale — e rigenerano le idee.
 
-Sotto le scale di durata di ciascuna classe, il **modo del materiale**. In *deriva* le
+Sotto le scale di durata di ciascuna classe stanno due segni gemelli, agli
+estremi della riga: a destra l'**avvio** di quella classe, a sinistra il **modo
+del materiale**. In *deriva* le
 idee si rinnovano: una goccia per volta fra una modulazione e l'altra, e da
 capo a ogni cambio di tonalità. In *ancora* restano quelle che il mood ha
 scelto, mentre tutto il resto continua a spostarsi — è il modo per suonarci

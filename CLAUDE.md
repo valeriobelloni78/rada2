@@ -199,12 +199,24 @@ interruttori stanno **dentro le colonne di linea**, sotto le scale di durata:
 il modo decide la sorte di quelle otto linee, e sta accanto a loro invece che
 in fondo alla pagina coi comandi d'insieme.
 
-**L'interruttore mostra lo STATO, come il quadratino di ogni linea**: quadro
-arancione e «deriva», quadro d'inchiostro e «ancora». È l'unico posto in cui
-l'accento indica uno stato di riposo invece di un evento, ed è voluto — la
-deriva è ciò che lo strumento fa se lo lasci fare. Il quadro sta verso il bordo
-esterno della propria colonna, a sinistra sotto le frasi e a destra sotto i
-tessuti, e i due si guardano da lontano.
+**Sotto le scale di durata stanno DUE segni per classe**, agli estremi della
+riga: a sinistra il modo del materiale, a destra l'avvio. Hanno la stessa
+grafica — un quadro di undici pixel, come il quadratino di ogni linea, e una
+parola — perché hanno la stessa grammatica: il segno mostra lo STATO e premerlo
+lo cambia. Il quadro sta al bordo esterno e la parola guarda verso il centro,
+così le due colonne si specchiano e i quattro quadri fanno i vertici di un
+rettangolo attorno al reticolo.
+
+Arancione è acceso — il materiale deriva, la classe suona — e inchiostro è
+fermo. È **l'unico posto in cui l'accento indica uno stato di riposo** invece
+di un evento, ed è voluto: la deriva e il suono sono ciò che lo strumento fa se
+lo lasci fare, e fermarli è il gesto. Sull'avvio le due cose convivono senza
+contraddirsi: la parola nomina l'AZIONE («Pausa» mentre suona), come vuole la
+regola delle etichette, e il quadro nomina lo stato.
+
+Il punto che respirava dentro il vecchio pulsante non c'è più: dire «sta
+suonando» resta compito del punto che pulsa nella riga di stato, che quel
+respiro l'aveva già.
 
 Il nome della classe vive dentro il bottone ma fuori campo, e finisce con uno
 spazio: il nome accessibile è la fila dei testi dei figli, e senza si
@@ -428,6 +440,32 @@ punto che pulsa.
 
 **I numeri che cambiano** usano cifre a larghezza fissa, altrimenti
 tremolano a ogni aggiornamento.
+
+**Le griglie di comandi uguali devono restare uguali, e in quattro lingue.**
+Tre difformità già trovate e chiuse, tutte dello stesso ceppo — un elemento
+dimensionato sul proprio contenuto invece che sullo spazio:
+
+- `.moods` senza `flex:1` si dimensionava sul contenuto, e le due righe di
+  mood uscivano larghe 79 e 63 px perché «Arcipelago» è più lungo di
+  «Fondale»;
+- `1fr` ha un minimo automatico pari al contenuto, quindi la colonna
+  dell'etichetta più lunga rubava spazio alle altre (69, 70 e 74 px nella
+  stessa riga, in inglese). Serve `minmax(0,1fr)`;
+- otto colonne di mood vogliono **circa 90 px per bottone** — tanto misura
+  «Archipelago» col prefisso numerico che il CSS le antepone — e sotto i
+  980 px di finestra non ci stanno: la riga andava a capo su due righe solo
+  per le frasi. La soglia era a 719 px, sbagliata da sempre e invisibile in
+  italiano.
+
+**Il cursore sta al fondo della cella, non sotto la sua etichetta.** Le
+etichette non sono lunghe uguale, e appese a loro le scale finivano a quote
+diverse — undici pixel di scarto a 900 px, su una riga che deve leggersi come
+una scala sola. La cella è una colonna flessibile e l'etichetta si prende lo
+spazio che avanza.
+
+**Chi misura queste cose lo faccia in tutte e quattro le lingue**, e sappia
+che `textContent` non include il contenuto generato da `::before`: la prima
+misura del bottone più largo dava 75 px invece di 90 proprio per questo.
 
 ## Verifica e pubblicazione
 
