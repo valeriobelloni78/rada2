@@ -55,15 +55,20 @@ function misto(t, a, b, c) {
 
 /* I valori correnti della deriva, in −1..1. Chi li usa decide di quanto
    pesano: qui non c'è nessuna unità, solo la forma del movimento.         */
-const deriva = { tonica: 0, dens: 0, spread: 0, head: 0, corpo: 0 };
+const deriva = { centro: 0, dens: 0, spread: 0, head: 0, corpo: 0 };
 
 /* --- il campo armonico ----------------------------------------------------
-   Due movimenti indipendenti, uno continuo e uno a scatti.
+   Due movimenti indipendenti: uno a scatti nell'armonia, uno continuo nel
+   registro. Prima erano una collezione che scattava e una tonica che
+   scivolava; la tonica non scivola più.
 
-   La TONICA deriva senza fermarsi, entro poche centinaia di centesimi.
-   Nessuna nota scivola — ognuna nasce e muore alla sua altezza — ma il campo
-   da cui sono prese si sposta, e mezz'ora dopo non è dov'era. Non è accordata
-   ad alcun riferimento esterno, e non deve esserlo: qui non suona nient'altro.
+   L'ACCORDATURA È FISSA. Il campo nasce sul do ricavato dal la a 440 — e ogni
+   altezza è una potenza esatta di due dodicesimi: temperamento equabile, senza
+   scarti. È il vincolo che rende Rada2 suonabile da fuori: chi imbraccia uno
+   strumento accordato ci trova sopra le stesse note che ha sotto le dita.
+   Prima la tonica derivava di ±350 centesimi, e quella deriva era ciò che
+   garantiva il non-ritorno; il prezzo era che nessuno potesse suonarci sopra.
+   Chi rimettesse un fattore non intero qui dentro romperebbe quel patto.
 
    La COLLEZIONE gira sul circolo delle quinte, un passo per volta. Fra una
    pentatonica e quella della sua quinta cambia UNA nota su cinque — {do re mi
@@ -71,52 +76,104 @@ const deriva = { tonica: 0, dens: 0, spread: 0, head: 0, corpo: 0 };
    due collezioni consonanti. Per questo il cambio non ha un bordo che si
    senta: te ne accorgi dopo, come della luce che cambia in una stanza.
 
-   Dodici passi chiuderebbero il giro. Ma la tonica intanto si è spostata di
-   una quantità che non è frazione di nulla, e il secondo giro non è il primo.
-   È qui che le due promesse si tengono a vicenda: da sola la collezione
-   tornerebbe, da sola la tonica sarebbe un campo senza armonia.
-
    La pentatonica anemitonica resta la garanzia ereditata da Rada — nessun
    semitono, nessun tritono, nessuna combinazione sgradevole possibile.
    Cambiarla in una collezione che contenga semitoni è una decisione musicale
    grossa, non una regolazione.                                            */
 const GRADI = [0, 2, 4, 7, 9];
-const TONICA_BASE = 261.63;
-const AMPIEZZA_TONICA = 350;   // centesimi, in ciascun verso
-const PASSO_QUINTA = 150;      // secondi fra un passo e il successivo, in media
+/* Il do di riferimento, ancorato al LA 440 e non scritto a mano: 261,63 è
+   l'arrotondamento a due decimali di questo numero, e quei due decimali
+   valgono tre centesimi di semitono. Inudibili — la soglia sta attorno a
+   cinque — ma qui la promessa è l'intonazione esatta, e un'ancora calcolata
+   costa una moltiplicazione una volta sola. Chi suona accorda sul la, non
+   sul do: è quello il riferimento da cui partire.                         */
+const TONICA_BASE = 440 * Math.pow(2, -9 / 12);
+const PASSO_QUINTA = 150;      // secondi esatti fra un passo e il successivo
+
+/* IL PASSO È REGOLARE, e lo è per chi suona. Prima aveva un ±25% di
+   irregolarità, che serviva a non far diventare la modulazione un metronomo;
+   ma un musicista che accompagna deve poter contare quanto manca al cambio, e
+   una modulazione che arriva quando le pare è una modulazione che si subisce.
+   L'imprevedibilità si è spostata dal QUANDO al DOVE, qui sotto.          */
+
+/* --- dove si va: un cammino che non si ripete ------------------------------
+   Il passo non è più sempre "+1 quinta", che dopo dodici scatti riporterebbe
+   esattamente al punto di partenza. La direzione — su o giù di una quinta —
+   viene da una parola sturmiana costruita su φ: `floor((n+1)α) − floor(nα)`
+   con α irrazionale dà una successione di 0 e 1 che non è periodica, per la
+   stessa ragione per cui non lo sono i canali della deriva.
+
+   In un verso o nell'altro cambia comunque UNA nota sola: la proprietà che
+   rende il passo inudibile è salva. Quello che si perde è la prevedibilità
+   della meta — con α = 1/φ si sale nel 61,8% dei casi, quindi il giro
+   circola lentamente invece di marciare, e passa e ripassa per le tonalità
+   vicine come farebbe una modulazione vera.
+
+   ONESTÀ SU COSA RESTA. Con l'accordatura fissa le altezze possibili sono un
+   insieme FINITO, e nessun cammino dentro un insieme finito può evitare di
+   ripassare: le dodici tonalità si rivedranno tutte, molte volte. A non
+   tornare è lo STATO — baricentro, fasi, materiale — non l'altezza delle
+   note. È un non-ritorno più debole di quello di prima, ed è il prezzo
+   dichiarato della suonabilità.                                           */
+const ALFA = 0.6180339887498949;   // 1/φ
 
 /* Il giro parte da un punto qualsiasi del circolo: due sessioni non aprono
-   nella stessa tonalità. `quinta` è dove ci si trova, `passiQuinta` è quanta
-   strada si è fatta da quando si ascolta — e sono due cose diverse, perché
-   la prima è un punto su dodici e la seconda non ha un tetto. In interfaccia
-   va la seconda: la prima non direbbe niente a nessuno, visto che il nome
-   della tonalità qui non esiste.                                           */
+   nella stessa tonalità. `quinta` è dove ci si trova — può andare sotto zero,
+   perché il cammino torna anche indietro — e `passiQuinta` è quanta strada si
+   è fatta da quando si ascolta.                                            */
 let quinta = Math.floor(Math.random() * 12);
 let passiQuinta = 0;
-let prossimaQuinta = PASSO_QUINTA * (0.75 + Math.random() * 0.5);
+let passoN = 0;
+let prossimaQuinta = PASSO_QUINTA;
 
-/* Venti frequenze, quattro ottave per cinque gradi: stessa forma della SCALE
-   di Rada, così `playDrop` e `playTone` continuano a indicizzarla come prima.
-   La differenza è che il contenuto adesso si muove.
+/* L'indice della tonalità corrente, da 0 a 11 in semitoni sopra il do. Il
+   modello espone un NUMERO, non un nome: "Sol" e "G" e "Ré" sono la stessa
+   cosa detta in tre lingue, e le parole stanno in i18n.js come tutte le
+   altre. Il doppio modulo serve perché `quinta` può essere negativa.      */
+function tonalita() { return ((quinta * 7) % 12 + 12) % 12; }
 
-   Si riscrive IN POSTO. Il vettore è letto dal thread principale a ogni goccia
-   prenotata, e riallocarlo due volte al secondo per la vita della sessione
-   sarebbe spazzatura gratuita in un progetto che sta attento alle
-   allocazioni.                                                            */
-const SCALE = new Array(20);
+/* Venticinque frequenze, cinque ottave per cinque gradi, da 65 Hz a 1975 Hz.
+   Erano venti su quattro ottave: la quinta ottava è lo spazio in cui il
+   baricentro può scorrere senza che la selezione vada a sbattere contro gli
+   estremi — 12 ± 4 di baricentro ± 8 di apertura fa esattamente 0..24, e la
+   forbice non tocca mai i bordi.
+
+   Si riscrive IN POSTO, e solo quando la collezione scatta: con l'accordatura
+   fissa il contenuto non ha più ragione di cambiare fra un passo e l'altro.
+   Prima si ricostruiva due volte al secondo perché la tonica scivolava.   */
+const SCALE = new Array(25);
+const MEZZA_CAMPATA  = 8;   // semi-apertura massima della selezione, in gradi
+const AMPIEZZA_CENTRO = 4;  // di quanto scorre il baricentro, in gradi
+const CENTRO_BASE     = 12; // il grado di mezzo, fra i venticinque
 
 function costruisciCampo() {
-  const base = TONICA_BASE * Math.pow(2, deriva.tonica * AMPIEZZA_TONICA / 1200);
-  const q = (quinta * 7) % 12;
+  const q = tonalita();
   let n = 0;
-  for (let oct = -2; oct <= 1; oct++)
+  for (let oct = -2; oct <= 2; oct++)
     for (const g of GRADI)
-      SCALE[n++] = base * Math.pow(2, (oct * 12 + (g + q) % 12) / 12);
+      SCALE[n++] = TONICA_BASE * Math.pow(2, (oct * 12 + (g + q) % 12) / 12);
   SCALE.sort((a, b) => a - b);
 }
 
-/* Quando il campo è stato ricostruito l'ultima volta, sul clock audio. */
-let ultimoCampo = -99;
+/* --- IL BARICENTRO ---------------------------------------------------------
+   Qui vive il movimento continuo che prima stava nell'accordatura. Le altezze
+   sono ferme; a scorrere è il punto attorno a cui vengono pescate.
+
+   L'effetto che si sente è quasi quello di prima — la musica sale e scende
+   piano, senza che si possa indicare il momento — ma nessuna nota è stonata:
+   il campo non si sposta, si sposta la finestra che lo guarda. È anche il
+   solo posto in cui il non-ritorno sopravvive intero, perché il baricentro è
+   un numero reale che si muove quasi-periodicamente.
+
+   Passano di qui TUTTE le altezze, gocce e tessuti: sono lo stesso pezzo, e
+   se il baricentro muovesse solo il primo piano lo sfondo resterebbe indietro.
+   Il `rel` dell'evento e l'apertura del cursore decidono dove cade rispetto
+   al centro, esattamente come prima.                                      */
+function altezza(rel, spread) {
+  const centro = CENTRO_BASE + deriva.centro * AMPIEZZA_CENTRO;
+  const i = Math.round(centro + rel * spread * MEZZA_CAMPATA);
+  return SCALE[clamp(i, 0, SCALE.length - 1)];
+}
 
 /* --- l'avanzamento --------------------------------------------------------
    Chiamata dallo scheduler, con il tempo del MOTORE AUDIO e non con quello di
@@ -128,29 +185,26 @@ function avanzaDeriva(t) {
   /* Ogni parametro pesca da una terna diversa: se due parametri condividessero
      tutti e tre i canali si muoverebbero all'unisono, e la deriva si
      ridurrebbe a una manopola sola tirata da una mano invisibile.         */
-  deriva.tonica = misto(t, 0, 3, 5);
+  deriva.centro = misto(t, 0, 3, 5);
   deriva.dens   = misto(t, 1, 4, 2);
   deriva.spread = misto(t, 2, 0, 4);
   deriva.head   = misto(t, 3, 1, 5);
   deriva.corpo  = misto(t, 4, 5, 0);
 
   if (t >= prossimaQuinta) {
-    quinta++; passiQuinta++;
-    prossimaQuinta = t + PASSO_QUINTA * (0.75 + Math.random() * 0.5);
-    ultimoCampo = -99;                 // il salto di collezione non aspetta
+    const su = Math.floor((passoN + 1) * ALFA) - Math.floor(passoN * ALFA);
+    passoN++;
+    quinta += su ? 1 : -1;
+    passiQuinta++;
+    prossimaQuinta = t + PASSO_QUINTA;
+    costruisciCampo();
   }
-
-  /* Due volte al secondo bastano: in mezzo secondo la tonica si sposta di
-     frazioni di centesimo, molto sotto la soglia a cui una nota nuova suoni
-     diversa dalla precedente. Ricostruire a ogni giro dello scheduler
-     significherebbe quaranta volte tanto per un risultato identico.       */
-  if (t - ultimoCampo >= 0.5) { costruisciCampo(); ultimoCampo = t; }
 }
 
-/* Quanto la tonica si è spostata, in centesimi: lo legge la riga di stato.
-   Il modello non sa dirlo a parole, come non sa dire "notturna": la frase la
-   compone i18n.js.                                                        */
-function derivaCents() { return deriva.tonica * AMPIEZZA_TONICA; }
+/* Dove sta il baricentro, in −1..1: lo legge la corsia lunga della fascia.
+   Prima qui c'erano i centesimi di scarto della tonica, che adesso sono
+   sempre zero per costruzione.                                            */
+function derivaCentro() { return deriva.centro; }
 
 /* Il campo esiste già prima del primo giro dello scheduler: `playDrop` non
    deve mai trovarsi davanti a un vettore di `undefined`.                  */

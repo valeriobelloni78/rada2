@@ -39,13 +39,13 @@ const dropHistory = [];
 const toneHistory = [];
 
 /* --- la storia della deriva ------------------------------------------------
-   Terza memoria, per la corsia lunga della fascia: la tonica campionata ogni
-   due secondi sull'ultima mezz'ora, più i tempi dei passi di quinta. Stesso
+   Terza memoria, per la corsia lunga della fascia: il baricentro campionato
+   ogni due secondi sull'ultima mezz'ora, più i tempi dei passi di quinta. Stesso
    principio delle altre due — lo scheduler scrive, il disegno legge — e la
    stessa ragione di stare qui: è lo scheduler a girare sempre, anche quando
    i fotogrammi si fermano perché la pagina non si vede.
 
-   La tonica sta in un ANELLO preallocato, non in una coda: novecento campioni
+   Il baricentro sta in un ANELLO preallocato, non in una coda: novecento campioni
    sono novecento, per tutta la sessione, e una coda con push e shift a regime
    sposterebbe l'intero array a ogni campione. Si memorizza anche il tempo di
    ciascun campione, perché i giri dello scheduler non sono equidistanti — a
@@ -56,7 +56,7 @@ const DERIVA_PASSO    = 2;                          // secondi fra due campioni
 const DERIVA_N        = DERIVA_FINESTRA / DERIVA_PASSO;
 const derivaStoria = {
   t: new Float32Array(DERIVA_N),
-  c: new Float32Array(DERIVA_N),                    // centesimi
+  c: new Float32Array(DERIVA_N),                    // baricentro, in −1..1
   testa: 0,                                         // prossima posizione di scrittura
   pieni: 0,                                         // quanti campioni esistono davvero
 };
@@ -72,7 +72,7 @@ function registraDeriva(now) {
   if (now - ultimoCampione >= DERIVA_PASSO) {
     ultimoCampione = now;
     derivaStoria.t[derivaStoria.testa] = now;
-    derivaStoria.c[derivaStoria.testa] = derivaCents();
+    derivaStoria.c[derivaStoria.testa] = derivaCentro();
     derivaStoria.testa = (derivaStoria.testa + 1) % DERIVA_N;
     if (derivaStoria.pieni < DERIVA_N) derivaStoria.pieni++;
   }
@@ -531,8 +531,10 @@ function suonaTenuta(at, ev, L) {
 function playDrop(when, ev, L) {
   const spread = effG.spread / 100;   // registro già inclinato dalla deriva
   const warmth = effWarmth;                 // calore già inclinato dall'ora
-  const half = SCALE.length / 2;
-  const freq = SCALE[clamp(Math.round(half + ev.rel * spread * half), 0, SCALE.length - 1)];
+  /* L'altezza la sceglie la deriva: il campo è fermo e intonato, a scorrere è
+     il baricentro attorno a cui si pesca. Le due classi passano dallo stesso
+     helper, così il registro non può divergere fra primo piano e sfondo.  */
+  const freq = altezza(ev.rel, spread);
 
   const car = ctx.createOscillator();
   car.type = "sine"; car.frequency.value = freq;
@@ -602,8 +604,10 @@ function playDrop(when, ev, L) {
    la palette oraria e lo spazio senza nodi propri.                        */
 function playTone(when, ev, L) {
   const spread = effD.spread / 100;
-  const half = SCALE.length / 2;
-  const freq = SCALE[clamp(Math.round(half + ev.rel * spread * half), 0, SCALE.length - 1)];
+  /* L'altezza la sceglie la deriva: il campo è fermo e intonato, a scorrere è
+     il baricentro attorno a cui si pesca. Le due classi passano dallo stesso
+     helper, così il registro non può divergere fra primo piano e sfondo.  */
+  const freq = altezza(ev.rel, spread);
 
   const dur = clamp(ev.dur * L.period, 2.5, 90);
 

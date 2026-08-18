@@ -20,13 +20,6 @@ function due(cursore, efficace, suffisso) {
   return (a === b) ? fmtInt(a) + suffisso : fmtInt(a) + "→" + fmtInt(b) + suffisso;
 }
 
-/* I centesimi vogliono sempre il segno, e vogliono il meno tipografico — il
-   trattino del tastierino è più corto e in una riga di cifre si vede.     */
-function fmtCents(c) {
-  const n = Math.round(c);
-  return (n < 0 ? "−" : "+") + fmtInt(Math.abs(n)) + "¢";
-}
-
 function readouts() {
   $("vSpread").textContent = due(G.spread, effG.spread, "%");
   $("vWarmth").textContent = due(G.warmth, effWarmth * 100, "%");
@@ -40,10 +33,17 @@ function readouts() {
      Due chiavi e non un plurale calcolato: la regola del dizionario è che le
      frasi ci stiano intere. Il giapponese non distingue e ha la stessa
      stringa due volte, che è il prezzo giusto da pagare — molto minore di un
-     motore di plurali per una parola sola.                               */
+     motore di plurali per una parola sola.
+
+     La TONALITÀ sta qui accanto al contatore delle quinte, ed è l'unica cosa
+     che l'interfaccia dichiari in termini musicali espliciti. Ci sta perché
+     Rada2 va suonata sopra: chi accompagna deve sapere dove si trova, e un
+     conteggio di passi non glielo dice. Prima al suo posto c'erano i
+     centesimi di scarto della tonica, che con l'accordatura fissa sono
+     sempre zero.                                                         */
   $("deriva").textContent = T(passiQuinta === 1 ? "deriva.uno" : "deriva", {
     q: fmtInt(passiQuinta),
-    c: fmtCents(derivaCents()),
+    k: tonalitaName(tonalita()),
   });
 }
 setInterval(readouts, 120);

@@ -15,7 +15,7 @@ const GUIDA = {
 
   it: {
     "g.title":        "Rada · Guida",
-    "meta.description": "Come funziona Rada2 e come si usa: otto linee con periodi coprimi, e una deriva lenta che non torna mai indietro.",
+    "meta.description": "Come funziona Rada2 e come si usa: otto linee con periodi coprimi, una deriva lenta, e un'accordatura fissa su cui si può suonare.",
     "g.back":         "Ascolta Rada",
 
     "g.open1": "Ra<em class=\"amb\">d</em>a è uno spazio sonoro nel quale si può indugiare nei propri ricordi mentre si guarda fuori dalla finestra. In questo spazio puoi prenderti cura della tua attenzione, i tessuti sonori producono delle sensazioni tattili e le gocce che ascolti cadono in un tempo dilatato nel quale puoi chiederti “come mi sento?”. L'ascolto è un'attività da coltivare, è un territorio che ha le sue poetiche e i suoi campi di forza. Ra<em class=\"amb\">d</em>a è un'insenatura tranquilla lungo la costa di un oceano di rumore. Tra le gocce troverai dei silenzi che parlano; ascoltali.",
@@ -33,9 +33,15 @@ const GUIDA = {
 
     "g.der.t":     "La deriva",
     "g.der.badge": "√2 · √3 · √5 · √7 · √11",
-    "g.der1": "Sotto le otto linee c'è un tempo più lento di tutti, e non torna indietro. L'armonia migra: il campo delle altezze gira sul circolo delle <em class=\"amb\">quinte</em>, un passo ogni due minuti e mezzo circa, e fra una collezione e la successiva cambia una nota su cinque — il passo più piccolo che esista fra due collezioni consonanti. Per questo il cambio non ha un bordo che si senta: te ne accorgi dopo, come della luce che cambia in una stanza. Intanto la tonica scivola con continuità, entro poche centinaia di centesimi. Dodici passi chiuderebbero il giro delle quinte, ma la tonica nel frattempo si è spostata di una quantità che non è frazione di nulla: il secondo giro non è il primo.",
+    "g.der1": "Sotto le otto linee c'è un tempo più lento di tutti. L'armonia modula: il campo delle altezze si sposta sul circolo delle <em class=\"amb\">quinte</em> ogni due minuti e mezzo esatti, e fra una collezione e la successiva cambia una nota su cinque — il passo più piccolo che esista fra due collezioni consonanti. Per questo il cambio non ha un bordo che si senta: te ne accorgi dopo, come della luce che cambia in una stanza. Il quando è regolare, così chi accompagna può contare quanto manca; a non essere prevedibile è il dove, perché la direzione — su o giù di una quinta — viene da una successione costruita sulla sezione aurea, che non si ripete. Il giro circola lentamente invece di marciare.",
     "g.der2": "Anche il materiale si rinnova, una goccia per volta: momento per momento la frase è ancora quella, qualche minuto dopo non ne è rimasta nessuna — e non c'è stato un istante in cui si potesse indicare il cambio. I tempi del ricambio, come le velocità della deriva, stanno in rapporti <i>irrazionali</i>: è la stessa idea dei periodi coprimi, salita di un piano, e garantisce che il pezzo non ripassi mai esattamente dove è già stato.",
-    "g.der3": "La riga arancione sopra il reticolo tiene il conto: quanti passi di quinta, quanti centesimi di deriva. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era, non corre di nascosto.",
+    "g.der3": "La riga arancione sopra il reticolo dice quanti passi sono stati fatti e, soprattutto, <em>in che tonalità sei adesso</em>. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era, non corre di nascosto.",
+    "g.der4": "Il baricentro è invece il movimento continuo: le altezze restano ferme, a scorrere piano è il punto attorno a cui vengono pescate. È quello che senti come una musica che sale e scende senza che si possa indicare il momento, ed è la linea ondulata nella fascia in fondo.",
+
+    "g.tune.t": "Suonarci sopra",
+    "g.tune1": "Rada2 è <em class=\"amb\">accordata</em>, e lo è esattamente: il campo nasce dal la a 440 e ogni nota è una nota del temperamento equabile, senza scarti. Puoi prendere uno strumento e accompagnarla.",
+    "g.tune2": "Ti servono due cose, e le trovi nella riga in alto a sinistra: la tonalità corrente, e il fatto che il cambio arriva ogni due minuti e mezzo, sempre. Le note sono cinque — la pentatonica maggiore di quella tonalità — quindi qualunque cosa suoni dentro quelle cinque va d'accordo con tutto il resto.",
+    "g.tune3": "C'è un prezzo, ed è giusto conoscerlo. Con l'accordatura ferma le altezze possibili sono un insieme finito, e le dodici tonalità torneranno tutte, molte volte. A non ripassare mai è lo stato del pezzo — dove sta il baricentro, come sono sfasate le linee, di che materiale sono fatte le frasi — non l'altezza delle note. Prima l'accordatura scivolava e il non-ritorno era assoluto; nessuno però poteva suonarci sopra.",
 
     "g.ret.t": "Il reticolo",
     "g.ret1": "Le otto linee sono anelli concentrici di un solo strumento: le frasi all'interno, i tessuti all'esterno, un centro solo. Le gocce sono tacche che attraversano l'anello, e la loro <em>lunghezza è il registro</em> — corta grave, lunga acuta: il profilo melodico di ogni idea si legge a colpo d'occhio. I tessuti sono archi, perché durano; un punto <em class=\"amb\">arancione</em> percorre ogni anello, ed è la fase che stai sentendo.",
@@ -122,7 +128,7 @@ const GUIDA = {
 
   fr: {
     "g.title":        "Rada · Guide",
-    "meta.description": "Comment fonctionne Rada2 et comment s'en servir : huit lignes aux périodes premières entre elles, et une dérive lente qui ne revient jamais.",
+    "meta.description": "Comment fonctionne Rada2 et comment s'en servir : huit lignes aux périodes premières entre elles, une dérive lente, et un accord fixe sur lequel on peut jouer.",
     "g.back":         "Écouter Rada",
 
     "g.open1": "Ra<em class=\"amb\">d</em>a est un espace sonore où l'on peut s'attarder dans ses souvenirs en regardant par la fenêtre. Dans cet espace tu peux prendre soin de ton attention~: les tissus sonores produisent des sensations tactiles et les gouttes que tu écoutes tombent dans un temps dilaté où tu peux te demander «~comment est-ce que je me sens~?~». L'écoute est une pratique à cultiver, un territoire qui a ses poétiques et ses champs de force. Ra<em class=\"amb\">d</em>a est une crique tranquille sur la côte d'un océan de bruit. Entre les gouttes tu trouveras des silences qui parlent~; écoute-les.",
@@ -140,9 +146,15 @@ const GUIDA = {
 
     "g.der.t":     "La dérive",
     "g.der.badge": "√2 · √3 · √5 · √7 · √11",
-    "g.der1": "Sous les huit lignes coule un temps plus lent que tous les autres, et il ne revient pas en arrière. L'harmonie migre~: le champ des hauteurs tourne sur le cycle des <em class=\"amb\">quintes</em>, un pas toutes les deux minutes et demie environ, et d'une collection à la suivante une seule note sur cinq change — le plus petit pas qui existe entre deux collections consonantes. C'est pourquoi le changement n'a pas de bord audible~: on s'en aperçoit après coup, comme de la lumière qui change dans une pièce. Pendant ce temps la tonique glisse continûment, dans les limites de quelques centaines de cents. Douze pas fermeraient le cycle des quintes, mais la tonique s'est déplacée entre-temps d'une quantité qui n'est fraction de rien~: le deuxième tour n'est pas le premier.",
+    "g.der1": "Sous les huit lignes coule un temps plus lent que tous les autres. L'harmonie module~: le champ des hauteurs se déplace sur le cycle des <em class=\"amb\">quintes</em> toutes les deux minutes et demie exactement, et d'une collection à la suivante une seule note sur cinq change — le plus petit pas qui existe entre deux collections consonantes. C'est pourquoi le changement n'a pas de bord audible~: on s'en aperçoit après coup, comme de la lumière qui change dans une pièce. Le quand est régulier, pour que celui qui accompagne puisse compter~; c'est le où qui reste imprévisible, car la direction — en haut ou en bas d'une quinte — vient d'une suite construite sur le nombre d'or, qui ne se répète pas.",
     "g.der2": "La matière aussi se renouvelle, une goutte à la fois~: d'un instant à l'autre la phrase est encore la même, quelques minutes plus tard il n'en reste aucune — et il n'y a pas eu un instant où l'on aurait pu montrer le changement du doigt. Les temps du renouvellement, comme les vitesses de la dérive, sont dans des rapports <i>irrationnels</i>~: c'est l'idée des périodes premières entre elles, montée d'un étage, et elle garantit que la pièce ne repasse jamais exactement là où elle est déjà passée.",
-    "g.der3": "La ligne orange au-dessus du réticule tient le compte~: combien de pas de quinte, combien de cents de dérive. En pause, la dérive attend — à la reprise la pièce repart d'où elle était, elle ne court pas en cachette.",
+    "g.der3": "La ligne orange au-dessus du réticule dit combien de pas ont été faits et, surtout, <em>dans quelle tonalité tu es maintenant</em>. En pause, la dérive attend — à la reprise la pièce repart d'où elle était, elle ne court pas en cachette.",
+    "g.der4": "Le barycentre est en revanche le mouvement continu~: les hauteurs restent fixes, ce qui glisse lentement c'est le point autour duquel on les puise. C'est ce que tu entends comme une musique qui monte et descend sans qu'on puisse en désigner l'instant, et c'est la ligne ondulée de la bande, en bas.",
+
+    "g.tune.t": "Jouer par-dessus",
+    "g.tune1": "Rada2 est <em class=\"amb\">accordée</em>, et elle l'est exactement~: le champ naît du la à 440 et chaque note est une note du tempérament égal, sans écart. Tu peux prendre un instrument et l'accompagner.",
+    "g.tune2": "Il te faut deux choses, et elles sont dans la ligne en haut à gauche~: la tonalité courante, et le fait que le changement arrive toutes les deux minutes et demie, toujours. Les notes sont cinq — la pentatonique majeure de cette tonalité — donc tout ce que tu joues dans ces cinq-là s'accorde avec le reste.",
+    "g.tune3": "Il y a un prix, et il est juste de le connaître. Avec l'accord fixe les hauteurs possibles forment un ensemble fini, et les douze tonalités reviendront toutes, bien des fois. Ce qui ne repasse jamais, c'est l'état de la pièce — où se trouve le barycentre, comment les lignes sont déphasées, de quelle matière les phrases sont faites — pas la hauteur des notes. Avant, l'accord glissait et le non-retour était absolu~; mais personne ne pouvait jouer par-dessus.",
 
     "g.ret.t": "Le réticule",
     "g.ret1": "Les huit lignes sont les anneaux concentriques d'un seul instrument~: les phrases à l'intérieur, les tissus à l'extérieur, un seul centre. Les gouttes sont des encoches qui traversent l'anneau, et leur <em>longueur est le registre</em> — courte grave, longue aiguë~: le profil mélodique de chaque idée se lit d'un coup d'œil. Les tissus sont des arcs, parce qu'ils durent~; un point <em class=\"amb\">orange</em> parcourt chaque anneau, et c'est la phase que tu entends.",
@@ -229,7 +241,7 @@ const GUIDA = {
 
   en: {
     "g.title":        "Rada · Guide",
-    "meta.description": "How Rada2 works and how to use it: eight lines with coprime periods, and a slow drift that never comes back.",
+    "meta.description": "How Rada2 works and how to use it: eight lines with coprime periods, a slow drift, and fixed tuning you can play along with.",
     "g.back":         "Listen to Rada",
 
     "g.open1": "Ra<em class=\"amb\">d</em>a is a sound space where you can linger among your own memories while looking out of the window. In this space you can take care of your attention: the sonic weaves produce tactile sensations and the drops you hear fall through a dilated time in which you can ask yourself, “how do I feel?”. Listening is a practice to be cultivated, a territory with its own poetics and its own force fields. Ra<em class=\"amb\">d</em>a is a quiet cove on the shore of an ocean of noise. Between the drops you will find silences that speak; listen to them.",
@@ -247,9 +259,15 @@ const GUIDA = {
 
     "g.der.t":     "The drift",
     "g.der.badge": "√2 · √3 · √5 · √7 · √11",
-    "g.der1": "Beneath the eight lines runs a time slower than all the others, and it does not turn back. The harmony migrates: the field of pitches moves around the circle of <em class=\"amb\">fifths</em>, one step roughly every two and a half minutes, and from one collection to the next a single note in five changes — the smallest step that exists between two consonant collections. That is why the change has no audible edge: you notice it afterwards, like light changing in a room. Meanwhile the tonic slides continuously, within a few hundred cents. Twelve steps would close the circle of fifths, but by then the tonic has moved by an amount that is no fraction of anything: the second lap is not the first.",
+    "g.der1": "Beneath the eight lines runs a time slower than all the others. The harmony modulates: the field of pitches moves around the circle of <em class=\"amb\">fifths</em> every two and a half minutes exactly, and from one collection to the next a single note in five changes — the smallest step that exists between two consonant collections. That is why the change has no audible edge: you notice it afterwards, like light changing in a room. The when is regular, so that whoever is playing along can count it down; it is the where that stays unpredictable, because the direction — up or down a fifth — comes from a sequence built on the golden ratio, which never repeats. The circle drifts round slowly instead of marching.",
     "g.der2": "The material renews itself too, one drop at a time: from moment to moment the phrase is still itself, and a few minutes later none of it is left — with no instant you could point to as the change. The renewal times, like the drift rates, stand in <i>irrational</i> ratios: the idea of coprime periods, raised one storey, and it guarantees the piece never passes exactly where it has already been.",
-    "g.der3": "The orange line above the reticle keeps count: how many steps of a fifth, how many cents of drift. In pause the drift waits — on resuming, the piece picks up from where it was; it does not run in secret.",
+    "g.der3": "The orange line above the reticle says how many steps have been taken and, above all, <em>what key you are in right now</em>. In pause the drift waits — on resuming, the piece picks up from where it was; it does not run in secret.",
+    "g.der4": "The centre of gravity is the continuous movement instead: the pitches stay put, what slides slowly is the point they are drawn around. It is what you hear as music rising and falling with no moment you could point to, and it is the wavy line in the strip at the foot of the page.",
+
+    "g.tune.t": "Playing along",
+    "g.tune1": "Rada2 is <em class=\"amb\">in tune</em>, and exactly so: the field is built from A440 and every note is an equal-temperament note, with no deviation. You can pick up an instrument and accompany it.",
+    "g.tune2": "You need two things, and both are in the line at the top left: the current key, and the fact that the change arrives every two and a half minutes, always. There are five notes — the major pentatonic of that key — so anything you play within those five agrees with everything else.",
+    "g.tune3": "There is a price, and it is fair to know it. With fixed tuning the possible pitches are a finite set, and all twelve keys will come round again, many times. What never passes twice is the state of the piece — where the centre of gravity sits, how the lines are phased, what material the phrases are made of — not the pitch of the notes. Tuning used to slide, and the non-return was absolute; but nobody could play along.",
 
     "g.ret.t": "The reticle",
     "g.ret1": "The eight lines are concentric rings of a single instrument: the phrases inside, the weaves outside, one centre. Drops are notches across the ring, and their <em>length is the register</em> — short low, long high: the melodic profile of each idea can be read at a glance. Weaves are arcs, because they last; an <em class=\"amb\">amber</em> dot travels each ring, and it is the phase you are hearing.",
@@ -336,7 +354,7 @@ const GUIDA = {
 
   ja: {
     "g.title":        "Rada · 手引き",
-    "meta.description": "Rada2の仕組みと使い方。互いに素な周期を持つ八つの線と、二度と戻らないゆっくりとした漂流。",
+    "meta.description": "Rada2の仕組みと使い方。互いに素な周期を持つ八つの線、ゆっくりとした漂流、そして上で弾ける固定された調律。",
     "g.back":         "Radaを聴く",
 
     "g.open1": "Ra<em class=\"amb\">d</em>aは、窓の外を眺めながら自分の記憶のなかに佇んでいられる音の空間です。この空間では、自分の注意を手入れすることができます。織りの響きは触れるような感覚を生み、聞こえてくる滴は引き伸ばされた時間のなかに落ちて、そのあいだに「いま自分はどう感じているだろう」と問いかけることができます。聴くことは育てていく営みであり、それ自体の詩学と力の場を持つひとつの土地です。Ra<em class=\"amb\">d</em>aは、騒音の大洋の岸辺にある、静かな入り江です。滴と滴のあいだに、語る沈黙が見つかります。それに耳を澄ませてください。",
@@ -354,9 +372,15 @@ const GUIDA = {
 
     "g.der.t":     "漂流",
     "g.der.badge": "√2 · √3 · √5 · √7 · √11",
-    "g.der1": "八つの線の下には、どれよりも遅い時間が流れていて、後戻りしません。和声は移ろいます。音高の場は<em class=\"amb\">五度</em>圏の上を、およそ二分半にひと歩みずつ回り、ひとつの集合から次の集合へ変わる音は五つのうち一つだけ——協和する二つの集合のあいだに存在する、いちばん小さな歩みです。だから変化には聞こえる縁がありません。部屋の光が変わるときのように、あとになって気づくのです。そのあいだ主音は、数百セントの幅のなかを絶え間なく滑っていきます。十二歩で五度圏は一周しますが、主音はそのあいだに、何の分数にもならない量だけ動いています。二周目は一周目ではありません。",
+    "g.der1": "八つの線の下には、どれよりも遅い時間が流れています。和声は転調します。音高の場は<em class=\"amb\">五度</em>圏の上をきっかり二分半ごとに移り、ひとつの集合から次の集合へ変わる音は五つのうち一つだけ——協和する二つの集合のあいだに存在する、いちばん小さな歩みです。だから変化には聞こえる縁がありません。部屋の光が変わるときのように、あとになって気づくのです。「いつ」は規則的で、合わせて弾く人が数えられるようにしてあります。読めないのは「どこへ」のほうで、五度を上がるか下がるかの方向は黄金比から作られた、繰り返さない数列に委ねられています。",
     "g.der2": "素材もまた、一滴ずつ入れ替わっていきます。瞬間ごとにはまだ同じフレーズなのに、数分後にはどの滴も残っていません——そして、変わった瞬間を指させる時はどこにもなかったのです。入れ替わりの周期は、漂流の速さと同じく<i>無理数</i>の比に置かれています。互いに素な周期という発想をひとつ上の階へ持ち上げたもので、曲がかつて通った場所を正確に再び通ることはない、という保証です。",
-    "g.der3": "レティクルの上のオレンジの行が数えています。五度の歩みがいくつ、漂流が何セント。休止のあいだ漂流は待ちます——再開すると曲はいた場所から進み直し、隠れて走り続けることはありません。",
+    "g.der3": "レティクルの上のオレンジの行は、歩みがいくつ進んだかと、なにより<em>いまどの調にいるか</em>を告げます。休止のあいだ漂流は待ちます——再開すると曲はいた場所から進み直し、隠れて走り続けることはありません。",
+    "g.der4": "いっぽう重心は連続した運動です。音高は動かず、ゆっくり滑るのはそれを汲みとる中心のほうです。どの瞬間とも指させないまま音楽が昇り降りするように聞こえるのがこれで、下の帯の波打つ線がそれにあたります。",
+
+    "g.tune.t": "上で弾く",
+    "g.tune1": "Rada2は<em class=\"amb\">調律されて</em>います。しかも正確に。場はA440から作られ、どの音も平均律の音そのもので、ずれはありません。楽器を手に取って合わせることができます。",
+    "g.tune2": "必要なものは二つ、どちらも左上の行にあります。いまの調と、変化がつねに二分半ごとに来るということ。音は五つ——その調の長音階のペンタトニック——なので、その五つのなかで弾くかぎり、ほかのすべてと調和します。",
+    "g.tune3": "代償があり、知っておくのが公平です。調律が固定されている以上、ありうる音高は有限の集合であり、十二の調はすべて何度も巡ってきます。二度と通らないのは曲の状態——重心の位置、線どうしの位相、フレーズを成す素材——であって、音の高さではありません。以前は調律そのものが滑り、非回帰は絶対でした。けれども誰も上で弾けなかったのです。",
 
     "g.ret.t": "レティクル",
     "g.ret1": "八つの線は、ひとつの楽器の同心円の輪です。内側にフレーズ、外側に織り、中心はひとつ。滴は輪を横切る刻みで、その<em>長さが音域</em>です——短ければ低く、長ければ高い。それぞれの楽想の旋律の輪郭が、ひと目で読み取れます。織りは弧です。続くものだからです。そして<em class=\"amb\">オレンジ</em>の点がそれぞれの輪をめぐります。いま聴こえている位相です。",

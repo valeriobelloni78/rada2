@@ -10,16 +10,34 @@ pentatonica costruita una volta sola, e dopo un'ora lo strumento era
 esattamente dov'era all'inizio: imprevedibile e immobile. L'interfaccia lo
 dichiarava — «si ripete ogni ≈ 4,7 ore» era la promessa di non avere una forma.
 
-**Rada2 va da qualche parte e non torna.** Il pezzo ha un tempo proprio, molto
-più lento di quello delle frasi: l'armonia migra, la densità e il registro si
-spostano, e il materiale stesso si rinnova una goccia per volta. Non finisce e
-non culmina — non è un brano con una fine — ma non ripassa mai dove è già
-stato.
+**Rada2 va da qualche parte.** Il pezzo ha un tempo proprio, molto più lento di
+quello delle frasi: l'armonia modula, il registro si sposta, e il materiale
+stesso si rinnova una goccia per volta. Non finisce e non culmina — non è un
+brano con una fine — e il suo stato non ripassa mai dov'era.
+
+**E si può suonarci sopra.** L'accordatura è fissa, le modulazioni sono
+regolari e la tonalità corrente è dichiarata in interfaccia. È una scelta
+recente e ha un prezzo, scritto qui sotto: prima la tonica scivolava, ed era
+quello scivolamento a rendere il non-ritorno assoluto.
 
 **Rispondi sempre in italiano.** Commenti nel codice, messaggi di commit e
 testi dell'interfaccia sono in italiano.
 
 ## Regole da non violare
+
+**L'ACCORDATURA È FISSA, e questo viene prima di tutto il resto.** Il campo
+nasce sul do ricavato dal la 440 (`440 · 2^(−9/12)`, calcolato e non scritto a
+mano: `261.63` vale tre centesimi di scarto) e ogni altezza è una potenza
+esatta di due dodicesimi. **Rada2 va suonata sopra**, e questo è il vincolo che
+lo permette. Chi reintroduce un fattore non intero nella costruzione del campo
+rompe il patto — ed è già successo di proposito: fino al ramo precedente la
+tonica scivolava di ±350 centesimi, ed era quello a garantire il non-ritorno.
+
+**Con l'accordatura fissa il non-ritorno è più debole, e va detto.** Le altezze
+possibili sono un insieme FINITO, e nessun cammino in un insieme finito evita
+di ripassare: le dodici tonalità si rivedono tutte, molte volte. A non tornare
+è lo STATO — baricentro, fasi, materiale — non l'altezza delle note. Chi scrive
+i testi non deve promettere più di così.
 
 **La deriva non deve poter tornare, e la garanzia è un teorema.** Lo stato del
 pezzo è un punto su un toro: sei canali che girano a velocità in rapporto
@@ -36,6 +54,21 @@ pesata di tre canali (`misto`). Una sinusoide sola, per quanto lenta, si sente
 andare e tornare; tre incommensurabili no. E due parametri non devono
 condividere tutta la terna, altrimenti si muovono all'unisono e la deriva si
 riduce a una manopola sola tirata da una mano invisibile.
+
+**Il movimento continuo vive nel BARICENTRO, non nelle altezze.** `altezza(rel,
+spread)` in `deriva.js` è l'unico punto in cui si sceglie una frequenza, e ci
+passano entrambe le classi: il campo è fermo, a scorrere è il centro attorno a
+cui si pesca. I numeri sono incastrati — venticinque note, centro a 12,
+baricentro ±4, apertura ±8 — così `12 ± 4 ± 8` copre esattamente `0..24` e la
+selezione non sbatte mai contro gli estremi. **Cambiando uno dei tre va
+ricontrollata la somma**, o agli estremi le note si accatastano sulla stessa
+altezza.
+
+**Il passo di quinta è REGOLARE, e l'irregolarità sta nella direzione.** Ogni
+150 secondi esatti, perché chi accompagna deve poter contare quanto manca; la
+direzione — su o giù di una quinta — viene da una parola sturmiana su 1/φ, che
+non è periodica. In un verso o nell'altro cambia comunque una nota su cinque,
+quindi il passo resta inudibile come prima.
 
 **I periodi restano coprimi a due a due, ma non sono più la promessa.** Se due
 linee condividono un divisore tornano insieme presto e la trama collassa in un
@@ -221,7 +254,7 @@ proprio quando la coda sta svanendo.
 
 **Attenzione alle allocazioni nei cicli a 60 fps.** Niente nuovi buffer o
 array dentro `disegna`, che è il corpo del fotogramma. Vale anche per la
-storia della deriva: la tonica sta in un ANELLO preallocato (`derivaStoria`
+storia della deriva: il baricentro sta in un ANELLO preallocato (`derivaStoria`
 in `audio.js`, novecento campioni per mezz'ora), non in una coda — una coda
 a regime sposterebbe l'intero array a ogni campione, per sempre.
 
@@ -337,7 +370,7 @@ stato verificato su rada2).
 Le quattro direzioni visive di Rada sono state percorse dal reticolo e dalla
 fascia: l'altezza si legge nella lunghezza delle tacche, il collage negli
 anelli concentrici e nei legami effimeri, il tempo lungo nella corsia dei
-trenta minuti dove la tonica sedimenta. Restano aperte, in ordine di
+trenta minuti dove il baricentro sedimenta. Restano aperte, in ordine di
 interesse:
 
 1. **Estendere le palette al visivo.** L'ora e la stagione oggi agiscono solo

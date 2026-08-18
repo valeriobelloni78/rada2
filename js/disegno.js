@@ -170,11 +170,17 @@ function drawReticolo(s, now) {
     g.stroke();
   }
 
-  /* L'arco pesante della tonica, fuori da tutto: un giro intero è un'ottava,
-     quindi i suoi ±350 centesimi lo fanno rollare di ±105 gradi attorno al
-     nord. È il segno più lento della pagina — la deriva resa visibile come
-     un corpo che si sposta, non come un numero che cambia.                 */
-  const aTon = -Math.PI / 2 + derivaCents() / 1200 * Math.PI * 2;
+  /* L'arco pesante del baricentro, fuori da tutto: rolla attorno al nord
+     seguendo il punto attorno a cui le altezze vengono pescate — a destra il
+     pezzo sta alto, a sinistra sta basso. È il segno più lento della pagina,
+     la deriva resa visibile come un corpo che si sposta invece che come un
+     numero che cambia.
+
+     Prima qui c'era la tonica, che scivolava di ±350 centesimi. Da quando
+     l'accordatura è fissa quello scarto è sempre zero, e il movimento
+     continuo si è trasferito nel baricentro: l'arco ha cambiato significato
+     senza cambiare aspetto.                                               */
+  const aTon = -Math.PI / 2 + derivaCentro() * Math.PI * 0.55;
   g.strokeStyle = COL.ink;
   g.lineWidth = Math.max(2.5, R * 0.022);
   g.beginPath();
@@ -448,7 +454,7 @@ function drawFascia(s, now) {
   g.globalAlpha = 1;
   g.lineCap = "butt";
 
-  /* la corsia lunga: la tonica sedimenta la sua traiettoria. L'anello si
+  /* la corsia lunga: il baricentro sedimenta la sua traiettoria. L'anello si
      percorre dal campione più vecchio al più recente; un buco più largo di
      qualche passo — schermo bloccato — spezza la linea invece di mentire
      con un ponte dritto.                                                   */
@@ -468,7 +474,7 @@ function drawFascia(s, now) {
     const t = st.t[idx];
     if (t < now - DERIVA_FINESTRA) continue;
     const x = xLungo(t);
-    const y = yB - st.c[idx] / 350 * hB * 0.46;
+    const y = yB - st.c[idx] * hB * 0.46;
     if (!inLinea || t - tPrec > DERIVA_PASSO * 4) { g.moveTo(x, y); inLinea = true; }
     else g.lineTo(x, y);
     tPrec = t;

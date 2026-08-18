@@ -72,11 +72,25 @@ Ma questa promessa riguarda le **fasi**, non il pezzo: dice quando le linee torn
 
 Sotto le otto linee c'è un tempo più lento di tutti, e non torna indietro.
 
-L'armonia migra: il campo delle altezze gira sul circolo delle ==quinte==, un passo ogni due minuti e mezzo circa, e fra una collezione e la successiva cambia una nota su cinque — il passo più piccolo che esista fra due collezioni consonanti. Per questo il cambio non ha un bordo che si senta: te ne accorgi dopo, come della luce che cambia in una stanza. Intanto la tonica scivola con continuità, entro poche centinaia di centesimi. Dodici passi chiuderebbero il giro delle quinte, ma la tonica nel frattempo si è spostata di una quantità che non è frazione di nulla: il secondo giro non è il primo.
+L'armonia modula: il campo delle altezze si sposta sul circolo delle ==quinte== ogni due minuti e mezzo esatti, e fra una collezione e la successiva cambia una nota su cinque — il passo più piccolo che esista fra due collezioni consonanti. Per questo il cambio non ha un bordo che si senta: te ne accorgi dopo, come della luce che cambia in una stanza. Il quando è regolare, così chi accompagna può contare quanto manca; a non essere prevedibile è il dove, perché la direzione — su o giù di una quinta — viene da una successione costruita sulla sezione aurea, che non si ripete. Il giro circola lentamente invece di marciare.
 
 Anche il materiale si rinnova, una goccia per volta: momento per momento la frase è ancora quella, qualche minuto dopo non ne è rimasta nessuna — e non c'è stato un istante in cui si potesse indicare il cambio. I tempi del ricambio, come le velocità della deriva, stanno in rapporti *irrazionali*: è la stessa idea dei periodi coprimi, salita di un piano, e garantisce che il pezzo non ripassi mai esattamente dove è già stato.
 
-La riga arancione sopra il reticolo tiene il conto: quanti passi di quinta, quanti centesimi di deriva. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era, non corre di nascosto.
+La riga arancione sopra il reticolo dice quanti passi sono stati fatti e, soprattutto, **in che tonalità sei adesso**. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era, non corre di nascosto.
+
+Il baricentro è invece il movimento continuo: le altezze restano ferme, a scorrere piano è il punto attorno a cui vengono pescate. È quello che senti come una musica che sale e scende senza che si possa indicare il momento, ed è la linea ondulata nella fascia in fondo.
+
+---
+
+## [riquadro 3a-bis — Suonarci sopra]
+
+**Titolo:** Suonarci sopra
+
+Rada2 è ==accordata==, e lo è esattamente: il campo nasce dal la a 440 e ogni nota è una nota del temperamento equabile, senza scarti. Puoi prendere uno strumento e accompagnarla.
+
+Ti servono due cose, e le trovi nella riga in alto a sinistra: la tonalità corrente, e il fatto che il cambio arriva ogni due minuti e mezzo, sempre. Le note sono cinque — la pentatonica maggiore di quella tonalità — quindi qualunque cosa suoni dentro quelle cinque va d'accordo con tutto il resto.
+
+C'è un prezzo, ed è giusto conoscerlo. Con l'accordatura ferma le altezze possibili sono un insieme finito, e le dodici tonalità torneranno tutte, molte volte. A non ripassare mai è lo stato del pezzo — dove sta il baricentro, come sono sfasate le linee, di che materiale sono fatte le frasi — non l'altezza delle note. Prima l'accordatura scivolava e il non-ritorno era assoluto; nessuno però poteva suonarci sopra.
 
 ---
 
@@ -86,7 +100,7 @@ La riga arancione sopra il reticolo tiene il conto: quanti passi di quinta, quan
 
 Le otto linee sono anelli concentrici di un solo strumento: le frasi all'interno, i tessuti all'esterno, un centro solo. Le gocce sono tacche che attraversano l'anello, e la loro **lunghezza è il registro** — corta grave, lunga acuta: il profilo melodico di ogni idea si legge a colpo d'occhio. I tessuti sono archi, perché durano; un punto ==arancione== percorre ogni anello, ed è la fase che stai sentendo.
 
-Sul bordo gira il tempo lungo: dodici tacche per il circolo delle quinte, con la posizione corrente marcata, e un arco pesante che rolla lentissimo con la tonica — un giro intero è un'ottava. È il segno più lento della pagina.
+Sul bordo gira il tempo lungo: dodici tacche per il circolo delle quinte, con la posizione corrente marcata, e un arco pesante che rolla lentissimo con il baricentro — a destra il pezzo sta alto, a sinistra basso. È il segno più lento della pagina.
 
 Il reticolo si guarda e basta: tutti i comandi stanno nelle due righe di colonna accanto, dallo stesso lato delle loro etichette dentro il disegno.
 
@@ -356,7 +370,7 @@ Ai tessuti parla invece la stagione: l'autunno raccoglie appena il registro e al
 
 Sotto il reticolo scorrono due righe del tempo, ciascuna col suo cartello. La prima contiene gli ultimi trenta secondi di tutte e otto le linee: ogni tacca è una goccia, ogni segmento un tessuto che dura — pieno finché suona, puntini quando ha finito. È il modo più diretto per vedere lo sfasamento reale. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
 
-La seconda contiene gli ultimi trenta minuti: la traiettoria della tonica che sedimenta piano, e i passi di quinta che cadono come croci. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
+La seconda contiene gli ultimi trenta minuti: la traiettoria del baricentro che sedimenta piano, e i passi di quinta che cadono come croci, regolarmente spaziate. All'apertura è vuota — si riempie ascoltando, ed è la memoria della sessione.
 
 ---
 
@@ -400,4 +414,4 @@ Titolo della scheda del browser: Rada · Guida
 Descrizione per le anteprime social, in inglese come nell'interfaccia
 principale, perché i crawler la leggono prima che il JavaScript giri:
 
-How Rada2 works and how to use it: eight lines with coprime periods, and a slow drift that never comes back.
+How Rada2 works and how to use it: eight lines with coprime periods, a slow drift, and fixed tuning you can play along with.

@@ -56,8 +56,9 @@ const STRINGS = {
     "status.stopped":   "{state} · {when}, palette {palette}",
     "status.playing":   "in ascolto · {when}, palette {palette}",
     "realign":          "le fasi tornano ogni ≈ {t}",
-    "deriva":           "deriva · {q} quinte · {c}",
-    "deriva.uno":       "deriva · {q} quinta · {c}",
+    "deriva":           "deriva · {q} quinte · {k}",
+    "deriva.uno":       "deriva · {q} quinta · {k}",
+    tonalita: ["Do","Do♯","Re","Mi♭","Mi","Fa","Fa♯","Sol","La♭","La","Si♭","Si"],
     "unit.sep":         " ",
     "unit.min":         "min",
     "unit.hours":       "ore",
@@ -112,8 +113,9 @@ const STRINGS = {
     "status.stopped":   "{state} · {when}, palette {palette}",
     "status.playing":   "à l'écoute · {when}, palette {palette}",
     "realign":          "les phases reviennent tous les ≈ {t}",
-    "deriva":           "dérive · {q} quintes · {c}",
-    "deriva.uno":       "dérive · {q} quinte · {c}",
+    "deriva":           "dérive · {q} quintes · {k}",
+    "deriva.uno":       "dérive · {q} quinte · {k}",
+    tonalita: ["Do","Do♯","Ré","Mi♭","Mi","Fa","Fa♯","Sol","La♭","La","Si♭","Si"],
     "unit.sep":         " ",
     "unit.min":         "min",
     "unit.hours":       "heures",
@@ -168,8 +170,9 @@ const STRINGS = {
     "status.stopped":   "{state} · {when}, {palette} palette",
     "status.playing":   "playing · {when}, {palette} palette",
     "realign":          "phases return every ≈ {t}",
-    "deriva":           "drift · {q} fifths · {c}",
-    "deriva.uno":       "drift · {q} fifth · {c}",
+    "deriva":           "drift · {q} fifths · {k}",
+    "deriva.uno":       "drift · {q} fifth · {k}",
+    tonalita: ["C","C♯","D","E♭","E","F","F♯","G","A♭","A","B♭","B"],
     "unit.sep":         " ",
     "unit.min":         "min",
     "unit.hours":       "hours",
@@ -224,8 +227,9 @@ const STRINGS = {
     "status.stopped":   "{state} · {when}、{palette}のパレット",
     "status.playing":   "再生中 · {when}、{palette}のパレット",
     "realign":          "位相は約{t}で一巡",
-    "deriva":           "漂流 · 5度{q} · {c}",
-    "deriva.uno":       "漂流 · 5度{q} · {c}",
+    "deriva":           "漂流 · 5度{q} · {k}",
+    "deriva.uno":       "漂流 · 5度{q} · {k}",
+    tonalita: ["C","C♯","D","E♭","E","F","F♯","G","A♭","A","B♭","B"],
     "unit.sep":         "",     // il giapponese non stacca il numero dall'unità
     "unit.min":         "分",
     "unit.hours":       "時間",
@@ -323,6 +327,10 @@ const moodName    = id => (STRINGS[lang].mood    || {})[id] || id;
 const droneMoodName = id => (STRINGS[lang].droneMood || {})[id] || id;
 const paletteName = id => (STRINGS[lang].palette || {})[id] || id;
 const seasonName  = id => (STRINGS[lang].season  || {})[id] || id;
+/* Il nome della tonalità: il modello espone un indice da 0 a 11, le parole
+   stanno qui — "Sol", "G" e "Ré" sono la stessa cosa in tre lingue. Stesso
+   principio dei mood e delle palette.                                    */
+const tonalitaName = i => (STRINGS[lang].tonalita || [])[i] || "";
 
 /* --- cache per il canvas --------------------------------------------------
    Le etichette dei quadranti non cambiano mai fra un fotogramma e l'altro:

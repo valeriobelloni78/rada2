@@ -1,12 +1,15 @@
 # Rada2
 
-**Un pezzo che non finisce, non culmina, e non ripassa mai dove è già stato.**
+**Un pezzo che non finisce, non culmina, e su cui si può suonare.**
 
 Rada2 è uno strumento generativo che vive nel browser, ramo divergente di
 [Rada](https://github.com/valeriobelloni78/rada). Non riproduce un brano
 registrato: costruisce il suono in tempo reale — e, a differenza di Rada,
-va da qualche parte. L'armonia migra, il materiale si rinnova una goccia per
+va da qualche parte. L'armonia modula, il materiale si rinnova una goccia per
 volta, e dopo un'ora lo strumento non è dov'era.
+
+**L'accordatura è fissa e la tonalità è dichiarata**, così ci si può prendere
+uno strumento e accompagnarlo.
 
 → **[Ascolta Rada2](https://valeriobelloni78.github.io/rada2/)** · [Guida](https://valeriobelloni78.github.io/rada2/guida.html)
 
@@ -25,13 +28,14 @@ strumento restava immobile — stessa scala, stessi parametri, stesse quattro
 frasi per ore. Rada2 aggiunge il **tempo lungo**, molto più lento di quello
 delle frasi, e su di esso tre movimenti:
 
-- **L'armonia migra.** Il campo delle altezze gira sul circolo delle quinte,
-  un passo ogni due minuti e mezzo circa; fra una collezione e la successiva
-  cambia una nota su cinque, il passo più piccolo che esista fra due collezioni
-  consonanti, e il cambio non ha un bordo udibile. Intanto la tonica scivola
-  con continuità, entro poche centinaia di centesimi: dodici passi chiudono il
-  giro delle quinte, ma la tonica nel frattempo si è spostata di una quantità
-  che non è frazione di nulla, e il secondo giro non è il primo.
+- **L'armonia modula.** Il campo delle altezze si sposta sul circolo delle
+  quinte ogni due minuti e mezzo esatti — regolari, così chi accompagna può
+  contare quanto manca. Fra una collezione e la successiva cambia **una nota su
+  cinque**, il passo più piccolo che esista fra due collezioni consonanti: non
+  ha un bordo udibile, te ne accorgi dopo. A non essere prevedibile è la
+  direzione, su o giù di una quinta, presa da una successione costruita sulla
+  sezione aurea che non è periodica: il giro circola lentamente invece di
+  marciare, e passa e ripassa per le tonalità vicine come una modulazione vera.
 - **Il materiale si rinnova.** Ogni frase cambia una goccia per volta, a tempi
   incommensurabili fra le otto linee: momento per momento la frase è ancora
   quella, qualche minuto dopo non ne è rimasta nessuna — e non c'è stato un
@@ -40,11 +44,21 @@ delle frasi, e su di esso tre movimenti:
   canali che girano a velocità in rapporto √2 : √3 : √5 : √7 : √11 : 1 —
   razionalmente indipendenti, quindi per il teorema di Kronecker l'orbita è
   densa e non si chiude mai. La coprimalità fra interi, salita di un piano.
+  Fra questi c'è il **baricentro**: le altezze restano ferme e intonate, a
+  scorrere con continuità è il punto attorno a cui vengono pescate. Si sente
+  come una musica che sale e scende senza che si possa indicare il momento, ed
+  è lì che vive tutto il movimento continuo che prima stava nell'accordatura.
 
-L'interfaccia dichiara entrambe le promesse: la riga grigia dice quando le
+L'interfaccia dichiara tre cose in due righe: la riga grigia dice quando le
 **fasi** tornano nella stessa combinazione, la riga arancione dice quanta
-strada il **pezzo** ha fatto — quanti passi di quinta, quanti centesimi di
-deriva. La prima torna, la seconda no.
+strada il pezzo ha fatto — quanti passi di quinta — e **in che tonalità sei
+adesso**, che è ciò che serve per suonarci sopra.
+
+Una nota onesta sul non-ritorno: con l'accordatura fissa le altezze possibili
+sono un insieme finito, e le dodici tonalità si rivedono tutte, molte volte. A
+non tornare è lo *stato* — baricentro, fasi, materiale — non l'altezza delle
+note. È un non-ritorno più debole di quello che si avrebbe lasciando scivolare
+l'accordatura, ed è il prezzo scelto della suonabilità.
 
 ## Come si usa
 
@@ -76,12 +90,13 @@ temporale — e rigenerano le idee.
   arancioni percorrono gli anelli: sono le fasi udibili, lette dai cicli reali
   dello scheduler.
 - **Sul bordo, il tempo lungo**: dodici tacche per il circolo delle quinte con
-  la posizione corrente marcata, e un arco pesante che rolla con la tonica —
-  un giro intero è un'ottava. È il segno più lento della pagina.
+  la posizione corrente marcata, e un arco pesante che rolla col baricentro —
+  a destra il pezzo sta alto, a sinistra basso. È il segno più lento della
+  pagina.
 - **La fascia, due scale dichiarate**: gli ultimi 30 secondi delle otto linee
   (tacche per le gocce, segmenti per i tessuti — lo sfasamento reale, visto),
-  e gli ultimi 30 minuti della deriva, dove la tonica sedimenta la sua
-  traiettoria e i passi di quinta cadono come croci. All'apertura è vuota:
+  e gli ultimi 30 minuti della deriva, dove il baricentro sedimenta la sua
+  traiettoria e i passi di quinta cadono come croci, regolarmente spaziati. All'apertura è vuota:
   si riempie ascoltando.
 - Quando due gocce di frasi diverse suonano quasi insieme, un filo sottile le
   unisce per un istante attraverso gli anelli: è il collage còlto sul fatto.
@@ -122,6 +137,12 @@ radici quadrate di interi liberi da quadrati: con 1 sono linearmente
 indipendenti sui razionali, ed è questo — non una speranza — a garantire che
 l'orbita non si richiuda. Sostituirle con numeri qualunque perde il teorema.
 
+**L'accordatura è ancorata al la 440**, con il do di riferimento calcolato
+(`440 · 2^(−9/12)`) e non scritto a mano: il `261,63` che si legge ovunque è
+arrotondato, e quei due decimali valgono tre centesimi di semitono. Verificato
+numericamente su 864.000 altezze: scarto massimo dal temperamento equabile,
+zero.
+
 **La grafica usa l'API 2D del browser, su un solo canvas** che non ascolta
 nulla: l'interazione passa dagli elementi nativi, e la pagina scorre da sé.
 La palette è definita una volta sola, nelle variabili CSS di `style.css`:
@@ -159,12 +180,15 @@ questa.
 of [Rada](https://github.com/valeriobelloni78/rada). Eight lines (four phrases
 of drops, four sustained weaves) loop at pairwise-coprime periods, so they
 never meet the same way twice. That much is inherited; what's new is that the
-piece **goes somewhere and never comes back**: the harmonic field migrates
-around the circle of fifths one common-tone step at a time while the tonic
-drifts by a few hundred cents; each phrase renews itself one drop at a time;
-and register, density and clustering breathe on six channels whose rates are
-√2 : √3 : √5 : √7 : √11 : 1 — rationally independent, so by Kronecker's
-theorem the orbit never closes. An hour in, the instrument is somewhere else.
+piece **goes somewhere** — and that **you can play along with it**. The
+harmonic field modulates around the circle of fifths every 2½ minutes exactly,
+one common-tone step at a time, the direction taken from a non-periodic
+golden-ratio sequence; each phrase renews itself one drop at a time; and
+register, density and clustering breathe on six channels whose rates are
+√2 : √3 : √5 : √7 : √11 : 1 — rationally independent, so by Kronecker's theorem
+the orbit never closes. Tuning is fixed and anchored to A440 (verified to zero
+cents of deviation) and the current key is displayed, so an instrument can
+follow. An hour in, the piece is somewhere else.
 
 The display is a single reticle: eight concentric rings (tick length = pitch,
 arcs = held tones, amber dots = audible phase), the circle of fifths and a
