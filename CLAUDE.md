@@ -334,6 +334,32 @@ semplicemente non esiste: le regole `:lang(ja)` in `style.css` la
 ricostruiscono con corpo e 字間. (Il canvas non c'entra più: da quando le
 parole sono uscite dalla tela, il tracking del testo è affare del solo CSS.)
 
+**I tessuti suonano a livello di SEZIONE, non di singola tenuta.** Passano
+tutti da `tessutiBus`, e ogni tenuta porta soltanto un peso relativo: il
+volume lo decide il bus, che divide per la **radice** del numero di tenute
+aperte. Due sinusoidi di frequenza diversa sono scorrelate e si sommano in
+potenza, non in ampiezza — misurato: quattro tenute facevano +6,02 dB, cioè
+esattamente `10·log₁₀(n)`, e dividere per quattro invece che per due le
+avrebbe rese molto più silenziose di una sola.
+
+Tre dettagli, e ciascuno risolve un guaio che si sente:
+
+- **Si somma il peso degli inviluppi, non il numero delle tenute.** Contare le
+  teste abbasserebbe il bus di tre decibel nell'istante in cui una nuova
+  tenuta comincia ad aprirsi — quando ancora non si sente — e quella già in
+  corso farebbe un tuffo udibile. Col peso, la compensazione entra alla stessa
+  velocità con cui entra il suono: misurato, 0,018 dB per giro di scheduler.
+- **Il pavimento a uno tiene in piedi l'identità dei tessuti.** Sotto una
+  tenuta-equivalente il bus non alza niente, così una tenuta sola che affiora
+  conserva la sua salita lenta. Senza, la normalizzazione la spingerebbe
+  subito a volume pieno e «nulla attacca, tutto affiora» smetterebbe di essere
+  vero. **Chi toglie quel `Math.max(somma, 1)` uccide l'affioramento.**
+- **Il bersaglio non dipende da `tessutiOn`.** Spegnendo la classe le tenute
+  già prenotate si dissolvono da sé; portare il bus a zero le taglierebbe.
+
+L'Intreccio ora cambia la trama e non il volume, che è quello che il suo nome
+promette.
+
 **Nei tessuti lo scarto fra le due voci è ADDITIVO, non proporzionale.**
 Due sinusoidi distanti d hertz battono a d hertz qualunque sia la loro
 altezza; con uno scarto proporzionale i toni gravi batterebbero molto più

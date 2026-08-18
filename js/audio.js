@@ -11,7 +11,7 @@
    Catena: [gocce] → filtro passa-basso → (diretto + riverbero) → uscita
 ============================================================================= */
 
-let ctx = null, master, wetGain, dryGain, filt;
+let ctx = null, master, wetGain, dryGain, filt, tessutiBus;
 let running = false;                 // il motore sta suonando?
 
 /* Le due classi si accendono e si spengono da sole, ciascuna col pulsante del
@@ -173,6 +173,13 @@ function buildAudio() {
   filt.type = "lowpass";
   filt.frequency.value = 4000;
   filt.Q.value = 0.6;
+
+  /* I tessuti hanno un bus proprio prima del filtro, e serve a una cosa sola:
+     tenere la SEZIONE a livello costante invece che ogni singola tenuta.
+     Vedi `normalizzaTessuti`.                                             */
+  tessutiBus = ctx.createGain();
+  tessutiBus.gain.value = livelloTessuti();
+  tessutiBus.connect(filt);
 
   filt.connect(dryGain); dryGain.connect(master);
   filt.connect(riverbero.ingresso);
@@ -454,6 +461,66 @@ function schedule() {
   ricambiaClasse(droni, SPECIE_TENUTE, now);
 
   rinnovaSuQuinta(now);
+  normalizzaTessuti(now);
+}
+
+/* --- IL LIVELLO DEI TESSUTI ------------------------------------------------
+   I tessuti suonano a un volume PRESTABILITO, e quel volume è della sezione,
+   non della singola tenuta: che ne sia aperta una o quattro, lo sfondo pesa
+   uguale.
+
+   Prima non era così. Ogni tenuta portava il proprio volume e il motore audio
+   le sommava, quindi la sezione si alzava a ogni sovrapposizione: con
+   l'Intreccio alto lo sfondo saliva sopra le gocce, e la stessa musica
+   suonava a volumi diversi a seconda di quante tenute si accavallavano in
+   quell'istante. Un fondale che va e viene non è un fondale.
+
+   Ora il volume sta sul bus e ogni tenuta porta solo un PESO relativo. Il bus
+   divide per la RADICE del numero di tenute aperte, non per il numero: due
+   sinusoidi di frequenza diversa sono scorrelate, quindi si sommano in
+   potenza e non in ampiezza — quattro tenute fanno il doppio dell'ampiezza
+   efficace, non il quadruplo, e dividere per quattro le renderebbe molto più
+   silenziose di una sola.
+
+   IL CONTO NON È UN CONTEGGIO ma la somma degli inviluppi normalizzati: una
+   tenuta a un decimo del suo affioramento pesa un decimo. Contare le teste
+   farebbe abbassare il bus di tre decibel nell'istante in cui una nuova
+   tenuta comincia ad aprirsi — cioè quando ancora non si sente — e quella che
+   suonava già farebbe un tuffo udibile.
+
+   IL PAVIMENTO A UNO è la parte che tiene in piedi l'identità dei tessuti.
+   Sotto una tenuta-equivalente il bus non alza nulla: una tenuta sola che
+   affiora resta una tenuta sola che affiora, con la sua salita lenta intatta.
+   Senza quel pavimento la normalizzazione la spingerebbe subito a volume
+   pieno, e «nulla attacca, tutto affiora» smetterebbe di essere vero.       */
+function livelloTessuti() {
+  return 0.15 * (effD.liv / 100);
+}
+
+/* Quanto pesa una tenuta adesso, da 0 a 1: la sua stessa forma d'inviluppo,
+   ricalcolata qui invece che chiesta al motore audio — che una AudioParam non
+   la sa rileggere.                                                         */
+function pesoTenuta(ev, t) {
+  if (!(t >= ev.flash && t < ev.fino)) return 0;
+  const dentro = t - ev.flash, restano = ev.fino - t;
+  if (dentro  < ev.apri)   return dentro / ev.apri;
+  if (restano < ev.chiudi) return restano / ev.chiudi;
+  return 1;
+}
+
+function normalizzaTessuti(now) {
+  if (!tessutiBus) return;
+  let somma = 0;
+  for (const L of droni)
+    for (const p of L.plan) somma += pesoTenuta(p.ev, now);
+
+  /* Il bersaglio NON dipende da `tessutiOn`: spegnendo la classe le tenute
+     già prenotate continuano a dissolversi da sé, e portare il bus a zero le
+     taglierebbe di netto invece di lasciarle chiudere.                     */
+  const g = livelloTessuti() / Math.sqrt(Math.max(somma, 1));
+  /* Una costante di tempo di un quarto di secondo: rapida rispetto a un
+     affioramento che dura secondi, lenta abbastanza da non fare scalini. */
+  tessutiBus.gain.setTargetAtTime(g, now, 0.25);
 }
 
 /* --- il rinnovo alla modulazione -------------------------------------------
@@ -660,7 +727,10 @@ function playTone(when, ev, L) {
 
   const env = ctx.createGain();
   env.gain.value = 0;
-  const picco = 0.15 * (effD.liv / 100) * ev.vel;
+  /* Il picco della singola tenuta è ora un PESO RELATIVO, non un volume: dice
+     solo quanto questa pesa rispetto alle sue sorelle. Il volume della
+     sezione lo decide il bus, una volta per tutte.                        */
+  const picco = ev.vel;
 
   /* Apertura e chiusura non possono sommarsi a più della durata, altrimenti
      la tenuta non raggiunge mai il suo livello.                           */
@@ -673,11 +743,17 @@ function playTone(when, ev, L) {
   env.gain.setValueAtTime(picco, when + dur - chiudi);
   env.gain.linearRampToValueAtTime(0, when + dur);
 
+  /* L'affioramento e la dissolvenza EFFETTIVI, dopo l'eventuale correzione
+     qui sopra: li rilegge `normalizzaTessuti` per sapere a che punto è
+     ciascuna tenuta senza doverlo chiedere al motore audio.               */
+  ev.apri = apri;
+  ev.chiudi = chiudi;
+
   const pan = ctx.createStereoPanner();
   pan.pan.value = clamp(L.pan + (Math.random() * 2 - 1) * 0.12, -1, 1);
 
   a.connect(env); b.connect(env);
-  env.connect(pan); pan.connect(filt);
+  env.connect(pan); pan.connect(tessutiBus);
 
   const stop = when + dur + 0.05;
   a.start(when); a.stop(stop);
