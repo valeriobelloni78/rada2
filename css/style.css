@@ -147,6 +147,26 @@ h1 em{font-style:normal;color:var(--amber)}
 }
 .sotto .v{color:var(--amber)}
 
+/* La variante IN RIGA, per la guida, dove la testata è alta la metà e due
+   righe avrebbero pesato più del titolo di pagina. Qui «deriva» non si
+   allarga — non c'è una riga sopra da pareggiare — e prende la spaziatura
+   del nome, così i due pezzi hanno lo stesso passo. Il filo si rialza e
+   diventa verticale: stesso colore, stesso mestiere.
+
+   Il recupero della spaziatura di coda (il margine negativo del nome) qui
+   torna utile per un'altra ragione: senza, fra il 2 e il filo ci sarebbe lo
+   stacco più sei decimi di em, e il filo sembrerebbe appartenere a
+   «deriva» invece di stare fra i due.                                    */
+.logo.inRiga{flex-direction:row;align-items:center;gap:.42em}
+.logo.inRiga h1{padding-bottom:0}
+.logo.inRiga .sotto{
+  border-top:0;
+  padding-top:0;
+  gap:.62em;
+  justify-content:flex-start;
+}
+.logoFilo{width:1px;height:.9em;background:var(--amber-filo);flex:none}
+
 .status{
   display:flex;
   align-items:center;
