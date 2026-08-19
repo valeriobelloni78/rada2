@@ -46,7 +46,22 @@
       <h1>Ra<em>d</em>a<span class="logoPunto" aria-hidden="true"></span>2</h1>
       <div class="sotto"><span>d</span><span>e</span><span>r</span><span>i</span><span class="v">v</span><span>a</span></div>
     </div>
-    <nav class="langs" id="langs" aria-label="Lingua"></nav>
+    <!-- A destra le lingue, e sotto il richiamo alla guida, separati da un
+         filo. Prima il richiamo stava in fondo alla pagina, dopo i comandi
+         dei tessuti: un collegamento che apre una scheda nuova non è un
+         comando dello strumento, e in coda lo si trovava solo scorrendo
+         tutto. Qui sta accanto alle lingue, che sono l'altra cosa che
+         riguarda la pagina e non il pezzo.
+
+         Scheda nuova: il collage sta suonando, e una navigazione qui lo
+         spegnerebbe perdendo la sessione in corso. Il ?da=strumento dice
+         alla guida che Rada è già aperta di là, così non offre di
+         riaprirla. -->
+    <div class="headLato">
+      <nav class="langs" id="langs" aria-label="Lingua"></nav>
+      <a class="docLink" href="guida.html?da=strumento" target="_blank" rel="noopener"
+         data-i18n="ui.guide" data-i18n-aria="ui.guideAria">Guida</a>
+    </div>
   </div>
 
   <!-- ------------------------------------------------------- lo strumento
@@ -163,14 +178,6 @@
 
   <div class="bar barDroni">
     <div class="moods" id="droniMoods"></div>
-  </div>
-
-  <div class="foot">
-    <!-- scheda nuova: il collage sta suonando, e una navigazione qui lo
-         spegnerebbe perdendo la sessione in corso. Il ?da=strumento dice alla
-         guida che Rada è già aperta di là, così non offre di riaprirla. -->
-    <a class="docLink" href="guida.html?da=strumento" target="_blank" rel="noopener"
-       data-i18n="ui.guide" data-i18n-aria="ui.guideAria">Guida</a>
   </div>
 
   <!-- ----------------------------------------------------------- la firma

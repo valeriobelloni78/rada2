@@ -426,7 +426,18 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 .barDroni{margin-top:24px}
 
 /* rimando alla guida, sotto i mood */
-.foot{margin-top:18px}
+/* Il richiamo alla guida, sotto le lingue e staccato da un filo. La nav si
+   allarga a tutta la colonna e porta il filo sul proprio bordo inferiore:
+   appeso al collegamento sarebbe stato lungo quanto la parola «Guida», e un
+   filo che separa deve arrivare da parte a parte di ciò che separa.
+   Il blocco si allinea a destra perché sta al bordo destro della pagina. */
+.headLato{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.headLato .langs{
+  align-self:stretch;
+  justify-content:flex-end;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--hair);
+}
 .docLink{
   font-family:var(--sans);font-weight:400;
   font-size:9px;letter-spacing:.16em;text-transform:uppercase;
