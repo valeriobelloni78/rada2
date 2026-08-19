@@ -201,6 +201,7 @@ function drawReticolo(s, now) {
   const g = cv2d;
   const cx = s.ret / 2, cy = s.ret / 2;
   const R = s.ret / 2 * 0.84;    // il margine ospita l'arco della tonica
+  misuraEtichette(g, R);         // solo quando il raggio cambia
 
   g.save();
   g.lineCap = "butt";
@@ -335,13 +336,53 @@ function arcoMisura(g, cx, cy, R, quota, colore, centro, accesa) {
   g.restore();
 }
 
+/* Le otto soglie del reticolo in ordine, più quella delle tacche delle
+   quinte: servono a sapere quanto spazio libero c'è FUORI da ciascun anello,
+   che è la banda dove va a stare il suo numerale.                        */
+const SOGLIE = [...ANELLI_FRASI, ...ANELLI_TESSUTI, R_QUINTE_IN];
+const STACCO_ETICH = new Float64Array(8);
+let etichR = -1;
+
+/* Lo stacco di ciascun numerale dal proprio anello, misurato UNA VOLTA per
+   ogni raggio. Dipende dalla larghezza del testo, e `measureText` dentro il
+   fotogramma sarebbe otto misure a sessanta al secondo per un dato che
+   cambia solo quando cambia la finestra.
+
+   Nominalmente è una frazione del RAGGIO GRANDE e non del proprio, come
+   tutte le proporzioni del disegno: preso sul raggio dell'anello sarebbe
+   tre volte più stretto sul primo che sull'ottavo. Ma se la banda fino alla
+   soglia successiva non basta a contenerlo, il numerale ci si centra dentro:
+   succede sui telefoni stretti, dove il corpo del testo tocca il suo minimo
+   di sette pixel e smette di rimpicciolirsi col reticolo. Senza questo,
+   sotto i 320 px di finestra il IV dei tessuti andava a finire sulle tacche
+   delle quinte.                                                          */
+function misuraEtichette(g, R) {
+  if (R === etichR) return;
+  etichR = R;
+  for (let k = 0; k < 8; k++) {
+    const r = SOGLIE[k] * R;
+    g.font = "400 " + Math.max(7, r * 0.05).toFixed(1) + "px " + fontPila();
+    const largo = g.measureText(CANVAS.linea[k % 4]).width;
+    const banda = (SOGLIE[k + 1] - SOGLIE[k]) * R;
+    STACCO_ETICH[k] = Math.max(1, Math.min(R * 0.014, (banda - largo) / 2));
+  }
+}
+
 /* L'etichetta di un anello: il numerale della linea, dal lato della sua
    colonna di comandi — le frasi a ovest, i tessuti a est. È il legame visivo
-   fra la riga che si tocca e l'anello che si guarda.                       */
-function etichettaAnello(g, testo, cx, cy, r, lato) {
+   fra la riga che si tocca e l'anello che si guarda.
+
+   Sta FUORI dal proprio anello, e cresce verso l'esterno. Prima era CENTRATA
+   sulla circonferenza — il fotogramma imposta textAlign "center" per tutti —
+   quindi ogni numerale aveva un filo che gli passava in mezzo, e a corpo
+   sette pixel un filo che attraversa una cifra la cancella: III e IV
+   diventavano la stessa macchia. Non basta scostarla, va anche riallineata:
+   lasciata al centro si sarebbe scostata per metà soltanto.              */
+function etichettaAnello(g, testo, cx, cy, r, k, lato) {
   g.fillStyle = COL.dust;
   g.font = "400 " + Math.max(7, r * 0.05).toFixed(1) + "px " + fontPila();
-  g.fillText(testo, cx + lato * r, cy - 7);
+  g.textAlign = lato < 0 ? "right" : "left";
+  g.fillText(testo, cx + lato * (r + STACCO_ETICH[k]), cy - 7);
 }
 
 function drawAnelloFrase(g, L, cx, cy, r, R, now) {
@@ -397,7 +438,7 @@ function drawAnelloFrase(g, L, cx, cy, r, R, now) {
     g.fill();
   }
 
-  etichettaAnello(g, CANVAS.linea[L.i], cx, cy, r, -1);
+  etichettaAnello(g, CANVAS.linea[L.i], cx, cy, r, L.i, -1);
   g.restore();
 }
 
@@ -454,7 +495,7 @@ function drawAnelloTessuto(g, L, cx, cy, r, R, now) {
     g.fill();
   }
 
-  etichettaAnello(g, CANVAS.linea[L.i], cx, cy, r, +1);
+  etichettaAnello(g, CANVAS.linea[L.i], cx, cy, r, 4 + L.i, +1);
   g.restore();
 }
 
