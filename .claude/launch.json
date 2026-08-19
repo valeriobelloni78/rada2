@@ -4,7 +4,9 @@
     {
       "name": "rada2",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["/private/tmp/claude-501/-Users-valeriobelloni-Documents-rada2/39f1051b-e342-47ce-ac66-9a058bfbb786/scratchpad/serve.js"],
+      "runtimeArgs": [
+        "/private/tmp/claude-501/-Users-valeriobelloni-Documents-rada2/13fff62f-fbd3-4ec4-9ccd-8f98ba91e706/scratchpad/serve.js"
+      ],
       "port": 8777,
       "autoPort": true
     }

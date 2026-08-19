@@ -21,6 +21,7 @@
   --scelto:#55564c;  /* fondo dei bottoni scelti: scuro, ma non inchiostro */
   --amber:#c25a2b;   /* unico accento */
   --glow:rgba(194,90,43,.18);
+  --amber-filo:rgba(194,90,43,.34); /* il filo del marchio, l'accento smorzato */
   --sans:"Helvetica Neue",-apple-system,system-ui,"Segoe UI",Roboto,Arial,sans-serif;
 }
 
@@ -80,7 +81,71 @@ h1{
   line-height:1;
   text-transform:uppercase;
 }
-h1 em{font-style:normal;font-weight:600;color:var(--amber)}
+h1 em{font-style:normal;color:var(--amber)}
+
+/* Il marchio a due righe, uno solo per le due pagine — la testata e il
+   cancello — che differiscono per il solo corpo. La colonna prende la misura
+   dalla riga più larga, il nome, e la seconda riga la riempie: è così che
+   «deriva» finisce larga esattamente quanto RADA 2 a qualunque corpo.
+
+   Il corpo si dichiara QUI e non sulle due righe: le due devono restare
+   solidali, e due clamp scritti a parte si sfaserebbero al primo ritocco. */
+.logo{
+  display:flex;flex-direction:column;
+  /* Lo stacco vive tutto sotto il filo (padding-top di .sotto): qui è zero
+     perché il letter-spacing del nome lascia già sotto la linea di base il
+     vuoto delle discendenti, che di maiuscole non ne ha nessuna.        */
+  gap:0;
+  font-size:clamp(21px,4.6vw,26px);
+}
+.logo h1,
+.logo h2{
+  font-size:inherit;
+  white-space:nowrap;
+  /* Il letter-spacing lascia una spaziatura anche DOPO l'ultimo segno. Senza
+     questo recupero la colonna sarebbe più larga di quanto si vede e
+     «deriva» sborderebbe a destra di sei decimi di em. Scritto come
+     abbreviazione perché .gate h2{margin:0} viene dopo nel foglio e con la
+     stessa specificità: un margin-right isolato lo perderebbe.            */
+  margin:0 -.62em 0 0;
+  /* Il filo va a metà fra la linea di base del nome e la testa delle
+     ascendenti di «deriva», e i due vuoti non sono uguali di natura: sotto le
+     maiuscole la casella lascia già poco, sopra le minuscole molto. Misurati
+     a 26 px: 3,5 px contro 8,6. Questi due ritocchi li pareggiano a 6,0.  */
+  padding-bottom:.1em;
+}
+
+.logoPunto{
+  display:inline-block;
+  width:.28em;height:.28em;border-radius:50%;
+  background:var(--amber);
+  vertical-align:.21em;
+  /* il letter-spacing separa i CARATTERI e non lascia nulla dopo un blocco
+     in linea: senza questo il 2 si appoggerebbe al pallino mentre tutte le
+     altre distanze restano di sei decimi di em. */
+  margin-right:.62em;
+  animation:pulse 2.6s ease-in-out infinite;
+}
+
+/* Stesso corpo del nome, peso da display e grigio medio: la seconda riga si
+   legge come secondaria per il peso e per il minuscolo, non per la scala —
+   a corpo diverso i due passi non si accorderebbero.                      */
+.sotto{
+  margin:0;
+  /* Il filo sta QUI e non sotto il nome: la casella del nome è più larga di
+     quanto si vede — è il recupero della spaziatura di coda — e la riga
+     sborderebbe a destra del 2. Questa invece è larga esattamente quanto il
+     marchio, e in em perché la distanza dal filo deve seguire il corpo. */
+  border-top:1px solid var(--amber-filo);
+  padding-top:.04em;
+  display:flex;
+  justify-content:space-between;
+  font-size:inherit;
+  font-weight:200;
+  line-height:1;
+  color:var(--ink-2);
+}
+.sotto .v{color:var(--amber)}
 
 .status{
   display:flex;
@@ -140,7 +205,12 @@ h1 em{font-style:normal;font-weight:600;color:var(--amber)}
    raro. Lo prende la deriva, che è la promessa di questo strumento; il
    riallineamento delle fasi resta — è l'eredità di Rada — ma in grigio.   */
 .realign{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dust)}
-#deriva{color:var(--amber)}
+/* Il conteggio delle quinte e la nota corrente stanno incolonnati: sono due
+   dati diversi — quanta strada e dove — e su una riga sola i puntini di
+   separazione li facevano sembrare un elenco di pari grado. Il blocco è suo
+   perché .cardHead serve anche alla guida, dove le testate sono a due poli. */
+.derivaBlocco{display:flex;flex-direction:column;gap:5px}
+.derivaBlocco .realign{color:var(--amber)}
 
 .strumento{
   display:grid;
@@ -411,12 +481,12 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
   transition:opacity .6s, visibility 0s .6s;
 }
 .gate.off{opacity:0;pointer-events:none;visibility:hidden}
+.gate .logo{font-size:clamp(24px,6vw,34px)}
 .gate h2{
-  margin:0;font-weight:300;
-  font-size:clamp(24px,6vw,34px);
+  font-weight:300;
   letter-spacing:.62em;text-transform:uppercase;line-height:1;
 }
-.gate h2 em{font-style:normal;font-weight:600;color:var(--amber)}
+.gate h2 em{font-style:normal;color:var(--amber)}
 .gate p{
   margin:0;max-width:34ch;
   font-size:14px;line-height:1.6;font-weight:300;
@@ -493,5 +563,6 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 /* chi preferisce meno movimento: si fermano le animazioni decorative */
 @media (prefers-reduced-motion:reduce){
   .status.live .pulse{animation:none}
+  .logoPunto{animation:none}
   .gate{transition:none}
 }

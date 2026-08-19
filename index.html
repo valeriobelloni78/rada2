@@ -32,7 +32,20 @@
        cima alla pagina, quella dei tessuti a metà — e da quando le due classi
        sono gemelle nel reticolo quell'asimmetria non si spiegava più.    -->
   <div class="head">
-    <h1>Ra<em>d</em>a</h1>
+    <!-- Il marchio è due righe. Sopra il nome, col pallino al posto
+         dell'asterisco: è lo stesso segno del punto che pulsa nella riga di
+         stato, ma qui non racconta niente — batte sempre, perché appartiene
+         al nome e non allo strumento.
+
+         Sotto, «deriva» allargata fino a coprire esattamente la larghezza
+         del nome. Le sei lettere sono elementi separati perché a
+         distribuirle è `space-between`, che dà la coincidenza esatta; un
+         letter-spacing indovinato a occhio andrebbe rincorso a ogni corpo,
+         e i corpi qui sono fluidi. -->
+    <div class="logo">
+      <h1>Ra<em>d</em>a<span class="logoPunto" aria-hidden="true"></span>2</h1>
+      <div class="sotto"><span>d</span><span>e</span><span>r</span><span>i</span><span class="v">v</span><span>a</span></div>
+    </div>
     <nav class="langs" id="langs" aria-label="Lingua"></nav>
   </div>
 
@@ -48,7 +61,10 @@
          pezzo intero e non una delle due classi. Il riallineamento delle
          fasi è sceso accanto ai comandi della classe di cui parla. -->
     <div class="cardHead">
-      <span class="realign" id="deriva">—</span>
+      <div class="derivaBlocco">
+        <span class="realign" id="quinte">—</span>
+        <span class="realign" id="nota">—</span>
+      </div>
     </div>
     <div class="strumento">
       <div class="colLinee colFrasi">
@@ -181,7 +197,13 @@
 <!-- Il cancello è una finestra modale vera: prima l'ingresso era un <div>,
      quindi non prendeva fuoco e chi naviga da tastiera restava chiuso fuori. -->
 <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
-  <h2 id="gateTitle">Ra<em>d</em>a</h2>
+  <!-- Stesso marchio della testata, e stesso meccanismo: il corpo si dichiara
+       una volta su .logo e le due righe lo ereditano, così qui — dove il nome
+       è più grande — «deriva» si allarga da sé fino a coprirlo. -->
+  <div class="logo">
+    <h2 id="gateTitle">Ra<em>d</em>a<span class="logoPunto" aria-hidden="true"></span>2</h2>
+    <div class="sotto"><span>d</span><span>e</span><span>r</span><span>i</span><span class="v">v</span><span>a</span></div>
+  </div>
   <p data-i18n="gate.text">Uno spazio sonoro nel quale si può indugiare nei propri ricordi mentre si guarda fuori dalla finestra.</p>
   <button class="enter" id="enter" type="button" data-i18n="gate.enter">Entra</button>
 </div>

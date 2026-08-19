@@ -30,21 +30,19 @@ function readouts() {
   /* La deriva sta qui e non in `onRealignChange` perché non ha un "cambio" da
      ascoltare: si muove sempre, e va riletta come si rilegge un cursore.
 
-     Due chiavi e non un plurale calcolato: la regola del dizionario è che le
-     frasi ci stiano intere. Il giapponese non distingue e ha la stessa
-     stringa due volte, che è il prezzo giusto da pagare — molto minore di un
-     motore di plurali per una parola sola.
+     Due dati su due righe. Il conteggio dice quanta strada, la nota dice
+     dove si è adesso, e la seconda è l'unica cosa che l'interfaccia dichiari
+     in termini musicali espliciti: ci sta perché Rada2 va suonata sopra, e a
+     chi accompagna un conteggio di passi non basta. Prima al suo posto
+     c'erano i centesimi di scarto della tonica, che con l'accordatura fissa
+     sono sempre zero.
 
-     La TONALITÀ sta qui accanto al contatore delle quinte, ed è l'unica cosa
-     che l'interfaccia dichiari in termini musicali espliciti. Ci sta perché
-     Rada2 va suonata sopra: chi accompagna deve sapere dove si trova, e un
-     conteggio di passi non glielo dice. Prima al suo posto c'erano i
-     centesimi di scarto della tonica, che con l'accordatura fissa sono
-     sempre zero.                                                         */
-  $("deriva").textContent = T(passiQuinta === 1 ? "deriva.uno" : "deriva", {
-    q: fmtInt(passiQuinta),
-    k: tonalitaName(tonalita()),
-  });
+     L'etichetta è invariabile, quindi qui non serve il plurale: era la sola
+     ragione per cui il dizionario teneva due chiavi. La nota non passa dal
+     dizionario perché non è una frase — è un nome, e i nomi delle dodici
+     tonalità sono già una tavola per lingua.                             */
+  $("quinte").textContent = T("quinte", { q: fmtInt(passiQuinta) });
+  $("nota").textContent   = tonalitaName(tonalita());
 }
 setInterval(readouts, 120);
 
