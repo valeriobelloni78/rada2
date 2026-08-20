@@ -57,6 +57,18 @@ const LINK_WINDOW  = 0.18;   // scarto massimo, in secondi, fra due gocce "vicin
    fenomeni. Vale anche per i tessuti, il cui attacco è lento: il lampo non
    dice «quanto ci mette ad aprirsi», dice «se n'è appena aperto uno».     */
 const LAMPO = 0.45;
+/* Il raggio del mirino, dove le otto linee si incontrano. Sta qui e non
+   dentro il disegno perché adesso lo usano in due: l'anello che lampeggia e
+   il filo che ci arriva. Se il filo partisse da un valore proprio, basterebbe
+   ritoccare l'anello per lasciarlo staccato o sovrapposto.               */
+const R_MIRINO = 0.045;
+/* Quanto resta il filo che lega una tenuta appena entrata al mirino.
+   NON è LAMPO, e la differenza è voluta: il lampo segna un istante e basta
+   che si veda, questo è un percorso che l'occhio deve seguire dal bordo al
+   centro per capire QUALE dei quattro anelli ha appena parlato. Mezzo
+   secondo non basta a farlo, e i due segni non sono la stessa cosa detta in
+   due posti — sono due cose diverse.                                     */
+const FILO_TENUTA = 1;
 
 let COL = {};                // palette letta dal CSS
 let holder = null, cvEl = null, cv2d = null;
@@ -87,6 +99,11 @@ let hotCount = 0;
    di quale tenuta mostrare l'avanzamento in arancione. Devono parlare della
    stessa, o le due letture dello stesso suono mentirebbero.               */
 let corrente = null;
+/* Dove sta la sua metà d'arco: l'angolo e la frazione di raggio del proprio
+   anello. Si registrano qui perché la scansione delle otto linee è già
+   questa, e perché sono i soli dati che il mirino non potrebbe ricavarsi —
+   l'evento non sa su quale anello viene disegnato.                        */
+let correnteAng = 0, correnteFr = 0;
 
 /* Vero nei LAMPO secondi che seguono l'apertura di un tessuto qualsiasi. Lo
    legge il mirino: il punto al centro lampeggia per le gocce, l'anello che lo
@@ -103,13 +120,22 @@ function aggiornaCorrente(now) {
   corrente = null;
   tessutoAppena = false;
   if (!tessutiOn) return;
-  for (const L of droni) {
+  for (let i = 0; i < droni.length; i++) {
+    const L = droni[i];
     if (L.muted) continue;
     for (const p of L.plan) {
       const ev = p.ev;
       if (!(now >= ev.flash && now < ev.fino)) continue;
       if (now - ev.flash < LAMPO) tessutoAppena = true;
-      if (!corrente || ev.flash > corrente.flash) corrente = ev;
+      if (!corrente || ev.flash > corrente.flash) {
+        corrente = ev;
+        /* La metà esatta dell'arco, con la stessa formula che lo disegna:
+           scritta due volte in due modi, il filo prima o poi punterebbe
+           altrove.                                                        */
+        correnteAng = -Math.PI / 2 +
+                      (p.ph + clamp(ev.dur, 0.02, 1) / 2) * Math.PI * 2;
+        correnteFr  = ANELLI_TESSUTI[i];
+      }
     }
   }
 }
@@ -280,6 +306,33 @@ function drawReticolo(s, now) {
 
   drawLinks(g, now);
 
+  /* IL FILO DELLA TENUTA. Per un secondo dall'apertura, un raggio lega la
+     metà esatta dell'arco al mirino: risponde alla domanda che l'anello
+     lampeggiante pone senza risolverla — «se n'è aperto uno», sì, ma quale?
+     Un tessuto si apre troppo lentamente perché l'orecchio lo localizzi, e
+     quattro anelli concentrici sono troppo simili perché l'occhio ci arrivi
+     da solo.
+
+     Non è un accento in più: è LO STESSO della tenuta arancione, prolungato
+     fino al centro. La regola dell'unico accento resta intera, perché la
+     tenuta arancione in tutta la pagina è una sola.
+
+     Svanisce col quadrato del tempo invece che linearmente: un filo che
+     attraversa mezzo reticolo resta visibile a lungo anche molto tenue, e
+     con la dissolvenza lineare l'ultimo terzo di secondo si trascinava.  */
+  if (corrente && now - corrente.flash < FILO_TENUTA) {
+    const t = (now - corrente.flash) / FILO_TENUTA;
+    const co = Math.cos(correnteAng), si = Math.sin(correnteAng);
+    g.strokeStyle = COL.amber;
+    g.lineWidth = 1;
+    g.globalAlpha = (1 - t) * (1 - t);
+    g.beginPath();
+    g.moveTo(cx + co * R_MIRINO * R,  cy + si * R_MIRINO * R);
+    g.lineTo(cx + co * correnteFr * R, cy + si * correnteFr * R);
+    g.stroke();
+    g.globalAlpha = 1;
+  }
+
   /* IL MIRINO: due segni concentrici per le due classi, nel punto in cui le
      otto linee si incontrano. Il punto al centro si accende con qualunque
      goccia; l'anello che lo circonda si accende quando un tessuto si apre.
@@ -292,7 +345,7 @@ function drawReticolo(s, now) {
   g.strokeStyle = tessutoAppena ? COL.amber : COL.hair;
   g.lineWidth = tessutoAppena ? 2 : 1;
   g.beginPath();
-  g.arc(cx, cy, R * 0.045, 0, Math.PI * 2);
+  g.arc(cx, cy, R_MIRINO * R, 0, Math.PI * 2);
   g.stroke();
   g.fillStyle = hotCount ? COL.amber : COL.hair;
   g.beginPath();

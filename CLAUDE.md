@@ -418,6 +418,23 @@ La durata del lampo è `LAMPO`, **una costante sola** per gocce, centro e
 anello: sono lo stesso segno detto in posti diversi, e tre valori li farebbero
 sembrare tre fenomeni.
 
+**Il filo della tenuta è l'unica eccezione, e ha una costante sua.** Per
+`FILO_TENUTA` secondi dall'apertura, un raggio arancione lega la metà esatta
+dell'arco al mirino. Risponde alla domanda che l'anello lampeggiante pone senza
+risolvere: «se n'è aperto uno», sì, ma *quale* — un tessuto si apre troppo
+lentamente perché l'orecchio lo localizzi, e quattro anelli concentrici sono
+troppo simili perché l'occhio ci arrivi da solo. Dura più di `LAMPO` perché
+**non è un lampo**: il lampo segna un istante e basta che si veda, questo è un
+percorso che l'occhio deve seguire dal bordo al centro. Non è nemmeno un accento
+in più — è lo STESSO della tenuta arancione, prolungato fino al centro, quindi
+la regola dell'unico accento resta intera.
+
+L'angolo si registra in `aggiornaCorrente` con la **stessa formula** che
+disegna l'arco: scritta due volte in due modi, il filo prima o poi punterebbe
+altrove. E il raggio del mirino è `R_MIRINO`, non un numero ripetuto: lo usano
+l'anello e il filo, e con due valori basterebbe ritoccare l'anello per lasciare
+il filo staccato o sovrapposto.
+
 **Le guide dei tessuti mostrano uno STATO, non una storia.** Le quattro corsie
 delle gocce scorrono e ricordano trenta secondi; le quattro guide dei tessuti
 sono ferme e dicono a che punto sono le tenute che suonano adesso, in
