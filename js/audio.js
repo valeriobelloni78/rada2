@@ -508,6 +508,8 @@ function pesoTenuta(ev, t) {
   return 1;
 }
 
+let ultimoBus = -1;
+
 function normalizzaTessuti(now) {
   if (!tessutiBus) return;
   let somma = 0;
@@ -518,6 +520,16 @@ function normalizzaTessuti(now) {
      già prenotate continuano a dissolversi da sé, e portare il bus a zero le
      taglierebbe di netto invece di lasciarle chiudere.                     */
   const g = livelloTessuti() / Math.sqrt(Math.max(somma, 1));
+  /* Solo se il bersaglio si è davvero mosso. Lo scheduler gira quaranta volte
+     al secondo e per lunghi tratti — pianoro di una tenuta sola, o silenzio —
+     il valore è identico: erano quaranta eventi al secondo infilati nella
+     lista di automazione del parametro per non cambiare niente. Un
+     mezzo per mille è 0,04 dB, ben sotto il percepibile — e il parametro
+     continua comunque a scorrere verso l'ultimo bersaglio con la sua
+     costante di tempo, quindi rinfrescarlo più di rado lo rende semmai più
+     liscio, non a scatti.                                                 */
+  if (Math.abs(g - ultimoBus) < g * 0.005) return;
+  ultimoBus = g;
   /* Una costante di tempo di un quarto di secondo: rapida rispetto a un
      affioramento che dura secondi, lenta abbastanza da non fare scalini. */
   tessutiBus.gain.setTargetAtTime(g, now, 0.25);
@@ -770,8 +782,20 @@ function playTone(when, ev, L) {
    Chiamata a ogni fotogramma da draw(): smussa i parametri e applica la
    palette oraria. Gira anche a motore spento, così i cursori rispondono
    subito.                                                                  */
+/* La smussatura è per FOTOGRAMMA, quindi dipende dalla cadenza: passando da
+   sessanta a trenta al secondo servono passi doppi, o i cursori si
+   muoverebbero alla metà della velocità di prima. Il conto è (1−a)² per il
+   vecchio a: 1 − 0,94² = 0,1164.                                          */
+const SMUSSO = 0.1164;
+
+/* Gli ultimi bersagli mandati al motore audio. `setTargetAtTime` non è
+   gratis — ogni chiamata inserisce un evento nella lista di automazione del
+   parametro — e qui ne partivano tre a ogni fotogramma anche quando i valori
+   non si muovevano di un millesimo, cioè quasi sempre. */
+let ultimoTaglio = -1, ultimoWet = -1, ultimoDry = -1;
+
 function tickParams() {
-  for (const k in GT) G[k] += (GT[k] - G[k]) * 0.06;
+  for (const k in GT) G[k] += (GT[k] - G[k]) * SMUSSO;
 
   /* Prima i valori efficaci, poi tutto il resto: da qui in giù nessuno deve
      più guardare i cursori nudi. */
@@ -795,9 +819,16 @@ function tickParams() {
 
   if (!ctx) return;
   const openness = clamp(45 + pal.toneBias, 0, 100);
-  filt.frequency.setTargetAtTime(600 * Math.pow(16, openness / 100), ctx.currentTime, 0.5);
-  wetGain.gain.setTargetAtTime(0.32 + effRev * 0.55, ctx.currentTime, 0.6);
-  dryGain.gain.setTargetAtTime(0.75 - effRev * 0.25, ctx.currentTime, 0.6);
+  const taglio = 600 * Math.pow(16, openness / 100);
+  const wet = 0.32 + effRev * 0.55;
+  const dry = 0.75 - effRev * 0.25;
+  /* Le soglie sono sotto il percepibile — un hertz sul taglio, un millesimo
+     sui due guadagni — quindi non si perde nessun movimento: si smette solo
+     di ripetere al motore audio un bersaglio che ha già.                  */
+  const now = ctx.currentTime;
+  if (Math.abs(taglio - ultimoTaglio) > 1)    { ultimoTaglio = taglio; filt.frequency.setTargetAtTime(taglio, now, 0.5); }
+  if (Math.abs(wet - ultimoWet) > 0.001)      { ultimoWet = wet;       wetGain.gain.setTargetAtTime(wet, now, 0.6); }
+  if (Math.abs(dry - ultimoDry) > 0.001)      { ultimoDry = dry;       dryGain.gain.setTargetAtTime(dry, now, 0.6); }
 }
 
 /* --- avvio / pausa --------------------------------------------------------

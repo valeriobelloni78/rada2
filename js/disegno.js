@@ -178,12 +178,27 @@ function canvasSize() {
 }
 
 /* ---------------------------------------------------------------------------
-   IL CICLO. Un solo `requestAnimationFrame` per tutta la pagina, sessanta
-   fotogrammi al secondo quando il motore gira e dodici quando è fermo. Le
-   soglie stanno appena SOTTO il periodo voluto — 1/61 e 1/13, non 1/60 e
+   IL CICLO. Un solo `requestAnimationFrame` per tutta la pagina, TRENTA
+   fotogrammi al secondo quando il motore gira e dodici quando è fermo.
+
+   Trenta e non sessanta, e il conto è questo: il codice del disegno costa un
+   decimo di millisecondo, la PITTURA ne costa tredici volte tanto — misurato
+   forzando la rasterizzazione, 1,29 ms contro 0,10 su una macchina veloce.
+   Su un telefono modesto quel numero si moltiplica, e a sessanta al secondo
+   arriva a occupare il fotogramma intero: la CPU resta satura, il thread
+   audio non viene servito in tempo e i buffer saltano. Dimezzare i
+   fotogrammi dimezza esattamente quella spesa.
+
+   E non si perde niente, perché qui non c'è niente di veloce da guardare: il
+   segno più rapido della pagina è il punto di fase sull'anello più interno,
+   che percorre 63 pixel al secondo — due pixel per fotogramma a trenta. I
+   lampi durano 0,45 s, cioè tredici fotogrammi. La fascia scorre 17 pixel al
+   secondo. Sessanta al secondo servivano a nessuno.
+
+   Le soglie stanno appena SOTTO il periodo voluto — 1/31 e 1/13, non 1/30 e
    1/12: i fotogrammi arrivano a passi discreti e una soglia esatta verrebbe
    mancata per frazioni di millisecondo, dimezzando il ritmo (misurato).    */
-const PASSO_VIVO  = 1000 / 61;
+const PASSO_VIVO  = 1000 / 31;
 const PASSO_FERMO = 1000 / 13;
 let ultimoFotogramma = 0;
 
@@ -248,15 +263,26 @@ function drawReticolo(s, now) {
   /* Il circolo delle quinte: dodici tacche sul bordo, la corrente marcata.
      `quinta` cresce senza tetto — il modulo la riporta sul quadrante, i
      giri interi li racconta il contatore nella testata.                    */
-  for (let k = 0; k < 12; k++) {
-    const corrente = k === ((quinta % 12) + 12) % 12;
-    const a = -Math.PI / 2 + k * Math.PI * 2 / 12;
-    g.strokeStyle = corrente ? COL.amber : COL.hair;
-    g.lineWidth = corrente ? 2 : 1;
-    const r0 = (corrente ? R_QUINTE_IN - 0.015 : R_QUINTE_IN) * R;
+  /* Le undici tenui in un tracciato solo e la corrente nell'altro: erano
+     dodici disegni separati per due soli stili.
+
+     La variabile si chiama `qui` e non `corrente`: quel nome, al livello di
+     sopra, è la tenuta arancione, e chiamarlo così qui dentro la copriva —
+     funzionava, ma è il tipo di ombra che si paga la prima volta che
+     qualcuno sposta due righe.                                           */
+  const quintaQui = ((quinta % 12) + 12) % 12;
+  for (let passata = 0; passata < 2; passata++) {
+    g.strokeStyle = passata ? COL.amber : COL.hair;
+    g.lineWidth   = passata ? 2 : 1;
     g.beginPath();
-    g.moveTo(cx + Math.cos(a) * r0,               cy + Math.sin(a) * r0);
-    g.lineTo(cx + Math.cos(a) * R_QUINTE_OUT * R, cy + Math.sin(a) * R_QUINTE_OUT * R);
+    for (let k = 0; k < 12; k++) {
+      const qui = k === quintaQui;
+      if (qui !== !!passata) continue;
+      const a = -Math.PI / 2 + k * Math.PI * 2 / 12;
+      const r0 = (qui ? R_QUINTE_IN - 0.015 : R_QUINTE_IN) * R;
+      g.moveTo(cx + Math.cos(a) * r0,               cy + Math.sin(a) * r0);
+      g.lineTo(cx + Math.cos(a) * R_QUINTE_OUT * R, cy + Math.sin(a) * R_QUINTE_OUT * R);
+    }
     g.stroke();
   }
 
@@ -458,23 +484,31 @@ function drawAnelloFrase(g, L, cx, cy, r, R, now) {
   /* le gocce: tacche radiali attraverso l'anello. La LUNGHEZZA segue il
      registro — corta grave, lunga acuta — ed è così che il profilo melodico
      dell'idea si legge senza una dimensione radiale da spendere.           */
+  /* DUE campiture, non una per tacca: le accese e le spente. Un tracciato
+     per goccia erano una cinquantina di disegni per fotogramma fra reticolo
+     e fascia, e ogni tracciato separato su un telefono costa una
+     tassellatura e una chiamata di disegno. Le tacche sono solo due stili —
+     accesa e spenta — quindi due passate sulla lista e due campiture.    */
   g.lineCap = "round";
-  for (const p of L.plan) {
-    const a = -Math.PI / 2 + p.ph * Math.PI * 2;
-    const dt = now - p.ev.flash;
-    const hot = dt >= 0 && dt < LAMPO;
-    const mezza = lerp(0.014, 0.042, (p.ev.rel + 1) / 2) * R * (hot ? 1.35 : 1);
-    const ux = Math.cos(a), uy = Math.sin(a);
-    g.strokeStyle = hot ? COL.amber : COL.ink;
-    g.lineWidth = hot ? 2.4 : 1.5;
+  for (let acceso = 0; acceso < 2; acceso++) {
+    g.strokeStyle = acceso ? COL.amber : COL.ink;
+    g.lineWidth   = acceso ? 2.4 : 1.5;
     g.beginPath();
-    g.moveTo(cx + ux * (r - mezza), cy + uy * (r - mezza));
-    g.lineTo(cx + ux * (r + mezza), cy + uy * (r + mezza));
-    g.stroke();
-    if (hot && hotCount < HOT_MAX) {
-      const o = hotPool[hotCount++];
-      o.x = cx + ux * r; o.y = cy + uy * r; o.t = p.ev.flash; o.loop = L.i;
+    for (const p of L.plan) {
+      const dt = now - p.ev.flash;
+      const hot = dt >= 0 && dt < LAMPO;
+      if (hot !== !!acceso) continue;
+      const a = -Math.PI / 2 + p.ph * Math.PI * 2;
+      const mezza = lerp(0.014, 0.042, (p.ev.rel + 1) / 2) * R * (hot ? 1.35 : 1);
+      const ux = Math.cos(a), uy = Math.sin(a);
+      g.moveTo(cx + ux * (r - mezza), cy + uy * (r - mezza));
+      g.lineTo(cx + ux * (r + mezza), cy + uy * (r + mezza));
+      if (hot && hotCount < HOT_MAX) {
+        const o = hotPool[hotCount++];
+        o.x = cx + ux * r; o.y = cy + uy * r; o.t = p.ev.flash; o.loop = L.i;
+      }
     }
+    g.stroke();
   }
   g.lineCap = "butt";
 
@@ -517,22 +551,32 @@ function drawAnelloTessuto(g, L, cx, cy, r, R, now) {
      alzandolo; lasciare un lampo di mezzo secondo, com'era prima, non diceva
      nulla su che cosa stia suonando adesso. Una per linea dice quante linee
      sono attive e quale suono è entrato per ultimo, e costa quattro archi.  */
-  for (const p of L.plan) {
-    const ev = p.ev;
-    const suona = now >= ev.flash && now < ev.fino;
-    const recente = ev === corrente;
-    const a0 = -Math.PI / 2 + p.ph * Math.PI * 2;
-    g.strokeStyle = recente ? COL.amber : suona ? COL.ink : COL.ink2;
-    /* Tratto in pixel assoluti, non in frazioni del raggio: sul reticolo R è
-       quattro volte quello dei vecchi quadranti, e la vecchia frazione
-       trasformava gli archi in fasce nere che coprivano tutto. Doppio
-       mentre suona: il colore dice QUALI stanno suonando, lo spessore lo
-       ribadisce a chi non distingue bene i colori.                        */
-    g.lineWidth = suona ? Math.max(3, R * 0.014) : 1;
-    g.globalAlpha = (spento ? 0.3 : 1) * (suona ? 1 : 0.5);
+  /* Tre stili, quindi TRE campiture e non una per arco: tacente, suonante,
+     e la più recente. Con l'Intreccio alto una linea può tenerne aperte
+     parecchie insieme, e ognuna era un disegno a sé.
+
+     Tratto in pixel assoluti, non in frazioni del raggio: sul reticolo R è
+     quattro volte quello dei vecchi quadranti, e la vecchia frazione
+     trasformava gli archi in fasce nere che coprivano tutto. Doppio mentre
+     suona: il colore dice QUALI stanno suonando, lo spessore lo ribadisce a
+     chi non distingue bene i colori.                                      */
+  for (let stile = 0; stile < 3; stile++) {          // 0 tacente, 1 suonante, 2 recente
+    g.strokeStyle = stile === 2 ? COL.amber : stile === 1 ? COL.ink : COL.ink2;
+    g.lineWidth   = stile ? Math.max(3, R * 0.014) : 1;
+    g.globalAlpha = (spento ? 0.3 : 1) * (stile ? 1 : 0.5);
     g.beginPath();
-    g.arc(cx, cy, r, a0, a0 + clamp(ev.dur, 0.02, 1) * Math.PI * 2);
-    g.stroke();
+    let qualcosa = false;
+    for (const p of L.plan) {
+      const ev = p.ev;
+      const suo = ev === corrente ? 2 : (now >= ev.flash && now < ev.fino) ? 1 : 0;
+      if (suo !== stile) continue;
+      const a0 = -Math.PI / 2 + p.ph * Math.PI * 2;
+      /* moveTo prima di ogni arco, o il tracciato li collega con una corda */
+      g.moveTo(cx + Math.cos(a0) * r, cy + Math.sin(a0) * r);
+      g.arc(cx, cy, r, a0, a0 + clamp(ev.dur, 0.02, 1) * Math.PI * 2);
+      qualcosa = true;
+    }
+    if (qualcosa) g.stroke();
   }
   g.globalAlpha = spento ? 0.3 : 1;
 
@@ -653,19 +697,26 @@ function drawFascia(s, now) {
 
   if (!ctx) { g.restore(); return; }
 
-  /* le gocce: tacche verticali, il segno di un istante */
+  /* le gocce: tacche verticali, il segno di un istante.
+
+     Anche qui DUE campiture e non una per tacca, ed è il punto in cui pesava
+     di più: la corsia tiene trenta secondi di gocce, che coi mood fitti sono
+     una cinquantina di tracciati per fotogramma — da soli, più della metà di
+     tutti i disegni della pagina.                                        */
   const xDi = t => lerp(right, left, (now - t) / TIMELINE_SEC);
-  for (const ev of dropHistory) {
-    const age = now - ev.t;
-    if (age < 0 || age > TIMELINE_SEC) continue;
-    const x = xDi(ev.t);
-    const ly = top + (ev.loop + 0.5) * laneH;
-    const hot = age < LAMPO;
-    const mezza = laneH * (hot ? 0.42 : 0.28);
-    g.strokeStyle = hot ? COL.amber : COL.ink2;
-    g.lineWidth = hot ? 1.6 : 1;
+  for (let acceso = 0; acceso < 2; acceso++) {
+    g.strokeStyle = acceso ? COL.amber : COL.ink2;
+    g.lineWidth   = acceso ? 1.6 : 1;
     g.beginPath();
-    g.moveTo(x, ly - mezza); g.lineTo(x, ly + mezza);
+    for (const ev of dropHistory) {
+      const age = now - ev.t;
+      if (age < 0 || age > TIMELINE_SEC) continue;
+      if ((age < LAMPO) !== !!acceso) continue;
+      const x = xDi(ev.t);
+      const ly = top + (ev.loop + 0.5) * laneH;
+      const mezza = laneH * (acceso ? 0.42 : 0.28);
+      g.moveTo(x, ly - mezza); g.lineTo(x, ly + mezza);
+    }
     g.stroke();
   }
 

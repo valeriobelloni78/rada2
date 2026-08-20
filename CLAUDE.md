@@ -314,11 +314,45 @@ storia della deriva: il baricentro sta in un ANELLO preallocato (`derivaStoria`
 in `audio.js`, un campione ogni due secondi), non in una coda — una coda
 a regime sposterebbe l'intero array a ogni campione, per sempre.
 
+**Si disegna a TRENTA fotogrammi al secondo, non a sessanta, e la ragione è
+il suono.** Il codice del disegno costa un decimo di millisecondo; la
+PITTURA ne costa tredici volte tanto — misurato forzando la rasterizzazione,
+1,29 ms contro 0,10 su una macchina veloce. Su un telefono quel numero si
+moltiplica e a sessanta al secondo arriva a occupare il fotogramma intero: la
+CPU resta satura, il thread audio non viene servito in tempo e i buffer
+saltano. È da lì che venivano i glitch su Android. Dimezzare i fotogrammi
+dimezza esattamente quella spesa, e non si perde niente: il segno più rapido
+della pagina è il punto di fase sull'anello più interno, 63 pixel al secondo,
+cioè due per fotogramma. **Chi rimette sessanta ricompra i glitch.**
+
 **Le soglie del ciclo stanno appena SOTTO il periodo voluto.** `PASSO_VIVO` è
-1/61 di secondo e `PASSO_FERMO` 1/13, non 1/60 e 1/12: i fotogrammi arrivano
+1/31 di secondo e `PASSO_FERMO` 1/13, non 1/30 e 1/12: i fotogrammi arrivano
 a passi discreti, e una soglia esatta verrebbe mancata per frazioni di
-millisecondo saltando un giro su due — trenta al secondo invece di sessanta.
-Misurato dopo la correzione: 12,0 fotogrammi al secondo a motore fermo.
+millisecondo saltando un giro su due. Misurato: intervallo mediano fra due
+disegni 33,3 ms a motore acceso, 12,0 fotogrammi al secondo a motore fermo.
+
+**La smussatura dei cursori è per FOTOGRAMMA, quindi dipende dalla cadenza.**
+`SMUSSO` in `audio.js` vale 0,1164 e non 0,06 perché i fotogrammi sono la
+metà: il conto è `1 − (1−0,06)²`. Chi cambia la cadenza ricalcoli anche
+questo, o i cursori si muovono al rallentatore.
+
+**Un disegno per oggetto è la spesa che conta, non il numero di oggetti.**
+Ogni tracciato separato costa una tassellatura e una chiamata di disegno, e
+su un telefono è lì che si perde il tempo. Le tacche delle gocce — sul
+reticolo e nella fascia — gli archi dei tessuti e le dodici tacche delle
+quinte si disegnano **raggruppati per stile**: due campiture per le tacche
+(accesa e spenta), tre per gli archi (tacente, suonante, la più recente), due
+per le quinte. Col mood più fitto i tracciati per fotogramma sono passati da
+166 a 41. Chi aggiunge segni ripetuti li raggruppi allo stesso modo — e metta
+un `moveTo` prima di ogni arco, o il tracciato li collega con una corda.
+
+**Nessuno ripeta al motore audio un bersaglio che ha già.** `setTargetAtTime`
+inserisce un evento nella lista di automazione del parametro, e `tickParams`
+ne sparava tre a ogni fotogramma — taglio del filtro, wet, dry — anche quando
+i valori non si muovevano di un millesimo, cioè quasi sempre. Ora partono solo
+se il bersaglio è cambiato: misurato, da 60 al secondo ciascuno a 0,02. Stessa
+guardia sul bus dei tessuti, che lo scheduler rinfrescava quaranta volte al
+secondo.
 
 **Le stringhe del canvas si preparano al cambio di lingua, non a ogni
 fotogramma.** La cache `CANVAS` è costruita una volta da `buildCanvasCache`;
