@@ -112,7 +112,7 @@ h1 em{font-style:normal;color:var(--amber)}
      ascendenti di «deriva», e i due vuoti non sono uguali di natura: sotto le
      maiuscole la casella lascia già poco, sopra le minuscole molto. Misurati
      a 26 px: 3,5 px contro 8,6. Questi due ritocchi li pareggiano a 6,0.  */
-  padding-bottom:.1em;
+  padding-bottom:.067em;
 }
 
 .logoPunto{
@@ -127,21 +127,23 @@ h1 em{font-style:normal;color:var(--amber)}
   animation:pulse 2.6s ease-in-out infinite;
 }
 
-/* Stesso corpo del nome, peso da display e grigio medio: la seconda riga si
-   legge come secondaria per il peso e per il minuscolo, non per la scala —
-   a corpo diverso i due passi non si accorderebbero.                      */
+/* La seconda riga è più minuta del nome e molto più spaziata. Le due cose
+   sono la stessa cosa: la larghezza è fissata dalla riga sopra, quindi ogni
+   punto di corpo tolto alle lettere finisce nei vuoti fra loro. Il corpo si
+   dichiara in em del marchio, non in pixel, così la proporzione fra le due
+   righe resta la stessa alla testata e al cancello.                       */
 .sotto{
+  font-size:.62em;
   margin:0;
   /* Il filo sta QUI e non sotto il nome: la casella del nome è più larga di
      quanto si vede — è il recupero della spaziatura di coda — e la riga
      sborderebbe a destra del 2. Questa invece è larga esattamente quanto il
      marchio, e in em perché la distanza dal filo deve seguire il corpo. */
   border-top:1px solid var(--amber-filo);
-  padding-top:.04em;
+  padding-top:.093em;
   display:flex;
   justify-content:space-between;
-  font-size:inherit;
-  font-weight:200;
+  font-weight:300;
   line-height:1;
   color:var(--ink-2);
 }
@@ -157,12 +159,16 @@ h1 em{font-style:normal;color:var(--amber)}
    torna utile per un'altra ragione: senza, fra il 2 e il filo ci sarebbe lo
    stacco più sei decimi di em, e il filo sembrerebbe appartenere a
    «deriva» invece di stare fra i due.                                    */
-.logo.inRiga{flex-direction:row;align-items:center;gap:.42em}
+.logo.inRiga{flex-direction:row;align-items:baseline;gap:.42em}
+.logo.inRiga .logoFilo{align-self:center}
 .logo.inRiga h1{padding-bottom:0}
 .logo.inRiga .sotto{
   border-top:0;
   padding-top:0;
-  gap:.62em;
+  /* Un em di QUESTO corpo, che è .62 di quello del nome: il vuoto fra le
+     lettere torna così uguale al letter-spacing del nome. Scritto .62em
+     seguirebbe il corpo rimpicciolito e il passo si stringerebbe.       */
+  gap:1em;
   justify-content:flex-start;
 }
 .logoFilo{width:1px;height:.9em;background:var(--amber-filo);flex:none}

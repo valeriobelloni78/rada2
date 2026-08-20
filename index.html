@@ -8,11 +8,17 @@
 <!-- Le anteprime social restano in inglese: i crawler leggono questi meta
      prima che il JavaScript giri, quindi qualunque lingua ci sia scritta qui
      è quella che appare quando si condivide il link. i18n.js li riscrive
-     comunque nella lingua corrente, per i motori che eseguono lo script. -->
-<meta name="description" content="Four sound phrases of different lengths that never come back together the same way. A generative instrument in the browser.">
+     comunque nella lingua corrente, per i motori che eseguono lo script.
+
+     Il testo è quello della soglia d'ingresso, tradotto: è la frase che dice
+     che cosa Rada è per chi ascolta, e non aveva senso che il link condiviso
+     ne annunciasse un'altra. Per lo stesso motivo `meta.description` in
+     i18n.js è la stessa frase, lingua per lingua — altrimenti il JavaScript
+     rimpiazzerebbe questa con una diversa un istante dopo. -->
+<meta name="description" content="A sound space where you can linger among your own memories while looking out of the window.">
 
 <meta property="og:title" content="Rada">
-<meta property="og:description" content="Four sound phrases of different lengths that never come back together the same way.">
+<meta property="og:description" content="A sound space where you can linger among your own memories while looking out of the window.">
 <meta property="og:type" content="website">
 
 <!-- favicon inline: il punto che pulsa. Data URI, così non c'è un file da

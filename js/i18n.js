@@ -26,7 +26,7 @@ const NNBSP = " ";
 const STRINGS = {
 
   it: {
-    "meta.description": "Quattro frasi sonore di lunghezza diversa che non tornano mai insieme allo stesso modo. Strumento generativo nel browser.",
+    "meta.description": "Uno spazio sonoro nel quale si può indugiare nei propri ricordi mentre si guarda fuori dalla finestra.",
     "ui.langNav":       "Lingua",
     "ui.guide":         "Guida",
     "ui.guideAria":     "Guida (si apre in una nuova scheda)",
@@ -90,7 +90,7 @@ const STRINGS = {
   },
 
   fr: {
-    "meta.description": "Quatre phrases sonores de longueurs différentes qui ne reviennent jamais ensemble de la même façon. Un instrument génératif dans le navigateur.",
+    "meta.description": "Un espace sonore où l'on peut s'attarder dans ses souvenirs en regardant par la fenêtre.",
     "ui.langNav":       "Langue",
     "ui.guide":         "Guide",
     "ui.guideAria":     "Guide (s'ouvre dans un nouvel onglet)",
@@ -154,7 +154,7 @@ const STRINGS = {
   },
 
   en: {
-    "meta.description": "Four sound phrases of different lengths that never come back together the same way. A generative instrument in the browser.",
+    "meta.description": "A sound space where you can linger among your own memories while looking out of the window.",
     "ui.langNav":       "Language",
     "ui.guide":         "Guide",
     "ui.guideAria":     "Guide (opens in a new tab)",
@@ -218,7 +218,7 @@ const STRINGS = {
   },
 
   ja: {
-    "meta.description": "長さの異なる四つの音のフレーズが、二度と同じかたちで重ならない。ブラウザで動く生成的な楽器。",
+    "meta.description": "窓の外を眺めながら、自分の記憶のなかに佇んでいられる音の空間。",
     "ui.langNav":       "言語",
     "ui.guide":         "手引き",
     "ui.guideAria":     "手引き（新しいタブで開きます）",
