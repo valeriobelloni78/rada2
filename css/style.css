@@ -218,7 +218,6 @@ h1 em{font-style:normal;color:var(--amber)}
 /* ------------------------------------------------------------ lo strumento
    Nessun bordo: il reticolo poggia sulla carta come in un disegno tecnico.
    Sopra, i due indicatori del tempo lungo; ai lati, le colonne di linea.  */
-.loopCard{padding:0}
 .cardHead{
   display:flex;
   justify-content:space-between;
@@ -451,7 +450,6 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 
 .barDroni{margin-top:24px}
 
-/* rimando alla guida, sotto i mood */
 /* Il richiamo alla guida, sotto le lingue e staccato da un filo. La nav si
    allarga a tutta la colonna e porta il filo sul proprio bordo inferiore:
    appeso al collegamento sarebbe stato lungo quanto la parola «Guida», e un

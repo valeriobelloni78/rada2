@@ -5,7 +5,8 @@
       "name": "rada2",
       "runtimeExecutable": "node",
       "runtimeArgs": [
-        "/private/tmp/claude-501/-Users-valeriobelloni-Documents-rada2/13fff62f-fbd3-4ec4-9ccd-8f98ba91e706/scratchpad/serve.js"
+        "-e",
+        "const h=require('http'),f=require('fs'),p=require('path');const R='/Users/valeriobelloni/Documents/rada2';const T={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};h.createServer((q,s)=>{let u=decodeURIComponent(q.url.split('?')[0]);let x=p.join(R,u==='/'?'index.html':u);if(!x.startsWith(R)){s.writeHead(403).end();return}f.readFile(x,(e,b)=>{if(e){s.writeHead(404).end('404');return}s.writeHead(200,{'content-type':T[p.extname(x)]||'application/octet-stream','cache-control':'no-store'});s.end(b)})}).listen(process.env.PORT||8777)"
       ],
       "port": 8777,
       "autoPort": true

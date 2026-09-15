@@ -11,9 +11,9 @@
 
    Sul bordo, il tempo lungo: dodici tacche per il circolo delle quinte con
    la posizione corrente marcata, e un arco pesante che rolla lentissimo con
-   la tonica — un giro intero è un'ottava. Sotto, la fascia: gli ultimi
-   trenta secondi di tutte le otto linee, e la corsia lunga dove la tonica
-   sedimenta la sua traiettoria sull'ultima mezz'ora.
+   il baricentro. Sotto, la fascia: gli ultimi trenta secondi delle gocce, lo
+   stato delle tenute in corso, e la corsia lunga dove il baricentro
+   sedimenta la sua traiettoria sull'ultimo quarto d'ora.
 
    IL CANVAS NON ASCOLTA NULLA. In Rada era una superficie di comando, con
    otto riquadri trasparenti a governare `touch-action` e un doppio binario
@@ -141,7 +141,9 @@ function aggiornaCorrente(now) {
 }
 
 const lerp = (a, b, t) => a + (b - a) * t;
-const fontPila = () =>
+/* Una stringa sola, non una funzione che la ricompone a ogni chiamata: la
+   leggono le etichette degli anelli, cioè otto volte per fotogramma.      */
+const FONT_PILA =
   '"Helvetica Neue", -apple-system, system-ui, Roboto, Arial, ' +
   '"Hiragino Sans", "Yu Gothic", "Noto Sans CJK JP", sans-serif';
 
@@ -262,7 +264,7 @@ function drawReticolo(s, now) {
 
   /* Il circolo delle quinte: dodici tacche sul bordo, la corrente marcata.
      `quinta` cresce senza tetto — il modulo la riporta sul quadrante, i
-     giri interi li racconta il contatore nella testata.                    */
+     giri interi li racconta il contatore sopra il reticolo.               */
   /* Le undici tenui in un tracciato solo e la corrente nell'altro: erano
      dodici disegni separati per due soli stili.
 
@@ -424,7 +426,7 @@ let etichR = -1;
 
 /* Lo stacco di ciascun numerale dal proprio anello, misurato UNA VOLTA per
    ogni raggio. Dipende dalla larghezza del testo, e `measureText` dentro il
-   fotogramma sarebbe otto misure a sessanta al secondo per un dato che
+   fotogramma sarebbe otto misure a ogni disegno per un dato che
    cambia solo quando cambia la finestra.
 
    Nominalmente è una frazione del RAGGIO GRANDE e non del proprio, come
@@ -440,7 +442,7 @@ function misuraEtichette(g, R) {
   etichR = R;
   for (let k = 0; k < 8; k++) {
     const r = SOGLIE[k] * R;
-    g.font = "400 " + Math.max(7, r * 0.05).toFixed(1) + "px " + fontPila();
+    g.font = "400 " + Math.max(7, r * 0.05).toFixed(1) + "px " + FONT_PILA;
     const largo = g.measureText(CANVAS.linea[k % 4]).width;
     const banda = (SOGLIE[k + 1] - SOGLIE[k]) * R;
     STACCO_ETICH[k] = Math.max(1, Math.min(R * 0.014, (banda - largo) / 2));
@@ -459,7 +461,7 @@ function misuraEtichette(g, R) {
    lasciata al centro si sarebbe scostata per metà soltanto.              */
 function etichettaAnello(g, testo, cx, cy, r, k, lato) {
   g.fillStyle = COL.dust;
-  g.font = "400 " + Math.max(7, r * 0.05).toFixed(1) + "px " + fontPila();
+  g.font = "400 " + Math.max(7, r * 0.05).toFixed(1) + "px " + FONT_PILA;
   g.textAlign = lato < 0 ? "right" : "left";
   g.fillText(testo, cx + lato * (r + STACCO_ETICH[k]), cy - 7);
 }
@@ -542,15 +544,9 @@ function drawAnelloTessuto(g, L, cx, cy, r, R, now) {
 
   /* gli archi: ognuno copre la porzione di giro in cui la tenuta è aperta.
      Tre stati. Una tenuta che suona è spessa il doppio per tutto il tempo in
-     cui suona, ma l'arancione lo prende SOLO LA PIÙ RECENTE della linea: le
-     altre ancora aperte restano inchiostro pieno.
-
-     È la misura fra due esigenze. Tenere acceso tutto ciò che suona
-     riempirebbe di accento i quattro anelli esterni — misurato al 71% della
-     circonferenza con l'Intreccio appena sopra l'uno, e verso la saturazione
-     alzandolo; lasciare un lampo di mezzo secondo, com'era prima, non diceva
-     nulla su che cosa stia suonando adesso. Una per linea dice quante linee
-     sono attive e quale suono è entrato per ultimo, e costa quattro archi.  */
+     cui suona, ma l'arancione lo prende SOLO `corrente`, la più recente in
+     tutta la pagina: le altre ancora aperte restano inchiostro pieno. Perché
+     una sola e non una per linea, lo spiega il commento su `corrente`.     */
   /* Tre stili, quindi TRE campiture e non una per arco: tacente, suonante,
      e la più recente. Con l'Intreccio alto una linea può tenerne aperte
      parecchie insieme, e ognuna era un disegno a sé.
@@ -624,21 +620,22 @@ function drawLinks(g, now) {
 }
 
 /* ---------------------------------------------------------------------------
-   LA FASCIA: due scale di tempo, una sopra l'altra, ognuna col suo cartello.
+   LA FASCIA: tre letture, una sopra l'altra.
 
-   Sopra, i TRENTA SECONDI: otto corsie — quattro di tacche per le gocce,
-   quattro di segmenti per i tessuti. È il modo più diretto per vedere lo
-   sfasamento reale fra le otto linee.
+   In cima i TRENTA SECONDI: quattro corsie di tacche, una per frase. È il
+   modo più diretto per vedere lo sfasamento reale fra le linee.
 
-   Sotto, i TRENTA MINUTI: la traiettoria della tonica come poligonale che
-   sedimenta, e i passi di quinta come croci. All'apertura è vuota e si
-   riempie in mezz'ora: è la memoria della sessione che si accumula, e il
-   disegno più lento della pagina.
+   In mezzo le quattro GUIDE DEI TESSUTI, ferme: a che punto sono le tenute
+   che suonano adesso.
+
+   In fondo il QUARTO D'ORA: l'istogramma del baricentro, con i passi di
+   quinta in arancione. All'apertura è vuoto e si riempie in quindici minuti:
+   è la memoria della sessione che si accumula, e il disegno più lento della
+   pagina.
 
    Tutto viene dalle memorie scritte dallo scheduler — dropHistory,
    derivaStoria, quinteHistory — e dal piano per le guide: il disegno non
-   ricalcola nulla,
-   mostra ciò che è stato davvero suonato.                                  */
+   ricalcola nulla, mostra ciò che è stato davvero suonato.                 */
 function drawFascia(s, now) {
   const g = cv2d;
   const left = s.w * 0.03, right = s.w * 0.97;
@@ -660,7 +657,7 @@ function drawFascia(s, now) {
      non ne hanno uno, e non è una dimenticanza — non contengono tempo, sono
      lo stato di adesso. Un cartello di durata lì sarebbe una bugia.       */
   g.fillStyle = COL.dust;
-  g.font = "400 7px " + fontPila();
+  g.font = "400 7px " + FONT_PILA;
   g.textAlign = "left";
   g.fillText(CANVAS.fBreve, left, top - 6);
   g.fillText(CANVAS.fLunga, left, topB - 6);
@@ -749,7 +746,7 @@ function drawFascia(s, now) {
 
    I puntini si disegnano in DUE sole campiture, una per i grigi e una per gli
    accesi: un `fill` per cerchietto sarebbe un centinaio di campiture per
-   fotogramma, e a sessanta al secondo si sente su un telefono. Il `moveTo`
+   fotogramma, e su un telefono si sente. Il `moveTo`
    prima di ogni arco serve a non collegare i cerchietti fra loro.        */
 const PASSO_PUNTI = 9;      // px fra un puntino e il successivo
 
@@ -815,7 +812,7 @@ function accendiTenute(g, colore, soloRecente, now, left, topR, railH, n, passo,
 }
 
 /* ---------------------------------------------------------------------------
-   LA CORSIA DEI TRENTA MINUTI
+   LA CORSIA DEL QUARTO D'ORA
 
    Un istogramma di puntini, non più una poligonale. Ogni colonnina è
    un'altezza: da zero a quattro puntini sopra l'asse se il baricentro sta
@@ -829,11 +826,11 @@ function accendiTenute(g, colore, soloRecente, now, left, topR, railH, n, passo,
    Una colonnina arancione al livello zero disegnerebbe il nulla, quindi in
    quel caso si accende comunque un puntino sull'asse.
 
-   LA GRIGLIA È FISSA, i dati ci scorrono dentro. Novecento campioni su
-   settecento pixel sarebbero una colonnina ogni otto decimi di pixel, cioè
-   una macchia: le colonnine stanno invece sullo stesso passo di nove pixel
-   delle guide dei tessuti — una sessantina in tutto, una ogni mezzo minuto
-   circa — e ciascuna prende il campione più recente che le compete. Una
+   LA GRIGLIA È FISSA, i dati ci scorrono dentro. Quattrocentocinquanta
+   campioni su cinquecento pixel sarebbero quasi una colonnina per pixel,
+   cioè una macchia: le colonnine stanno invece sullo stesso passo di nove
+   pixel delle guide dei tessuti — una sessantina in tutto, una ogni quindici
+   secondi circa — e ciascuna prende il campione più recente che le compete. Una
    colonnina senza campioni non si disegna, ed è così che i buchi veri —
    schermo bloccato — restano buchi invece di essere colmati da un ponte.
 

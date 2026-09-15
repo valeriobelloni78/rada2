@@ -1,9 +1,9 @@
 /* =============================================================================
    RADA · i18n.js — le quattro lingue
 
-   Non dipende da nulla, come il modello: contiene solo parole, e va caricato
-   per primo. La direzione delle dipendenze resta quella di sempre —
-   i18n/model ← audio ← disegno/ui.
+   Non dipende da nulla: contiene solo parole, e va caricato per primo. Le
+   dipendenze del resto scorrono deriva ← model ← audio ← disegno/ui, e di
+   queste parole si servono soltanto gli ultimi tre.
 
    Due regole che valgono qui più che altrove:
 
@@ -11,9 +11,9 @@
    pezzi. "palette pomeriggio" in giapponese diventa "昼下がりのパレット":
    l'ordine si rovescia, e nessuna concatenazione può prevederlo.
 
-   LE STRINGHE DEL CANVAS SONO IN CACHE. `draw` gira a 60 fps e non deve
-   costruire testo né, peggio, creare formattatori Intl: si preparano qui a
-   ogni cambio di lingua e lì si limitano a leggerle.
+   LE STRINGHE DEL CANVAS SONO IN CACHE. `disegna` gira a ogni fotogramma e
+   non deve costruire testo né, peggio, creare formattatori Intl: si
+   preparano qui a ogni cambio di lingua e lì si limitano a leggerle.
 ============================================================================= */
 
 const LANGS = ["it", "fr", "en", "ja"];
@@ -82,7 +82,7 @@ const STRINGS = {
     "unit.hz":          "Hz",
     mood: { sereno: "Sereno", pioggia: "Pioggia", vespro: "Vespro", carillon: "Carillon",
             arcipelago: "Arcipelago", collina: "Collina", finestra: "Finestra", nuvola: "Nuvola" },
-        droneMood: { velo: "Velo", fondale: "Fondale", lino: "Lino", respiro: "Respiro",
+    droneMood: { velo: "Velo", fondale: "Fondale", lino: "Lino", respiro: "Respiro",
                  bruma: "Bruma", tenda: "Tenda", seta: "Seta", vela: "Vela" },
     palette: { alba: "alba", mattino: "mattino", pomeriggio: "pomeriggio",
                tramonto: "tramonto", sera: "sera", notturna: "notturna" },
@@ -146,7 +146,7 @@ const STRINGS = {
     "unit.hz":          "Hz",
     mood: { sereno: "Serein", pioggia: "Pluie", vespro: "Vêpres", carillon: "Carillon",
             arcipelago: "Archipel", collina: "Colline", finestra: "Fenêtre", nuvola: "Nuage" },
-        droneMood: { velo: "Voile", fondale: "Fond", lino: "Lin", respiro: "Souffle",
+    droneMood: { velo: "Voile", fondale: "Fond", lino: "Lin", respiro: "Souffle",
                  bruma: "Brume", tenda: "Rideau", seta: "Soie", vela: "Voilure" },
     palette: { alba: "aube", mattino: "matin", pomeriggio: "après-midi",
                tramonto: "crépuscule", sera: "soir", notturna: "nuit" },
@@ -210,7 +210,7 @@ const STRINGS = {
     "unit.hz":          "Hz",
     mood: { sereno: "Clear", pioggia: "Rain", vespro: "Vespers", carillon: "Carillon",
             arcipelago: "Archipelago", collina: "Hillside", finestra: "Window", nuvola: "Cloud" },
-        droneMood: { velo: "Veil", fondale: "Backdrop", lino: "Linen", respiro: "Breath",
+    droneMood: { velo: "Veil", fondale: "Backdrop", lino: "Linen", respiro: "Breath",
                  bruma: "Haze", tenda: "Curtain", seta: "Silk", vela: "Sail" },
     palette: { alba: "dawn", mattino: "morning", pomeriggio: "afternoon",
                tramonto: "dusk", sera: "evening", notturna: "night" },
@@ -274,7 +274,7 @@ const STRINGS = {
     "unit.hz":          "Hz",
     mood: { sereno: "凪", pioggia: "雨", vespro: "晩鐘", carillon: "風鈴",
             arcipelago: "島々", collina: "稜線", finestra: "窓辺", nuvola: "霞" },
-        droneMood: { velo: "薄衣", fondale: "底", lino: "亜麻", respiro: "息",
+    droneMood: { velo: "薄衣", fondale: "底", lino: "亜麻", respiro: "息",
                  bruma: "靄", tenda: "帳", seta: "絹", vela: "帆" },
     palette: { alba: "暁", mattino: "朝", pomeriggio: "昼下がり",
                tramonto: "夕暮れ", sera: "宵", notturna: "夜半" },
@@ -321,7 +321,7 @@ function detectLang() {
 let lang = detectLang();
 
 /* --- formattatori ---------------------------------------------------------
-   Costruiti UNA VOLTA per lingua. Crearne uno dentro draw costerebbe più
+   Costruiti UNA VOLTA per lingua. Crearne uno dentro `disegna` costerebbe più
    del disegno stesso.                                                      */
 let fmt0, fmt1, fmt2, fmtData;
 
@@ -361,15 +361,16 @@ const seasonName  = id => (STRINGS[lang].season  || {})[id] || id;
 const tonalitaName = i => (STRINGS[lang].tonalita || [])[i] || "";
 
 /* --- cache per il canvas --------------------------------------------------
-   Le etichette dei quadranti non cambiano mai fra un fotogramma e l'altro:
-   solo al cambio di lingua. Si preparano qui e `draw` le legge e basta.     */
-const CANVAS = { linea: ["I", "II", "III", "IV"], seconds: "", fBreve: "", fLunga: "" };
+   Le etichette del reticolo e della fascia non cambiano mai fra un
+   fotogramma e l'altro: solo al cambio di lingua. Si preparano qui e
+   `disegna` le legge e basta.
+
+   I numerali degli anelli sono notazione, non parole: identici in tutte le
+   lingue, come le sigle delle colonne. Stanno nella cache perché il disegno
+   legge da un posto solo.                                                  */
+const CANVAS = { linea: ["I", "II", "III", "IV"], fBreve: "", fLunga: "" };
 
 function buildCanvasCache() {
-  /* I numerali degli anelli sono notazione, non parole: identici in tutte le
-     lingue, come le sigle delle colonne. Restano nella cache perché il
-     disegno legge da un posto solo.                                        */
-  CANVAS.seconds = T("canvas.seconds");
   /* I cartelli delle due scale della fascia: quanto tempo contiene la riga.
      I numeri sono scritti qui a mano perché i18n.js è il primo file caricato
      e non può leggere le costanti dello scheduler; chi cambia TIMELINE_SEC o

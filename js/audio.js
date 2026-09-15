@@ -8,7 +8,8 @@
    immediati, non per pianificazione temporale rigorosa. Qui la precisione
    è il punto, quindi si parla con l'API nativa.
 
-   Catena: [gocce] → filtro passa-basso → (diretto + riverbero) → uscita
+   Catena: [gocce] + [tenute → bus dei tessuti] → filtro passa-basso →
+           (diretto + riverbero) → uscita
 ============================================================================= */
 
 let ctx = null, master, wetGain, dryGain, filt, tessutiBus;
@@ -43,9 +44,10 @@ const dropHistory = [];
    Il disegno prende ora la tenuta corrente da `L.plan`, che è il piano vero. */
 
 /* --- la storia della deriva ------------------------------------------------
-   Terza memoria, per la corsia lunga della fascia: il baricentro campionato
-   ogni due secondi sull'ultimo quarto d'ora, più i tempi dei passi di quinta. Stesso
-   principio delle altre due — lo scheduler scrive, il disegno legge — e la
+   Seconda memoria, per la corsia lunga della fascia: il baricentro
+   campionato ogni due secondi sull'ultimo quarto d'ora, più i tempi dei passi
+   di quinta. Stesso principio di `dropHistory` — lo scheduler scrive, il
+   disegno legge — e la
    stessa ragione di stare qui: è lo scheduler a girare sempre, anche quando
    i fotogrammi si fermano perché la pagina non si vede.
 
@@ -633,7 +635,7 @@ function prenota(lista, costruisciPiano, suona, now, horizon, attiva) {
 function suonaGoccia(at, ev, L) {
   playDrop(at, ev, L);
   ev.flash = at;
-  dropHistory.push({ t: at, loop: L.i, rel: ev.rel });
+  dropHistory.push({ t: at, loop: L.i });
 }
 
 function suonaTenuta(at, ev, L) {
@@ -779,7 +781,7 @@ function playTone(when, ev, L) {
 }
 
 /* --- modulazione lenta ----------------------------------------------------
-   Chiamata a ogni fotogramma da draw(): smussa i parametri e applica la
+   Chiamata a ogni fotogramma da `disegna`: smussa i parametri e applica la
    palette oraria. Gira anche a motore spento, così i cursori rispondono
    subito.                                                                  */
 /* La smussatura è per FOTOGRAMMA, quindi dipende dalla cadenza: passando da

@@ -30,8 +30,9 @@ const MOODS = {
 
 /* --- palette oraria -------------------------------------------------------
    L'ora del giorno inclina registro (filtro), calore (timbro) e spazio
-   (riverbero). È l'unica influenza esterna sul suono: non chiede permessi,
-   non usa sensori, e rende l'ascolto notturno diverso da quello diurno.
+   (riverbero). È l'influenza esterna delle gocce, come la stagione è quella
+   dei tessuti: non chiede permessi, non usa sensori, e rende l'ascolto
+   notturno diverso da quello diurno.
 
    Come per i mood, qui viaggia un `id`: la parola che si legge nella riga di
    stato la sceglie i18n.js. Il modello resta senza lingua.                 */
@@ -49,9 +50,9 @@ let currentPalette = { id: "", toneBias: 0, warmBias: 0, spaceBias: 0 };
 let effWarmth = 0.70, effRev = 0.72, lastHead = 30;
 
 /* La scala non abita più qui. Era una pentatonica costruita una volta e mai
-   più toccata; adesso è un campo che migra, e sta in deriva.js insieme a ciò
-   che lo muove. `SCALE` resta un vettore di venti frequenze crescenti, così
-   `playDrop` e `playTone` non si accorgono del cambio.                     */
+   più toccata; adesso è un campo di venticinque frequenze che cambia a ogni
+   passo di quinta, e sta in deriva.js insieme a ciò che lo muove. Gocce e
+   tenute lo leggono soltanto attraverso `altezza`.                         */
 
 /* --- valori efficaci globali ----------------------------------------------
    Stessa forma che il progetto usa già per l'ora e per la stagione: posizione
@@ -133,7 +134,7 @@ function regenerate(L) {
    scheduler le percorre sempre in sequenza crescente.                      */
 function buildPlan(L) {
   const head = effG.head / 100;
-  L.planHead = head;          // il quadrante disegnerà questo, non il valore live
+  L.planHead = head;          // il reticolo disegna questo, non il valore live
   L.plan = L.idea
     .map(ev => ({ ph: (L.offset + ev.t * head) % 1, ev }))
     .sort((a, b) => a.ph - b.ph);
@@ -299,14 +300,6 @@ function nuovaTenuta(L) {
   };
 }
 
-/* I tempi di ricambio delle due classi pescano da radicali DIVERSI, non solo
-   da una base diversa: con le stesse radici scalate, ogni coppia di linee
-   omologhe starebbe in rapporto razionale fra le due classi, ed è la cosa da
-   cui questo progetto si tiene lontano da sempre.
-
-   I tessuti si rinnovano tre volte più lentamente delle gocce. Sono uno
-   sfondo, e uno sfondo che si rifà alla stessa velocità del primo piano
-   smette di stare dietro.                                                  */
 /* --- il modo di ciascuna classe -------------------------------------------
    Due modi, e decidono se il MATERIALE si rinnova o resta.
 
@@ -325,6 +318,14 @@ function nuovaTenuta(L) {
    Sono IDENTIFICATORI, come i mood: le parole stanno in i18n.js.          */
 const MODI = { gocce: "deriva", tessuti: "deriva" };
 
+/* I tempi di ricambio delle due classi pescano da radicali DIVERSI, non solo
+   da una base diversa: con le stesse radici scalate, ogni coppia di linee
+   omologhe starebbe in rapporto razionale fra le due classi, ed è la cosa da
+   cui questo progetto si tiene lontano da sempre.
+
+   I tessuti si rinnovano tre volte più lentamente delle gocce. Sono uno
+   sfondo, e uno sfondo che si rifà alla stessa velocità del primo piano
+   smette di stare dietro.                                                  */
 const SPECIE_GOCCE = {
   classe: "gocce",
   nuovo:  nuovaGoccia,
@@ -367,9 +368,6 @@ const SPECIE_TENUTE = {
    possibile: con 8, 15 e 25 in campo le coppie di preset che condividono un
    divisore passano da 17 a 25 su 64. È il prezzo dei tessuti brevi, ed è
    stato pagato sapendo quanto costava.
-
-   Le tenute non hanno cursori propri: tutto viene dal mood. Sono uno sfondo,
-   e uno sfondo non si regola mentre si ascolta.
 ============================================================================= */
 /* La corsa parte da sette secondi, come quella delle gocce parte da tre: sotto
    di lì un tessuto non farebbe più in tempo ad aprirsi e chiudersi. Non è un
@@ -423,8 +421,8 @@ delete D.periods;
 
    Tre inclinazioni, come per l'ora: quanto si allarga il registro, quanto è
    lento il respiro (affioramento e dissolvenza insieme) e quanto è veloce il
-   battito. L'Intreccio no: è il numero che si legge anche nella fascia in
-   fondo al riquadro, e inclinarlo farebbe litigare il disegno col cursore.
+   battito. L'Intreccio no: la sua lettura resta una sola, e il numero
+   accanto al cursore è quello che suona.
 
    `respiro` è un FATTORE e non una somma, perché affioramento e dissolvenza
    vivono su scale diverse (0,3–12 s e 0,3–15 s): due secondi in più sono
@@ -529,25 +527,23 @@ function buildPlanDrone(L) {
     .sort((a, b) => a.ph - b.ph);
 }
 
-/* Riallineamento della sola seconda classe. */
-function realignDroni() {
-  const v = droni.map(L => Math.max(1, Math.round(L.target)));
-  let l = v[0];
-  for (let k = 1; k < v.length; k++) l = l * v[k] / gcd(l, v[k]);
-  return l;
-}
-
 /* Tempo di riallineamento: minimo comune multiplo dei quattro periodi. È
    quanto passa prima che la combinazione si ripeta identica — con periodi
-   coprimi diventa enorme, ed è il senso stesso del collage.                */
+   coprimi diventa enorme, ed è il senso stesso del collage. Il conto è lo
+   stesso per le due classi, quindi è scritto una volta sola.               */
 function gcd(a, b) { return b ? gcd(b, a % b) : a; }
 
-function realignSeconds() {
-  const v = loops.map(L => Math.max(1, Math.round(L.target)));
-  let l = v[0];
-  for (let k = 1; k < v.length; k++) l = l * v[k] / gcd(l, v[k]);
+function mcmPeriodi(linee) {
+  let l = 1;
+  for (const L of linee) {
+    const p = Math.max(1, Math.round(L.target));
+    l = l * p / gcd(l, p);
+  }
   return l;
 }
+
+const realignSeconds = () => mcmPeriodi(loops);
+const realignDroni   = () => mcmPeriodi(droni);
 
 /* Il modello nasce già popolato: senza questa riga le quattro frasi
    resterebbero vuote fino al primo mood, e l'app sarebbe muta all'apertura. */

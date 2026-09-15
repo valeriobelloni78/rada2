@@ -4,9 +4,8 @@
    Si appoggia a style.css, che resta l'unica fonte della palette: qui non c'è
    nessun colore scritto a mano, solo le variabili già definite là.
 
-   La gerarchia dei rettangoli ricalca quella dell'interfaccia: il bordo pieno
-   d'inchiostro è quello del riquadro dei quadranti e resta per le sezioni
-   portanti; le celle minori usano il filo tenue delle pillole dei mood. Se
+   Due pesi di rettangolo: il bordo pieno d'inchiostro per le sezioni
+   portanti, il filo tenue dei bottoni dei mood per le celle minori. Se
    avessero tutte lo stesso bordo la pagina diventerebbe una parete di scatole
    identiche, e la lettura non avrebbe più un ordine.
 ============================================================================= */
@@ -234,7 +233,7 @@
   .moodGrid .docCell p{font-size:12px;line-height:1.42;text-align:left}
 }
 
-/* -------------------------------- il giapponese, se un giorno tradurremo */
+/* ----------------------------------------------------------- il giapponese */
 :lang(ja) .docLabel,
 :lang(ja) .docCell .k,
 :lang(ja) .docList dt,

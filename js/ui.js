@@ -3,8 +3,8 @@
 
    Cursori, mood, lingua, avvio e riga di stato restano elementi HTML: sono
    comandi standard, e come tali funzionano meglio se il browser li conosce
-   (accessibilità, tastiera, comportamento nativo). Il canvas si occupa
-   soltanto dei quadranti.
+   (accessibilità, tastiera, comportamento nativo). Il canvas è puro
+   display: disegna il reticolo e la fascia, e non ascolta nulla.
 ============================================================================= */
 
 const $ = id => document.getElementById(id);
@@ -49,15 +49,19 @@ setInterval(readouts, 120);
 /* --- indicatore di riallineamento ----------------------------------------
    Le unità e il separatore decimale cambiano con la lingua: "4,7 ore" in
    italiano, "4.7 hours" in inglese, "約4.7時間で一巡" in giapponese. Se ne
-   occupa Intl, non un replace cablato.                                     */
-function onRealignChange() {
-  const l = realignSeconds();
+   occupa Intl, non un replace cablato. La frase serve alle due classi, quindi
+   si compone in un posto solo.                                             */
+function fraseRiallineamento(l) {
   const sep = T("unit.sep");
   let t;
   if (l < 3600)       t = fmtInt(Math.round(l / 60)) + sep + T("unit.min");
   else if (l < 86400) t = fmtOne(l / 3600)           + sep + T("unit.hours");
   else                t = fmtOne(l / 86400)          + sep + T("unit.days");
-  $("realign").textContent = T("realign", { t });
+  return T("realign", { t });
+}
+
+function onRealignChange() {
+  $("realign").textContent = fraseRiallineamento(realignSeconds());
   syncLinee();         // i mood riscrivono le durate: le righe devono seguirli
 }
 
@@ -83,12 +87,12 @@ function refreshStatus() {
   scriviRiga("status", "statusText", running, hh + ":" + mm, paletteName(currentPalette.id));
 }
 
-/* La riga della stagione, sopra il riquadro dei tessuti: stessa forma di
-   quella in testa alla pagina, altra scala del tempo — là l'ora, qui il mese.
+/* La riga della stagione, sopra i comandi dei tessuti: stessa forma di
+   quella delle frasi, altra scala del tempo — là l'ora, qui il mese.
 
    Il punto pulsa quando suonano i TESSUTI, non l'intero strumento: è la riga
-   di questo riquadro, e deve dire di questo riquadro. Chi mette in pausa i
-   tessuti e lascia le gocce vede la riga in alto viva e questa spenta.    */
+   di questa classe, e deve dire di questa classe. Chi mette in pausa i
+   tessuti e lascia le gocce vede la riga delle frasi viva e questa spenta. */
 function refreshStagione() {
   const d = new Date();
   currentSeason = seasonPalette(d.getMonth());
@@ -99,11 +103,8 @@ function refreshStagione() {
 function refreshTutteLeRighe() { refreshStatus(); refreshStagione(); }
 setInterval(refreshTutteLeRighe, 15000);
 
-/* Gli annunci dal canvas non esistono più: la tela è puro display, e tutti i
-   comandi passano dagli elementi nativi qui sotto. */
-/* Il pulsante è un COMANDO, non un indicatore: la scritta dice che cosa
-   accadrà premendolo, non che cosa sta accadendo. Lo stato è già raccontato
-   dal punto che pulsa e dalla riga in alto.                                */
+/* Chiamata da audio.js quando il motore si accende o si spegne: i segni di
+   avvio e le due righe di stato devono seguirlo.                           */
 function onPowerChange() {
   syncModi();
   refreshTutteLeRighe();
@@ -288,13 +289,7 @@ Object.keys(DRONI_MOODS).forEach((id, i) => {
 
 /* Il riallineamento della seconda classe, con le stesse unità della prima. */
 function onDroniChange() {
-  const l = realignDroni();
-  const sep = T("unit.sep");
-  let t;
-  if (l < 3600)       t = fmtInt(Math.round(l / 60)) + sep + T("unit.min");
-  else if (l < 86400) t = fmtOne(l / 3600)           + sep + T("unit.hours");
-  else                t = fmtOne(l / 86400)          + sep + T("unit.days");
-  $("realignDroni").textContent = T("realign", { t });
+  $("realignDroni").textContent = fraseRiallineamento(realignDroni());
   refreshTutteLeRighe();
   syncLinee();
 }
@@ -396,22 +391,19 @@ function onLanguageChange() {
   document.querySelectorAll("#moods .mood").forEach(b => {
     b.textContent = moodName(b.dataset.mood);
   });
-  onPowerChange();
-  onRealignChange();
-  readouts();
-  syncLinee();
   document.querySelectorAll("#droniMoods .mood").forEach(b => {
     b.textContent = droneMoodName(b.dataset.droneMood);
   });
-  syncModi();
-  letturaTessuti();       // le unità cambiano con la lingua: "s" diventa "秒"
+  onPowerChange();        // i quattro segni e le due righe di stato
+  onRealignChange();      // e con loro le otto righe di linea
   onDroniChange();
+  readouts();
+  letturaTessuti();       // le unità cambiano con la lingua: "s" diventa "秒"
 }
 
-/* --- avvio ---------------------------------------------------------------- */
-/* Ogni riquadro ha il suo interruttore, e governa solo la propria classe:
-   due pulsanti che facessero la stessa cosa sarebbero un pulsante di troppo. */
-// barra spaziatrice: avvia e ferma
+/* --- avvio ----------------------------------------------------------------
+   Ogni classe ha il suo segno di avvio; la barra spaziatrice resta il comando
+   globale, e accende o spegne le due insieme.                              */
 addEventListener("keydown", e => {
   if (e.code === "Space" && !/^(INPUT|BUTTON|TEXTAREA)$/.test(e.target.tagName)) {
     e.preventDefault();
@@ -450,13 +442,11 @@ $("enter").addEventListener("keydown", e => {
 });
 
 applyI18n();
-refreshTutteLeRighe();
 onRealignChange();
-onDroniChange();
+onDroniChange();          // aggiorna anche le due righe di stato
 DPARAMS.forEach(k => { $("d_" + k).value = D[k]; });
 letturaTessuti();
 readouts();
-syncLinee();
 syncModi();
 
 /* Finché il cancello è chiuso, tutto ciò che sta dietro è fuori gioco: senza

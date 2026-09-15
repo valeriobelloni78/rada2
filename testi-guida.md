@@ -71,12 +71,12 @@ Se due frasi durassero ad esempio sei e nove secondi condividerebbero il tre com
 **Dicitura in arancione, in alto a destra:** √2 · √3 · √5 · √7 · √11
 
 La Deriva armonica: il campo delle altezze delle note che vengono scelte si sposta sul circolo delle ==quinte== ogni due minuti e mezzo esatti, e fra una collezione e la successiva cambia una nota su cinque — uno slittamento lieve per l'orecchio, un passaggio tenue fra due collezioni consonanti. 
-Questo rende il passaggio impercettibile, te ne accorgi dopo, come della luce che cambia in una stanza. I tempi del ricambio, come le velocità della deriva, stanno in rapporti *irrazionali*: è la stessa idea dei periodi coprimi, salita di un piano, e garantisce che il pezzo non ripassi mai esattamente dove è già stato.
+Questo rende il passaggio impercettibile. I tempi del ricambio, come le velocità della deriva, stanno in rapporti *irrazionali*.
 
-La riga arancione sopra il reticolo dice quanti passaggi di quinta sono stati fatti e, soprattutto, **in che tonalità sei adesso**. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era.
+La riga arancione sopra il reticolo dice quante modulazioni sono state fatte e, soprattutto, **in che tonalità sei adesso**. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era.
 
-Il baricentro è invece il movimento continuo: le altezze restano ferme, a scorrere piano è il punto attorno a cui vengono pescate. È quello che senti come una musica che sale e scende senza che si possa indicare il momento. La rappresentazione di questo movimento è data dall'arco di cerchio esterno in alto che oscilla tra destra e sinistra.
-La sua oscillazione è rappresentata anche nello scorrere di 15 minuti sulla linea orizzontale più in basso
+Il baricentro è invece il movimento continuo: le altezze restano ferme, a scorrere piano è il punto attorno a cui vengono pescate. La rappresentazione di questo movimento è data dall'arco di cerchio esterno in alto che oscilla tra destra e sinistra.
+La sua oscillazione è rappresentata anche nello scorrere di 15 minuti nell'istogramma orizzontale più in basso
 
 ---
 
@@ -84,13 +84,13 @@ La sua oscillazione è rappresentata anche nello scorrere di 15 minuti sulla lin
 
 **Titolo:** Il reticolo
 
-Le otto linee sono anelli concentrici di un solo strumento: le frasi all'interno, i tessuti all'esterno, un centro solo. Le gocce sono tacche che attraversano l'anello, e la loro **lunghezza è il registro** — corta grave, lunga acuta: il profilo melodico di ogni idea si legge a colpo d'occhio. I tessuti sono archi, perché durano; un punto ==arancione== percorre ogni anello, ed è la fase che stai ascoltando.
+Le otto linee sono anelli concentrici di un solo strumento: le frasi all'interno, i tessuti all'esterno.
 
-Sul bordo sono indicate le dodici tacche per il circolo delle quinte, con la posizione corrente marcata in arancione, e un arco pesante che rolla lentissimo con il baricentro — a destra il pezzo sta alto, a sinistra basso. È il segno più lento della pagina.
+Sul bordo esterno sono indicate le dodici tacche per il circolo delle quinte, con la posizione corrente marcata in arancione, e un arco pesante che rolla lentissimo con il baricentro — a destra il pezzo sta alto, a sinistra basso. È il segno più lento della pagina.
 
-Al centro, dove le otto linee si incontrano, ci sono due segni concentrici: il punto lampeggia a ogni goccia, l'anello che lo circonda quando un tessuto si apre. Sono i due attacchi dello strumento, e da lì si sente arrivare tutto senza guardare altrove.
+Al centro, dove le otto linee si incontrano, ci sono due segni concentrici: il punto lampeggia a ogni goccia, l'anello che lo circonda quando un tessuto si apre.
 
-Ai piedi del reticolo due archi dicono quanto è largo il ventaglio delle altezze di ciascuna classe: le gocce a destra in ==arancione==, i tessuti a sinistra in nero. Si aprono come forbici attorno alla diagonale del proprio quadrante, allargandosi nei due versi insieme quando muovi il cursore dell'ampiezza — o quando lo muovono per te la deriva e la stagione.
+Ai piedi del reticolo due archi dicono quanto è largo il ventaglio delle altezze di ciascuna classe: le gocce a destra in ==arancione==, i tessuti a sinistra in nero. Si aprono partendo dalla diagonale del proprio quadrante, allargandosi nei due versi insieme quando muovi il cursore dell'ampiezza — o quando lo muovono per te la deriva e la stagione.
 
 Il reticolo si guarda e basta: tutti i comandi stanno nelle due righe di colonna accanto, dallo stesso lato delle loro etichette dentro il disegno.
 
@@ -104,13 +104,13 @@ I comandi di linea
 
 **Etichetta:** La scala della durata
 
-Ogni linea ha la sua riga accanto al reticolo, e la scala ne cambia la durata: fra 3 e 30 secondi per le frasi, fra 7 e 60 per i tessuti. La nuova durata entra in vigore al giro successivo, mai a metà di uno in corso.
+Ogni linea ha la sua riga accanto al reticolo, e la scala ne cambia la durata: fra 3 e 30 secondi per le frasi, fra 7 e 60 per i tessuti. La nuova durata entra in vigore al giro successivo.
 
 ## [gesto 2]
 
 **Etichetta:** Il quadratino
 
-Silenzia quella linea, o la riattiva: pieno suona, vuoto tace. L'anello impallidisce ma continua a girare in silenzio: quando la riaccendi è già dove sarebbe stata, non riparte da capo.
+Silenzia quella linea, o la riattiva: pieno suona, vuoto tace. L'anello impallidisce ma continua a girare in silenzio: quando lo riaccendi è già dove sarebbe dovuto essere.
 
 ## [gesto 3]
 
@@ -244,7 +244,7 @@ Densità massima, riverbero quasi al limite e timbro vetroso: tante gocce dure d
 
 **Titolo:** I tessuti
 
-Sotto le quattro frasi ce ne sono altre quattro, e non fanno la stessa cosa. Le gocce accadono: un attacco, una coda, e la nota è già passata. I tessuti invece durano — si aprono lentamente, restano aperti anche mezzo minuto, si dissolvono. Sovrapponendosi fra loro e alle gocce formano le tessiture. Anche qui i periodi sono coprimi a due a due, e lo sono anche con quelli delle frasi. Ogni classe ha il suo pulsante: si possono lasciare i tessuti e mettere in pausa le frasi, o il contrario. La barra spaziatrice invece vale per entrambi.
+I tessuti sono note che durano — si aprono lentamente e poi si dissolvono. Sovrapponendosi fra loro e alle gocce formano le tessiture. Anche qui i periodi sono coprimi a due a due, e lo sono anche con quelli delle frasi. Ogni classe ha il suo pulsante: si possono lasciare i tessuti e mettere in pausa le frasi, o il contrario. La barra spaziatrice invece vale per entrambi.
 
 ---
 
@@ -366,11 +366,11 @@ Ai tessuti parla invece la stagione: l'autunno raccoglie appena il registro e al
 
 **Titolo:** La fascia temporale
 
-Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia: è il modo più diretto per vedere lo sfasamento reale. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
+Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
 
-La seconda non scorre affatto: quattro file ferme di puntini, una per tessuto. I puntini **accesi** dicono quanto è avanzata ogni tenuta in corso. L'arancione tocca a una sola in tutta la pagina — l'ultima entrata fra tutt'e quattro le linee — e le altre restano nere, come sugli anelli. Le corsie delle gocce ricordano.
+Nella seconda i puntini **accesi** dicono quanto è avanzata ogni tenuta in corso. In arancione l'ultima che viene suonata mentre le altre restano nere, come sugli anelli. 
 
-La terza contiene gli ultimi quindici minuti, ed è un istogramma: ogni colonnina è un'altezza del baricentro, da zero a quattro puntini sopra l'asse se il pezzo sta alto, altrettanti sotto se sta basso. Una colonnina ogni quindici secondi circa. Quella in cui cade un passaggio di quinta è ==arancione==.
+La terza contiene gli ultimi quindici minuti, ed è un istogramma: ogni colonnina è un'altezza del baricentro, da zero a quattro puntini sopra l'asse se il pezzo sta alto, altrettanti sotto se sta basso. Una colonnina ogni quindici secondi circa. Quella in cui cade una modulazione è ==arancione==.
 
 ---
 
