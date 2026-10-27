@@ -361,7 +361,7 @@ const seasonName  = id => (STRINGS[lang].season  || {})[id] || id;
 const tonalitaName = i => (STRINGS[lang].tonalita || [])[i] || "";
 
 /* --- cache per il canvas --------------------------------------------------
-   Le etichette del reticolo e della fascia non cambiano mai fra un
+   Le etichette del campo e della fascia non cambiano mai fra un
    fotogramma e l'altro: solo al cambio di lingua. Si preparano qui e
    `disegna` le legge e basta.
 

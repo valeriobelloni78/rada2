@@ -134,7 +134,7 @@ function regenerate(L) {
    scheduler le percorre sempre in sequenza crescente.                      */
 function buildPlan(L) {
   const head = effG.head / 100;
-  L.planHead = head;          // il reticolo disegna questo, non il valore live
+  L.planHead = head;          // il campo disegna questo, non il valore live
   L.plan = L.idea
     .map(ev => ({ ph: (L.offset + ev.t * head) % 1, ev }))
     .sort((a, b) => a.ph - b.ph);

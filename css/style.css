@@ -20,6 +20,7 @@
   --hair:#c3c2b4;    /* linee inattive */
   --scelto:#55564c;  /* fondo dei bottoni scelti: scuro, ma non inchiostro */
   --amber:#c25a2b;   /* unico accento */
+  --velo:rgba(32,33,28,.07); /* lo spicchio del giro, sui dischi del campo */
   --glow:rgba(194,90,43,.18);
   --amber-filo:rgba(194,90,43,.34); /* il filo del marchio, l'accento smorzato */
   --sans:"Helvetica Neue",-apple-system,system-ui,"Segoe UI",Roboto,Arial,sans-serif;

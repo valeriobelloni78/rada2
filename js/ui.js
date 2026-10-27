@@ -4,7 +4,7 @@
    Cursori, mood, lingua, avvio e riga di stato restano elementi HTML: sono
    comandi standard, e come tali funzionano meglio se il browser li conosce
    (accessibilità, tastiera, comportamento nativo). Il canvas è puro
-   display: disegna il reticolo e la fascia, e non ascolta nulla.
+   display: disegna il campo e la fascia, e non ascolta nulla.
 ============================================================================= */
 
 const $ = id => document.getElementById(id);
@@ -297,11 +297,11 @@ function onDroniChange() {
 /* --- le otto righe di linea -------------------------------------------------
    In Rada questi comandi esistevano due volte: i gesti sul canvas per chi
    guarda, e un doppione nativo fuori campo per chi naviga con la tastiera o
-   con un lettore di schermo. Il reticolo unico ha chiuso la questione nel
-   modo giusto: gli anelli concentrici sarebbero bersagli impossibili per un
-   dito, quindi il doppione È DIVENTATO l'interfaccia. Otto righe visibili,
-   nelle due colonne accanto al reticolo — sigla, scala della durata, valore,
-   quadratino di stato, ↻ — e un solo binario per tutti.
+   con un lettore di schermo. Il campo unico ha chiuso la questione nel modo
+   giusto: i dischi si sovrappongono, quindi un tocco non saprebbe a quale dei
+   due appartiene, e il doppione È DIVENTATO l'interfaccia. Otto righe
+   visibili, nelle due colonne accanto al campo — sigla, scala della durata,
+   valore, quadratino di stato, ↻ — e un solo binario per tutti.
 
    Le due classi si costruiscono con lo stesso codice, come i due scheduler:
    cambiano gli estremi della durata, le parole e la funzione che rigenera —

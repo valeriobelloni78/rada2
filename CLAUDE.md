@@ -270,11 +270,11 @@ la tela era una superficie di comando, con otto riquadri trasparenti
 (`.dialZone`) a governare `touch-action` — perché con i pointer event lo
 scorrimento della pagina lo decide SOLO `touch-action`, e `preventDefault` su
 `pointerdown` non lo ferma — più un doppione di comandi nativi fuori campo per
-la tastiera. Il reticolo unico ha chiuso la questione: gli anelli concentrici
-sarebbero bersagli impossibili per un dito, quindi **il doppione è diventato
-l'interfaccia** — le otto righe di linea nelle colonne accanto al reticolo,
-elementi HTML nativi, un binario solo per puntatore, tastiera e lettore di
-schermo. Con questo sono spariti i dialZone, le regole di `touch-action` e la
+la tastiera. Il campo unico ha chiuso la questione: i dischi si sovrappongono,
+quindi un tocco non saprebbe a quale dei due appartiene, e **il doppione è
+diventato l'interfaccia** — le otto righe di linea nelle colonne accanto al
+campo, elementi HTML nativi, un binario solo per puntatore, tastiera e lettore
+di schermo. Con questo sono spariti i dialZone, le regole di `touch-action` e la
 sincronia bidirezionale canvas↔comandi. Chi rimette un ascoltatore sulla tela
 si ricompra tutti e tre i problemi.
 
@@ -322,7 +322,8 @@ moltiplica e a sessanta al secondo arriva a occupare il fotogramma intero: la
 CPU resta satura, il thread audio non viene servito in tempo e i buffer
 saltano. È da lì che venivano i glitch su Android. Dimezzare i fotogrammi
 dimezza esattamente quella spesa, e non si perde niente: il segno più rapido
-della pagina è il punto di fase sull'anello più interno, 63 pixel al secondo,
+della pagina è il punto di fase sul bordo di un disco, una sessantina di
+pixel al secondo,
 cioè due per fotogramma. **Chi rimette sessanta ricompra i glitch.**
 
 **Le soglie del ciclo stanno appena SOTTO il periodo voluto.** `PASSO_VIVO` è
@@ -420,54 +421,81 @@ e quella che suona un evento. Le gocce e le tenute differiscono per come
 suonano, non per come vengono collocate nel tempo — e due copie dello
 scheduler divergerebbero al primo ritocco.
 
-**I due archi di misura stanno PIÙ FUORI del baricentro, e non è estetica.**
-Il baricentro rolla fino a 127 gradi dal nord, cioè entra nei quadranti bassi:
-alla stessa quota gli passerebbe sopra proprio quando il pezzo è agli estremi.
-Raggi diversi — 1,055 e 1,13 — li tengono separati sempre.
+**LE OTTO LINEE SONO OTTO DISCHI, non otto anelli concentrici.** Un disco è
+una quantità — lo spicchio chiaro dice a che punto è il giro, il diametro
+quanto è lungo il periodo — mentre un anello era una traiettoria e di quantità
+non ne dichiarava nessuna. Le frasi stanno davanti e piccole, i tessuti dietro
+e larghi.
 
-Gli archi dicono l'ampiezza del registro di ciascuna classe: le gocce a
-sud-est in arancione, i tessuti a sud-ovest in inchiostro. Sono **centrati
-sulla diagonale del proprio quadrante** e crescono nei due versi insieme, come
-una forbice che si apre: a metà corsa stanno a metà quadrante, non a un quarto.
-Al massimo si fermano due gradi prima di ciascun estremo — quello stacco tiene
-separati i due archi sul sud, dove altrimenti si toccherebbero a cursori pieni
-leggendosi come un segno solo spezzato in due colori, e li chiude anche verso
-est e ovest. Sotto ciascuno resta la guida tenue del quadrante: a cursore
-quasi chiuso l'arco sparisce, e senza guida non si saprebbe dove guardare.
+**Il campo è ORIZZONTALE e NUDO.** Niente cornice: sono spariti il cerchio
+esterno, le dodici tacche del circolo delle quinte, l'arco pesante del
+baricentro e i due archi di misura del registro. Il reticolo era quadrato
+perché un cerchio lo è; una composizione libera no, e in un quadrato lascerebbe
+vuoti gli angoli.
 
-Leggono `effG.spread` ed `effD.spread`, **non la posizione del cursore** —
-verificato campionando i pixel della tela: scarto massimo un punto percentuale
-su tutta la corsa. Il tratto è più sottile di quello del baricentro perché sul
-bordo convivono tre archi e uno solo può essere il più pesante.
+Nulla di quello che se n'è andato è andato perso, e conviene sapere dove
+ritrovarlo: la tonalità e il conteggio delle modulazioni stanno nella riga
+sopra il campo, il baricentro nella corsia dei quindici minuti, il registro
+efficace nei due numeri accanto a ciascun cursore. Erano tre letture doppie, e
+sul campo erano quelle che facevano rumore.
 
-**Il mirino ha due segni, uno per classe.** Il punto al centro lampeggia con
-qualunque goccia, l'anello che lo circonda quando un tessuto si apre: sono i
-due attacchi dello strumento letti nel punto in cui le otto linee si
-incontrano. L'anello **lampeggia e non resta acceso** — la tenuta accesa è già
-raccontata dal suo arco, e qui interessa l'istante d'ingresso, che altrimenti
-non avrebbe segno perché un tessuto si apre troppo lentamente perché l'orecchio
-ne colga il momento.
+**Il baricentro ora è il movimento della TAVOLA.** La composizione intera
+scorre di due punti percentuali sui due assi, con due canali diversi perché con
+uno solo scorrerebbe in diagonale avanti e indietro — cioè si leggerebbe come
+un'oscillazione, la cosa che la deriva esiste per non essere.
 
-La durata del lampo è `LAMPO`, **una costante sola** per gocce, centro e
-anello: sono lo stesso segno detto in posti diversi, e tre valori li farebbero
-sembrare tre fenomeni.
+**La composizione in `POSTO` è FISSA, e i suoi numeri sono stati CERCATI.** Due
+condizioni, e vanno rimisurate a ogni ritocco perché tirano in direzioni
+opposte — allargare la tavola separa i dischi e spegne le lenti:
 
-**Il filo della tenuta è l'unica eccezione, e ha una costante sua.** Per
-`FILO_TENUTA` secondi dall'apertura, un raggio arancione lega la metà esatta
-dell'arco al mirino. Risponde alla domanda che l'anello lampeggiante pone senza
-risolvere: «se n'è aperto uno», sì, ma *quale* — un tessuto si apre troppo
-lentamente perché l'orecchio lo localizzi, e quattro anelli concentrici sono
-troppo simili perché l'occhio ci arrivi da solo. Dura più di `LAMPO` perché
-**non è un lampo**: il lampo segna un istante e basta che si veda, questo è un
-percorso che l'occhio deve seguire dal bordo al centro. Non è nemmeno un accento
-in più — è lo STESSO della tenuta arancione, prolungato fino al centro, quindi
-la regola dell'unico accento resta intera.
+- **contenimento**: nessun disco esce dal campo;
+- **incontro**: ogni frase incrocia almeno due tessuti, e i tessuti si
+  incrociano fra loro. Senza, la lente non ha mai occasione di comparire e il
+  segno esiste solo sulla carta.
 
-L'angolo si registra in `aggiornaCorrente` con la **stessa formula** che
-disegna l'arco: scritta due volte in due modi, il filo prima o poi punterebbe
-altrove. E il raggio del mirino è `R_MIRINO`, non un numero ripetuto: lo usano
-l'anello e il filo, e con due valori basterebbe ritoccare l'anello per lasciare
-il filo staccato o sovrapposto.
+La prima stesura veniva da un mockup largo quasi mille pixel. Portata qui, dove
+il campo è 560 × 347, i dischi smettevano di toccarsi — **tre coppie su 28**, e
+la lente non si accendeva mai; ingrandirli e basta li faceva uscire dal campo.
+La taratura ha provato ogni misura contro ogni contrazione su quattro formati
+per sessantaquattro combinazioni di mood, 256 casi per candidato, e ha tenuto
+la tavola **più larga** che reggesse entrambe le condizioni ovunque: raggio
+`0,17` del lato corto, posizioni contratte del 30% verso il centro. Lì le
+coppie che si possono toccare stanno fra 14 e 19. Si contano, non si guardano.
+
+**Il raggio segue la RADICE del periodo, con un pavimento a 0,70.** Preso
+linearmente, un mood come «carillon» — 4 e 25 secondi — farebbe un disco sei
+volte l'altro e la tavola si sbilancerebbe a ogni preset.
+
+**LA LENTE è il collage.** Dove due dischi che suonano si sovrappongono, l'area
+comune si scurisce: una durata, che resta finché resta vera. È l'erede del filo
+che sul reticolo univa due gocce vicine — `drawLinks` e `LINK_WINDOW` non ci
+sono più, e la lente dice la stessa cosa come area invece che come linea.
+
+**La lente è in inchiostro e non in arancione**, ed è la regola dell'unico
+accento: la lente è uno stato, e in questo progetto l'arancione segna un evento.
+
+**L'arancione su un tessuto dura `LAMPO`, non tutta la tenuta.** Il disco si
+accende solo se l'evento è `corrente` **e** si è aperto da meno di mezzo
+secondo: le due condizioni insieme garantiscono un accento alla volta. Legarlo
+alla sola `corrente` terrebbe un disco acceso anche mezzo minuto.
+
+**IL MIRINO E IL FILO DELLA TENUTA NON CI SONO PIÙ, e non vanno rimessi.**
+Erano due segni al centro: un punto che lampeggiava con le gocce, un anello che
+lampeggiava con i tessuti, e un raggio che legava la tenuta appena aperta al
+centro. Esistevano entrambi per rispondere alla stessa domanda — *quale* di
+quattro anelli quasi identici ha appena parlato — e quella domanda sparisce
+quando le otto linee sono otto oggetti distinti in otto posti distinti: il
+disco che si accende dice già da sé qual è. Rimetterli costerebbe due segni per
+un'informazione che c'è già.
+
+La durata del lampo resta `LAMPO`, **una costante sola** per le gocce e per i
+tessuti: sono lo stesso segno detto in posti diversi, e due valori li farebbero
+sembrare due fenomeni.
+
+**La fase udibile si legge in un posto solo.** `faseUdibile` prende dalla coda
+`L.cycles` e mai da `cycleStart`, e la leggono in due — lo spicchio e il punto
+di fase sul bordo. Due conti scritti a parte finirebbero per dire due cose
+diverse della stessa linea.
 
 **Le guide dei tessuti mostrano uno STATO, non una storia.** Le quattro corsie
 delle gocce scorrono e ricordano trenta secondi; le quattro guide dei tessuti
@@ -484,9 +512,9 @@ sarebbe un centinaio di campiture per fotogramma, e a sessanta al secondo si
 sente su un telefono: si accumulano tutti i grigi in un percorso e tutti gli
 accesi in un altro, con un `moveTo` prima di ogni arco perché non si colleghino.
 
-**La tela è UNA, e il ciclo di fotogrammi pure.** Le otto linee sono anelli
-concentrici di un solo reticolo, disegnato da `disegno.js` su un solo canvas
-dentro un solo `requestAnimationFrame`. In Rada le tele erano due perché due
+**La tela è UNA, e il ciclo di fotogrammi pure.** Le otto linee sono otto
+dischi di un solo campo, disegnato da `disegno.js` su un solo canvas dentro un
+solo `requestAnimationFrame`. In Rada le tele erano due perché due
 riquadri con bordo proprio non potevano condividerne una; caduti i riquadri è
 caduta la ragione, e `droni.js` è confluito qui. Due animazioni indipendenti
 si sfaserebbero e su un telefono costerebbero il doppio: chi aggiunge una
@@ -498,7 +526,7 @@ tacenti filo tenue; lo spessore doppio invece vale per tutte quelle che suonano.
 
 Il tetto dell'accento è passato per tre valori, e conviene sapere perché è
 finito a uno. Accendere tutto ciò che suona portava l'arancione al 71% della
-circonferenza degli anelli esterni con l'Intreccio appena sopra l'uno, e alla
+circonferenza dei dischi esterni con l'Intreccio appena sopra l'uno, e alla
 saturazione alzandolo. Una per linea lo riportava al 58%: meglio, ma ancora
 quattro accenti simultanei. Una sola scende al 13%, e soprattutto guadagna un
 significato preciso — non «queste stanno suonando» ma **«questa è appena
@@ -508,7 +536,7 @@ entrata»**.
 assoluto può cadere su una linea muta, prendersi l'arancione e lasciare la
 pagina senza acceso mentre qualcosa suona davvero. Vale anche a classe spenta.
 
-Il reticolo e la guida usano la STESSA gerarchia e gli STESSI due colori, e
+Il campo e la guida usano la STESSA gerarchia e gli STESSI due colori, e
 leggono lo stesso `corrente` in `disegno.js`, calcolato una volta per
 fotogramma. Chi ne cambia la definizione da una parte la cambi anche
 dall'altra, e chi introduce un terzo grigio per una delle due fa sembrare due
@@ -597,13 +625,13 @@ stato verificato su rada2).
 
 Le quattro direzioni visive di Rada sono state percorse dal reticolo e dalla
 fascia: l'altezza si legge nella lunghezza delle tacche, il collage negli
-anelli concentrici e nei legami effimeri, il tempo lungo nella corsia dei
+dischi che si sovrappongono e nelle lenti, il tempo lungo nella corsia dei
 quindici minuti dove il baricentro sedimenta. Restano aperte, in ordine di
 interesse:
 
 1. **Estendere le palette al visivo.** L'ora e la stagione oggi agiscono solo
    sul suono: alle 23 Rada2 suona cupa ma appare identica a mezzogiorno. Il
-   reticolo unico rende l'idea più facile di prima — un'inclinazione sola,
+   campo unico rende l'idea più facile di prima — un'inclinazione sola,
    non otto.
 2. **L'esportazione di un'immagine finale.** La corsia lunga già accumula la
    sessione; il passo successivo è poterla portare via — la traiettoria di

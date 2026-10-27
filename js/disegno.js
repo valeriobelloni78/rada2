@@ -1,83 +1,123 @@
 /* =============================================================================
-   RADA2 · disegno.js — il reticolo e la fascia di deriva
+   RADA2 · disegno.js — il campo e la fascia di deriva
 
    Sostituisce frasi.js e droni.js, e con loro l'idea che le otto linee siano
-   otto quadranti. Qui sono OTTO ANELLI CONCENTRICI di un solo strumento: le
-   quattro frasi all'interno, i quattro tessuti all'esterno, un centro solo.
-   È la conseguenza visiva di ciò che il suono fa da sempre — otto periodi
-   che si sfasano fra loro, non due gruppi da quattro — e rende finalmente
-   visibile il collage, che accade FRA le linee e che otto isole non potevano
-   mostrare.
+   otto quadranti. Qui sono OTTO DISCHI in composizione libera dentro un campo
+   solo: le quattro frasi piccole e in primo piano, i quattro tessuti grandi e
+   dietro. Un disco è una QUANTITÀ — lo spicchio chiaro dice a che punto è il
+   giro, il diametro quanto è lungo il periodo — mentre un anello era una
+   traiettoria, e di quantità non ne dichiarava nessuna.
 
-   Sul bordo, il tempo lungo: dodici tacche per il circolo delle quinte con
-   la posizione corrente marcata, e un arco pesante che rolla lentissimo con
-   il baricentro. Sotto, la fascia: gli ultimi trenta secondi delle gocce, lo
-   stato delle tenute in corso, e la corsia lunga dove il baricentro
-   sedimenta la sua traiettoria sull'ultimo quarto d'ora.
+   I DISCHI SI TOCCANO, ed è lì che vive il collage: dove due che suonano si
+   sovrappongono, l'area comune si scurisce. È la LENTE — una durata, che dice
+   «queste due stanno suonando insieme» e resta finché resta vero. Sta in
+   inchiostro e non in arancione, perché è uno stato e in questo progetto
+   l'accento segna un evento.
+
+   IL CAMPO È NUDO. Niente cornice attorno ai dischi: non c'è il cerchio
+   esterno, non ci sono le dodici tacche del circolo delle quinte, l'arco del
+   baricentro né i due archi di misura del registro. Sono spariti anche tre
+   segni che il reticolo aveva: il MIRINO al centro, il FILO DELLA TENUTA che
+   ci arrivava, e il filo che univa due gocce vicine (`drawLinks`).
+
+   Niente di tutto questo è andato perso, e conviene sapere dove ritrovarlo —
+   erano letture doppie, e sul campo erano quelle che facevano rumore:
+
+     la tonalità e le modulazioni   nella riga sopra il campo
+     il baricentro                  nel movimento della tavola, e in numero
+                                    nella corsia dei quindici minuti
+     il registro efficace           nei due numeri accanto a ogni cursore
+     quale linea ha parlato         nel disco che si accende, che il mirino
+                                    poteva solo dire che qualcuno l'aveva fatto
+     due gocce insieme              nella lente, come area invece che linea
+
+   Sotto il campo, la fascia: gli ultimi trenta secondi delle gocce, lo stato
+   delle tenute in corso, e la corsia lunga dove il baricentro sedimenta la
+   sua traiettoria sull'ultimo quarto d'ora.
 
    IL CANVAS NON ASCOLTA NULLA. In Rada era una superficie di comando, con
    otto riquadri trasparenti a governare `touch-action` e un doppio binario
-   di comandi nativi fuori campo per chi non usa il puntatore. Qui gli anelli
-   concentrici sarebbero bersagli impossibili per un dito — e il doppio
-   binario è diventato il binario: i comandi nativi sono visibili, nelle due
-   colonne accanto al reticolo, e la tela è puro display. Con questo cade
-   tutta la meccanica dei dialZone, e la pagina scorre da sé.
+   di comandi nativi fuori campo per chi non usa il puntatore. Qui i dischi
+   sarebbero bersagli ambigui — si sovrappongono — e il doppio binario è
+   diventato il binario: i comandi nativi sono visibili, nelle due colonne
+   accanto al campo, e la tela è puro display. Con questo cade tutta la
+   meccanica dei dialZone, e la pagina scorre da sé.
 
    Disegnato con l'API 2D nativa, proporzioni in frazioni del raggio, palette
    letta dalle variabili CSS: le regole di sempre. Il ciclo di fotogrammi è
    uno solo, e niente allocazioni dentro `disegna`.
 ============================================================================= */
 
-/* --- geometria del reticolo, in frazioni del raggio esterno R ------------- */
-const ANELLI_FRASI   = [0.30, 0.38, 0.46, 0.54];   // dall'interno
-const ANELLI_TESSUTI = [0.66, 0.74, 0.82, 0.90];   // il vuoto fra 0,54 e 0,66
-                                                   // separa le due classi
-const R_QUINTE_IN  = 0.965, R_QUINTE_OUT = 1.0;    // le dodici tacche
-const R_TONICA     = 1.055;                        // l'arco pesante, fuori da tutto
-const TONICA_SPAN  = Math.PI / 3.2;                // ampiezza dell'arco
-/* I due archi di misura stanno PIÙ FUORI del baricentro, e non è una
-   preferenza: il baricentro rolla fino a 127 gradi dal nord, cioè entra nei
-   quadranti bassi, e alla stessa quota gli passerebbe sopra proprio quando il
-   pezzo è agli estremi. Un raggio diverso li tiene separati sempre.       */
-const R_MISURA     = 1.13;
-/* I due archi sono CENTRATI sulle diagonali — sud-est e sud-ovest — e da lì
-   crescono nei due versi insieme. Al massimo coprono il proprio quadrante,
-   meno due gradi per estremo: quello stacco tiene separati i due archi sul
-   sud, dove altrimenti si toccherebbero a cursori pieni leggendosi come un
-   segno solo spezzato in due colori, e li tiene staccati anche da est e da
-   ovest, così restano due segni chiusi invece di due quarti di cerchio.  */
-const MISURA_PIEDE = Math.PI / 90;                 // due gradi
-const MISURA_MEZZA = Math.PI / 4 - MISURA_PIEDE;   // semi-apertura massima
-const MISURA_SE    = Math.PI / 4;                  // il centro di sud-est
-const MISURA_SO    = Math.PI * 3 / 4;              // e quello di sud-ovest
-const LINK_WINDOW  = 0.18;   // scarto massimo, in secondi, fra due gocce "vicine"
-/* Quanto dura un lampo, in secondi. Un solo numero per tutti gli attacchi —
-   le gocce, il centro, l'anello dei tessuti — perché sono lo stesso segno
-   detto in posti diversi, e tre valori diversi li farebbero sembrare tre
-   fenomeni. Vale anche per i tessuti, il cui attacco è lento: il lampo non
-   dice «quanto ci mette ad aprirsi», dice «se n'è appena aperto uno».     */
+/* --- LA COMPOSIZIONE -------------------------------------------------------
+   Dove cade ciascun disco e quanto pesa. `x` e `y` sono frazioni della
+   LARGHEZZA e dell'ALTEZZA del campo — posizioni assolute sulla tavola, non
+   scarti da un centro: il campo è un rettangolo e non ha più un centro da cui
+   misurare. Le prime quattro voci sono le frasi, le altre quattro i tessuti.
+
+   È FISSA, e non si ricompone al cambio di mood: una tavola che si rimpasta a
+   ogni preset smette di essere una tavola, e si perderebbe la cosa che questa
+   disposizione dà in cambio — la memoria di dove sta ciascuna linea.
+
+   Due condizioni, e vanno RIMISURATE a ogni ritocco perché tirano in
+   direzioni opposte — allargare la tavola separa i dischi e spegne le lenti:
+
+     CONTENIMENTO  nessun disco esce dal campo.
+     INCONTRO      ogni frase incrocia almeno due tessuti, e i tessuti si
+                   incrociano fra loro. Senza questo la lente non avrebbe mai
+                   occasione di comparire, e il segno esisterebbe solo sulla
+                   carta.
+
+   I NUMERI SONO STATI CERCATI, non scelti. La prima stesura veniva da un
+   mockup largo quasi mille pixel; portata qui, dove il campo è 560 × 347, i
+   dischi smettevano di toccarsi — TRE coppie su 28, e la lente non si
+   accendeva mai. Ingrandirli e basta li faceva uscire dal campo.
+
+   La taratura ha provato ogni misura contro ogni contrazione su quattro
+   formati di campo per sessantaquattro combinazioni di mood, cioè 256 casi
+   per candidato, e ha tenuto la tavola PIÙ LARGA che reggesse tutte e due le
+   condizioni ovunque: raggio 0,17 del lato corto, posizioni contratte del 30%
+   verso il centro. Lì le coppie che si possono toccare stanno fra 14 e 19, e
+   nessun disco esce in nessun caso. A 0,15 la tavola è più ariosa ma qualche
+   frase resta isolata; a 0,19 i dischi cominciano a sbordare.
+
+   Quelle che si toccano sono le coppie POSSIBILI: la lente si accende solo
+   quando tutt'e due suonano davvero, cioè due o tre per volta.           */
+const DISCO_BASE = 0.17;   // raggio di riferimento, in frazioni del lato corto
+const POSTO = [
+  { x: 0.339, y: 0.381, k: 0.80 },   // frase I
+  { x: 0.472, y: 0.570, k: 0.95 },   // frase II
+  { x: 0.619, y: 0.367, k: 0.72 },   // frase III
+  { x: 0.724, y: 0.584, k: 0.88 },   // frase IV
+  { x: 0.290, y: 0.598, k: 1.55 },   // tessuto I
+  { x: 0.521, y: 0.339, k: 1.80 },   // tessuto II
+  { x: 0.682, y: 0.640, k: 1.42 },   // tessuto III
+  { x: 0.409, y: 0.724, k: 1.25 },   // tessuto IV
+];
+
+/* Quanto dura un lampo, in secondi. Un solo numero per le gocce e per i
+   tessuti, perché sono lo stesso segno detto in posti diversi, e due valori
+   li farebbero sembrare due fenomeni. Vale anche per i tessuti, il cui
+   attacco è lento: il lampo non dice «quanto ci mette ad aprirsi», dice
+   «se n'è appena aperto uno».                                             */
 const LAMPO = 0.45;
-/* Il raggio del mirino, dove le otto linee si incontrano. Sta qui e non
-   dentro il disegno perché adesso lo usano in due: l'anello che lampeggia e
-   il filo che ci arriva. Se il filo partisse da un valore proprio, basterebbe
-   ritoccare l'anello per lasciarlo staccato o sovrapposto.               */
-const R_MIRINO = 0.045;
-/* Quanto resta il filo che lega una tenuta appena entrata al mirino.
-   NON è LAMPO, e la differenza è voluta: il lampo segna un istante e basta
-   che si veda, questo è un percorso che l'occhio deve seguire dal bordo al
-   centro per capire QUALE dei quattro anelli ha appena parlato. Mezzo
-   secondo non basta a farlo, e i due segni non sono la stessa cosa detta in
-   due posti — sono due cose diverse.                                     */
-const FILO_TENUTA = 1;
 
 let COL = {};                // palette letta dal CSS
 let holder = null, cvEl = null, cv2d = null;
 
 /* Strutture riusate a ogni fotogramma: niente allocazioni dentro `disegna`. */
-const SIZE = { w: 0, h: 0, ret: 0, stripH: 0 };
-const HOT_MAX = 96;
-const hotPool = Array.from({ length: HOT_MAX }, () => ({ x: 0, y: 0, t: 0, loop: 0 }));
-let hotCount = 0;
+const SIZE = { w: 0, h: 0, ret: 0, campo: 0, stripH: 0 };
+
+/* Il numerale al centro di un disco non cresce oltre questo: è una sigla, non
+   un titolo, e sul tessuto più largo arriverebbe al corpo di un'intestazione. */
+const CORPO_SIGLA = 11;
+
+/* Gli otto dischi come stanno in QUESTO fotogramma: centro, raggio, linea, e
+   quanto la linea sta suonando (0..1). Preallocati, perché `disegna` non
+   alloca — e la lente ha bisogno di rileggerli tutti dopo averli calcolati,
+   quindi un vettore serve davvero invece di una variabile di giro.        */
+const forme = Array.from({ length: 8 }, () => ({
+  L: null, x: 0, y: 0, r: 0, viva: 0, fase: -1, spenta: false, appena: false,
+}));
 
 /* LA tenuta più recente fra tutt'e quattro le linee: una sola in tutta la
    pagina, non una per linea. È l'ultimo tessuto entrato, quello che si è
@@ -95,30 +135,14 @@ let hotCount = 0;
    a classe spenta — se i tessuti sono in pausa non c'è nessuna più recente.
 
    La calcola `aggiornaCorrente` una volta per fotogramma, e la leggono in
-   due: l'anello, per decidere quale arco è arancione, e la guida, per sapere
-   di quale tenuta mostrare l'avanzamento in arancione. Devono parlare della
-   stessa, o le due letture dello stesso suono mentirebbero.               */
+   due: il disco del tessuto, per decidere quale si accende, e la guida nella
+   fascia, per sapere di quale tenuta mostrare l'avanzamento in arancione.
+   Devono parlare della stessa, o le due letture dello stesso suono
+   mentirebbero.                                                           */
 let corrente = null;
-/* Dove sta la sua metà d'arco: l'angolo e la frazione di raggio del proprio
-   anello. Si registrano qui perché la scansione delle otto linee è già
-   questa, e perché sono i soli dati che il mirino non potrebbe ricavarsi —
-   l'evento non sa su quale anello viene disegnato.                        */
-let correnteAng = 0, correnteFr = 0;
-
-/* Vero nei LAMPO secondi che seguono l'apertura di un tessuto qualsiasi. Lo
-   legge il mirino: il punto al centro lampeggia per le gocce, l'anello che lo
-   circonda per i tessuti. Due classi, due segni concentrici nello stesso
-   punto — il cuore comune delle otto linee — e da lì si sente arrivare tutto
-   senza guardare da nessun'altra parte.
-
-   Si calcola qui e non nel disegno perché la scansione delle otto linee è già
-   questa: farne una seconda per la stessa domanda sarebbe lavoro doppio a
-   ogni fotogramma.                                                        */
-let tessutoAppena = false;
 
 function aggiornaCorrente(now) {
   corrente = null;
-  tessutoAppena = false;
   if (!tessutiOn) return;
   for (let i = 0; i < droni.length; i++) {
     const L = droni[i];
@@ -126,18 +150,24 @@ function aggiornaCorrente(now) {
     for (const p of L.plan) {
       const ev = p.ev;
       if (!(now >= ev.flash && now < ev.fino)) continue;
-      if (now - ev.flash < LAMPO) tessutoAppena = true;
-      if (!corrente || ev.flash > corrente.flash) {
-        corrente = ev;
-        /* La metà esatta dell'arco, con la stessa formula che lo disegna:
-           scritta due volte in due modi, il filo prima o poi punterebbe
-           altrove.                                                        */
-        correnteAng = -Math.PI / 2 +
-                      (p.ph + clamp(ev.dur, 0.02, 1) / 2) * Math.PI * 2;
-        correnteFr  = ANELLI_TESSUTI[i];
-      }
+      if (!corrente || ev.flash > corrente.flash) corrente = ev;
     }
   }
+}
+
+/* A che punto è il giro UDIBILE di una linea, da 0 a 1, o −1 se non ne ha uno.
+   Legge dalla coda `L.cycles` e mai da `cycleStart`, che descrive il ciclo in
+   pianificazione e corre avanti fino a un terzo di giro.
+
+   Sta in una funzione sola perché adesso la leggono in due — lo spicchio del
+   disco e il punto di fase sul bordo — e due conti scritti a parte
+   finirebbero per dire due cose diverse della stessa linea.               */
+function faseUdibile(L, now, accesa) {
+  if (!(ctx && running && accesa && !L.muted && L.cycles.length)) return -1;
+  while (L.cycles.length > 1 && now >= L.cycles[0].start + L.cycles[0].period)
+    L.cycles.shift();
+  const c = L.cycles[0];
+  return clamp((now - c.start) / c.period, 0, 1);
 }
 
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -165,17 +195,25 @@ function readPalette() {
     dust:  v("--dust"),
     hair:  v("--hair"),
     amber: v("--amber"),
+    velo:  v("--velo"),
   };
 }
 
-/* Il reticolo è un quadrato largo quanto il contenitore concede, la fascia
-   una striscia sotto, della stessa larghezza.                              */
+/* Il campo è ORIZZONTALE, la fascia una striscia sotto della stessa
+   larghezza. Il reticolo era quadrato perché un cerchio lo è; una
+   composizione libera no, e in un quadrato lascerebbe vuoti gli angoli.
+
+   Sul telefono il campo si alza — 0,82 invece di 0,62 — perché a schermo
+   stretto una tavola bassa schiaccia gli otto dischi uno sull'altro: le
+   sovrapposizioni diventano una macchia sola e la lente smette di dire
+   quali due linee si sono incontrate.                                     */
 function canvasSize() {
   const avail = holder ? holder.clientWidth : 320;
   SIZE.ret    = Math.min(avail, 560);
+  SIZE.campo  = Math.min(SIZE.ret * (SIZE.ret < 420 ? 0.82 : 0.62), 520);
   SIZE.stripH = clamp(SIZE.ret * 0.34, 120, 190);
   SIZE.w      = SIZE.ret;
-  SIZE.h      = SIZE.ret + SIZE.stripH;
+  SIZE.h      = SIZE.campo + SIZE.stripH;
   return SIZE;
 }
 
@@ -231,392 +269,223 @@ function disegna() {
   cv2d.textBaseline = "middle";
 
   const now = audioNow();
-  hotCount = 0;
   aggiornaCorrente(now);
-  drawReticolo(s, now);
+  drawCampo(s, now);
   drawFascia(s, now);
 }
 
 /* ---------------------------------------------------------------------------
-   IL RETICOLO
+   IL CAMPO
 --------------------------------------------------------------------------- */
-function drawReticolo(s, now) {
+function drawCampo(s, now) {
   const g = cv2d;
-  const cx = s.ret / 2, cy = s.ret / 2;
-  const R = s.ret / 2 * 0.84;    // il margine ospita l'arco della tonica
-  misuraEtichette(g, R);         // solo quando il raggio cambia
+  const W = s.w, H = s.campo;
 
   g.save();
   g.lineCap = "butt";
 
-  /* La croce diagonale, sottilissima: il telaio su cui gli anelli poggiano.
-     Parte da fuori il centro e si ferma sotto le tacche delle quinte, così
-     non tocca né il mirino né il bordo.                                    */
-  g.strokeStyle = COL.hair;
-  g.lineWidth = 0.75;
-  g.beginPath();
-  for (let k = 0; k < 4; k++) {
-    const a = Math.PI / 4 + k * Math.PI / 2;
-    g.moveTo(cx + Math.cos(a) * R * 0.10, cy + Math.sin(a) * R * 0.10);
-    g.lineTo(cx + Math.cos(a) * R * 0.94, cy + Math.sin(a) * R * 0.94);
-  }
-  g.stroke();
+  /* LA DERIVA SPOSTA L'INTERA TAVOLA, piano. Non c'è più un arco che la
+     dichiari: il baricentro è diventato il movimento della composizione, e si
+     legge perché tutto si sposta insieme invece che perché un segno glielo
+     racconta. Lo scarto è piccolo apposta — due punti percentuali — perché
+     deve restare sotto la soglia del notare, come tutto il tempo lungo di
+     questo progetto. Chi cerca il numero lo trova nella corsia dei quindici
+     minuti, che non ha smesso di disegnarlo.                               */
+  /* Due canali diversi per i due assi: con uno solo la tavola scorrerebbe in
+     diagonale avanti e indietro, cioè si leggerebbe come un'oscillazione —
+     proprio la cosa che la deriva esiste per non essere. `deriva.spread` qui
+     non è il ventaglio delle altezze: è solo l'altro canale, e nessun segno
+     della pagina lo disegna più da quando gli archi di misura non ci sono. */
+  const dx = derivaCentro() * W * 0.022;
+  const dy = deriva.spread * H * 0.02;
+  const base = Math.min(W, H) * DISCO_BASE;
 
-  /* Il circolo delle quinte: dodici tacche sul bordo, la corrente marcata.
-     `quinta` cresce senza tetto — il modulo la riporta sul quadrante, i
-     giri interi li racconta il contatore sopra il reticolo.               */
-  /* Le undici tenui in un tracciato solo e la corrente nell'altro: erano
-     dodici disegni separati per due soli stili.
-
-     La variabile si chiama `qui` e non `corrente`: quel nome, al livello di
-     sopra, è la tenuta arancione, e chiamarlo così qui dentro la copriva —
-     funzionava, ma è il tipo di ombra che si paga la prima volta che
-     qualcuno sposta due righe.                                           */
-  const quintaQui = ((quinta % 12) + 12) % 12;
-  for (let passata = 0; passata < 2; passata++) {
-    g.strokeStyle = passata ? COL.amber : COL.hair;
-    g.lineWidth   = passata ? 2 : 1;
-    g.beginPath();
-    for (let k = 0; k < 12; k++) {
-      const qui = k === quintaQui;
-      if (qui !== !!passata) continue;
-      const a = -Math.PI / 2 + k * Math.PI * 2 / 12;
-      const r0 = (qui ? R_QUINTE_IN - 0.015 : R_QUINTE_IN) * R;
-      g.moveTo(cx + Math.cos(a) * r0,               cy + Math.sin(a) * r0);
-      g.lineTo(cx + Math.cos(a) * R_QUINTE_OUT * R, cy + Math.sin(a) * R_QUINTE_OUT * R);
-    }
-    g.stroke();
-  }
-
-  /* L'arco pesante del baricentro, fuori da tutto: rolla attorno al nord
-     seguendo il punto attorno a cui le altezze vengono pescate — a destra il
-     pezzo sta alto, a sinistra sta basso. È il segno più lento della pagina,
-     la deriva resa visibile come un corpo che si sposta invece che come un
-     numero che cambia.
-
-     Prima qui c'era la tonica, che scivolava di ±350 centesimi. Da quando
-     l'accordatura è fissa quello scarto è sempre zero, e il movimento
-     continuo si è trasferito nel baricentro: l'arco ha cambiato significato
-     senza cambiare aspetto.                                               */
-  const aTon = -Math.PI / 2 + derivaCentro() * Math.PI * 0.55;
-  g.strokeStyle = COL.ink;
-  g.lineWidth = Math.max(2.5, R * 0.022);
-  g.beginPath();
-  g.arc(cx, cy, R_TONICA * R, aTon - TONICA_SPAN / 2, aTon + TONICA_SPAN / 2);
-  g.stroke();
-
-  /* I DUE ARCHI DI MISURA, ai piedi del reticolo.
-
-     Non raccontano un evento ma una quantità: quanto è largo il ventaglio
-     delle altezze da cui ciascuna classe pesca. Le gocce a sud-est in
-     arancione, i tessuti a sud-ovest in inchiostro; tutti e due partono dal
-     basso e crescono verso il proprio lato, così si specchiano attorno
-     all'asse verticale come si specchiano le due colonne di comandi.
-
-     Sotto ciascuno resta la guida tenue del quadrante intero: senza, a
-     cursore quasi chiuso l'arco sparirebbe e non si saprebbe più dove
-     guardare né quanto manca al massimo.
-
-     Leggono il valore EFFICACE, non la posizione del cursore — `effG.spread`
-     e `effD.spread` — perché è quello che sta davvero suonando: il cursore li
-     muove, ma li muovono anche la deriva e la stagione, e mostrare il cursore
-     nudo sarebbe mostrare una cosa che non si sente.                      */
-  arcoMisura(g, cx, cy, R, effG.spread / 100, COL.amber, MISURA_SE, gocceOn);
-  arcoMisura(g, cx, cy, R, effD.spread / 100, COL.ink,   MISURA_SO, tessutiOn);
-
-  /* Gli otto anelli. Le frasi dentro, i tessuti fuori: le gocce sono tacche
-     radiali, i tessuti archi — un istante attraversa l'anello, una durata lo
-     percorre.                                                              */
-  for (let i = 0; i < loops.length; i++)
-    drawAnelloFrase(g, loops[i], cx, cy, ANELLI_FRASI[i] * R, R, now);
-  for (let i = 0; i < droni.length; i++)
-    drawAnelloTessuto(g, droni[i], cx, cy, ANELLI_TESSUTI[i] * R, R, now);
-
-  drawLinks(g, now);
-
-  /* IL FILO DELLA TENUTA. Per un secondo dall'apertura, un raggio lega la
-     metà esatta dell'arco al mirino: risponde alla domanda che l'anello
-     lampeggiante pone senza risolverla — «se n'è aperto uno», sì, ma quale?
-     Un tessuto si apre troppo lentamente perché l'orecchio lo localizzi, e
-     quattro anelli concentrici sono troppo simili perché l'occhio ci arrivi
-     da solo.
-
-     Non è un accento in più: è LO STESSO della tenuta arancione, prolungato
-     fino al centro. La regola dell'unico accento resta intera, perché la
-     tenuta arancione in tutta la pagina è una sola.
-
-     Svanisce col quadrato del tempo invece che linearmente: un filo che
-     attraversa mezzo reticolo resta visibile a lungo anche molto tenue, e
-     con la dissolvenza lineare l'ultimo terzo di secondo si trascinava.  */
-  if (corrente && now - corrente.flash < FILO_TENUTA) {
-    const t = (now - corrente.flash) / FILO_TENUTA;
-    const co = Math.cos(correnteAng), si = Math.sin(correnteAng);
-    g.strokeStyle = COL.amber;
-    g.lineWidth = 1;
-    g.globalAlpha = (1 - t) * (1 - t);
-    g.beginPath();
-    g.moveTo(cx + co * R_MIRINO * R,  cy + si * R_MIRINO * R);
-    g.lineTo(cx + co * correnteFr * R, cy + si * correnteFr * R);
-    g.stroke();
-    g.globalAlpha = 1;
-  }
-
-  /* IL MIRINO: due segni concentrici per le due classi, nel punto in cui le
-     otto linee si incontrano. Il punto al centro si accende con qualunque
-     goccia; l'anello che lo circonda si accende quando un tessuto si apre.
-     Sono i due attacchi dello strumento, letti in un posto solo.
-
-     L'anello lampeggia e non resta acceso: la tenuta accesa è già raccontata
-     dal suo arco sull'anello esterno, e qui interessa l'istante in cui
-     entra — che altrimenti non avrebbe nessun segno, perché un tessuto si
-     apre troppo lentamente perché l'orecchio ne colga il momento.        */
-  g.strokeStyle = tessutoAppena ? COL.amber : COL.hair;
-  g.lineWidth = tessutoAppena ? 2 : 1;
-  g.beginPath();
-  g.arc(cx, cy, R_MIRINO * R, 0, Math.PI * 2);
-  g.stroke();
-  g.fillStyle = hotCount ? COL.amber : COL.hair;
-  g.beginPath();
-  g.arc(cx, cy, hotCount ? R * 0.020 : R * 0.012, 0, Math.PI * 2);
-  g.fill();
+  preparaForme(W, H, dx, dy, base, now);
+  campitureTessuti(g);
+  lenti(g);
+  lampiGocce(g);
+  contorni(g, now);
 
   g.restore();
 }
 
-/* Un arco di misura: la guida del quadrante e, sopra, la parte piena. Cresce
-   simmetrico attorno a `centro`, che è la diagonale del proprio quadrante —
-   così il segno si apre come una forbice invece di scorrere da un capo, e a
-   metà corsa sta a metà quadrante invece che a un quarto.
+/* Dove cade ciascun disco in questo fotogramma, e quanto la sua linea sta
+   suonando. Si calcola una volta e lo rileggono tutte le passate — la lente
+   in particolare ha bisogno di vedere gli altri sette dischi, cosa che una
+   funzione che ne disegna uno per volta non potrebbe fare.
 
-   Il tratto è più sottile di quello del baricentro: sul bordo convivono tre
-   archi, e uno solo può essere il più pesante. Quello resta il baricentro,
-   che è l'unico a dire dove è arrivato il pezzo.                          */
-function arcoMisura(g, cx, cy, R, quota, colore, centro, accesa) {
-  const r = R_MISURA * R;
-
-  g.save();
-  /* A classe spenta impallidisce come i suoi anelli: il valore c'è ancora,
-     ma non sta governando niente che si senta.                           */
-  g.globalAlpha = accesa ? 1 : 0.3;
-
-  g.strokeStyle = COL.hair;
-  g.lineWidth = 1;
-  g.beginPath();
-  g.arc(cx, cy, r, centro - MISURA_MEZZA, centro + MISURA_MEZZA);
-  g.stroke();
-
-  const q = clamp(quota, 0, 1);
-  if (q > 0.004) {
-    const mezza = MISURA_MEZZA * q;
-    g.strokeStyle = colore;
-    g.lineWidth = Math.max(2, R * 0.016);
-    g.beginPath();
-    g.arc(cx, cy, r, centro - mezza, centro + mezza);
-    g.stroke();
-  }
-  g.restore();
-}
-
-/* Le otto soglie del reticolo in ordine, più quella delle tacche delle
-   quinte: servono a sapere quanto spazio libero c'è FUORI da ciascun anello,
-   che è la banda dove va a stare il suo numerale.                        */
-const SOGLIE = [...ANELLI_FRASI, ...ANELLI_TESSUTI, R_QUINTE_IN];
-const STACCO_ETICH = new Float64Array(8);
-let etichR = -1;
-
-/* Lo stacco di ciascun numerale dal proprio anello, misurato UNA VOLTA per
-   ogni raggio. Dipende dalla larghezza del testo, e `measureText` dentro il
-   fotogramma sarebbe otto misure a ogni disegno per un dato che
-   cambia solo quando cambia la finestra.
-
-   Nominalmente è una frazione del RAGGIO GRANDE e non del proprio, come
-   tutte le proporzioni del disegno: preso sul raggio dell'anello sarebbe
-   tre volte più stretto sul primo che sull'ottavo. Ma se la banda fino alla
-   soglia successiva non basta a contenerlo, il numerale ci si centra dentro:
-   succede sui telefoni stretti, dove il corpo del testo tocca il suo minimo
-   di sette pixel e smette di rimpicciolirsi col reticolo. Senza questo,
-   sotto i 320 px di finestra il IV dei tessuti andava a finire sulle tacche
-   delle quinte.                                                          */
-function misuraEtichette(g, R) {
-  if (R === etichR) return;
-  etichR = R;
+   Il raggio dipende dal periodo, ma con la RADICE e con un pavimento a 0,70:
+   preso linearmente, un mood come «carillon» (4 e 25 secondi) farebbe un
+   disco sei volte l'altro e la tavola si sbilancerebbe.                    */
+function preparaForme(W, H, dx, dy, base, now) {
   for (let k = 0; k < 8; k++) {
-    const r = SOGLIE[k] * R;
-    g.font = "400 " + Math.max(7, r * 0.05).toFixed(1) + "px " + FONT_PILA;
-    const largo = g.measureText(CANVAS.linea[k % 4]).width;
-    const banda = (SOGLIE[k + 1] - SOGLIE[k]) * R;
-    STACCO_ETICH[k] = Math.max(1, Math.min(R * 0.014, (banda - largo) / 2));
-  }
-}
+    const frase = k < 4;
+    const lista = frase ? loops : droni;
+    const L = lista[frase ? k : k - 4];
+    const P = POSTO[k];
+    const f = forme[k];
 
-/* L'etichetta di un anello: il numerale della linea, dal lato della sua
-   colonna di comandi — le frasi a ovest, i tessuti a est. È il legame visivo
-   fra la riga che si tocca e l'anello che si guarda.
+    let maxp = 1;
+    for (const x of lista) if (x.period > maxp) maxp = x.period;
 
-   Sta FUORI dal proprio anello, e cresce verso l'esterno. Prima era CENTRATA
-   sulla circonferenza — il fotogramma imposta textAlign "center" per tutti —
-   quindi ogni numerale aveva un filo che gli passava in mezzo, e a corpo
-   sette pixel un filo che attraversa una cifra la cancella: III e IV
-   diventavano la stessa macchia. Non basta scostarla, va anche riallineata:
-   lasciata al centro si sarebbe scostata per metà soltanto.              */
-function etichettaAnello(g, testo, cx, cy, r, k, lato) {
-  g.fillStyle = COL.dust;
-  g.font = "400 " + Math.max(7, r * 0.05).toFixed(1) + "px " + FONT_PILA;
-  g.textAlign = lato < 0 ? "right" : "left";
-  g.fillText(testo, cx + lato * (r + STACCO_ETICH[k]), cy - 7);
-}
+    f.L = L;
+    f.x = P.x * W + dx;
+    f.y = P.y * H + dy;
+    f.r = base * P.k * (0.70 + 0.30 * Math.sqrt(L.period / maxp));
+    f.spenta = L.muted || !(frase ? gocceOn : tessutiOn);
+    f.fase = faseUdibile(L, now, frase ? gocceOn : tessutiOn);
 
-function drawAnelloFrase(g, L, cx, cy, r, R, now) {
-  g.save();
-  g.globalAlpha = (L.muted || !gocceOn) ? 0.3 : 1;
+    /* Quanto questa linea sta suonando ADESSO, da 0 a 1.
 
-  /* guida: il cerchio intero, tenue */
-  g.strokeStyle = COL.hair;
-  g.lineWidth = 0.75;
-  g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
-
-  /* la zona attiva: l'arco dove le gocce si addensano. Dal PIANO, non dal
-     cursore: `planHead` è l'addensamento con cui il piano è stato costruito,
-     e quel che si vede coincide con quel che suona.                        */
-  const a0 = -Math.PI / 2 + L.offset * Math.PI * 2;
-  g.strokeStyle = COL.ink;
-  g.lineWidth = 1.6;
-  g.beginPath(); g.arc(cx, cy, r, a0, a0 + L.planHead * Math.PI * 2); g.stroke();
-
-  /* le gocce: tacche radiali attraverso l'anello. La LUNGHEZZA segue il
-     registro — corta grave, lunga acuta — ed è così che il profilo melodico
-     dell'idea si legge senza una dimensione radiale da spendere.           */
-  /* DUE campiture, non una per tacca: le accese e le spente. Un tracciato
-     per goccia erano una cinquantina di disegni per fotogramma fra reticolo
-     e fascia, e ogni tracciato separato su un telefono costa una
-     tassellatura e una chiamata di disegno. Le tacche sono solo due stili —
-     accesa e spenta — quindi due passate sulla lista e due campiture.    */
-  g.lineCap = "round";
-  for (let acceso = 0; acceso < 2; acceso++) {
-    g.strokeStyle = acceso ? COL.amber : COL.ink;
-    g.lineWidth   = acceso ? 2.4 : 1.5;
-    g.beginPath();
-    for (const p of L.plan) {
-      const dt = now - p.ev.flash;
-      const hot = dt >= 0 && dt < LAMPO;
-      if (hot !== !!acceso) continue;
-      const a = -Math.PI / 2 + p.ph * Math.PI * 2;
-      const mezza = lerp(0.014, 0.042, (p.ev.rel + 1) / 2) * R * (hot ? 1.35 : 1);
-      const ux = Math.cos(a), uy = Math.sin(a);
-      g.moveTo(cx + ux * (r - mezza), cy + uy * (r - mezza));
-      g.lineTo(cx + ux * (r + mezza), cy + uy * (r + mezza));
-      if (hot && hotCount < HOT_MAX) {
-        const o = hotPool[hotCount++];
-        o.x = cx + ux * r; o.y = cy + uy * r; o.t = p.ev.flash; o.loop = L.i;
+       Per una GOCCIA è il lampo che svanisce in mezzo secondo. Per una
+       TENUTA è il suo avanzamento, da 0 all'apertura a 1 alla chiusura: così
+       la campitura cresce mentre il suono affiora, invece di comparire tutta
+       insieme quando ancora non si sente.                                 */
+    let viva = 0, appena = false;
+    if (!f.spenta) {
+      if (frase) {
+        for (const p of L.plan) {
+          const dt = now - p.ev.flash;
+          if (dt >= 0 && dt < LAMPO) viva = Math.max(viva, 1 - dt / LAMPO);
+        }
+      } else {
+        for (const p of L.plan) {
+          const ev = p.ev;
+          if (!(now >= ev.flash && now < ev.fino)) continue;
+          const durata = ev.fino - ev.flash;
+          if (durata > 0) viva = Math.max(viva, clamp((now - ev.flash) / durata, 0, 1));
+          /* Arancione solo nei LAMPO secondi dall'apertura, e solo se è LA
+             più recente della pagina: le due condizioni insieme garantiscono
+             un accento alla volta, che è la regola del progetto.          */
+          if (ev === corrente && now - ev.flash < LAMPO) appena = true;
+        }
       }
     }
-    g.stroke();
+    f.viva = viva;
+    f.appena = appena;
   }
-  g.lineCap = "butt";
-
-  /* l'indicatore di fase: un punto che percorre l'anello. Legge dalla coda
-     dei cicli udibili, mai da cycleStart — lo scheduler corre avanti.      */
-  if (ctx && running && gocceOn && !L.muted && L.cycles.length) {
-    while (L.cycles.length > 1 && now >= L.cycles[0].start + L.cycles[0].period)
-      L.cycles.shift();
-    const c = L.cycles[0];
-    const a = -Math.PI / 2 + clamp((now - c.start) / c.period, 0, 1) * Math.PI * 2;
-    g.fillStyle = COL.amber;
-    g.beginPath();
-    g.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, Math.max(2, R * 0.011), 0, Math.PI * 2);
-    g.fill();
-  }
-
-  etichettaAnello(g, CANVAS.linea[L.i], cx, cy, r, L.i, -1);
-  g.restore();
 }
 
-function drawAnelloTessuto(g, L, cx, cy, r, R, now) {
-  g.save();
-  const spento = L.muted || !tessutiOn;
-  g.globalAlpha = spento ? 0.3 : 1;
+/* Le campiture dei tessuti aperti: tenui, e sotto a tutto il resto. Sono
+   quelle che danno alla lente qualcosa da scurire.                        */
+function campitureTessuti(g) {
+  for (let k = 4; k < 8; k++) {
+    const f = forme[k];
+    if (f.viva <= 0) continue;
+    g.fillStyle = f.appena ? COL.amber : COL.ink2;
+    g.globalAlpha = (f.appena ? 0.26 : 0.16) * f.viva;
+    g.beginPath(); g.arc(f.x, f.y, f.r, 0, Math.PI * 2); g.fill();
+  }
+  g.globalAlpha = 1;
+}
 
-  /* guida tenue, come per le frasi: qui non c'è zona attiva da distinguere —
-     le tenute si distribuiscono su tutto il giro.                          */
-  g.strokeStyle = COL.hair;
-  g.lineWidth = 0.75;
-  g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
+/* LE LENTI. Dove due dischi che suonano si sovrappongono, l'area comune si
+   scurisce: è il collage reso come area, e dice «queste due stanno suonando
+   insieme» per tutto il tempo in cui è vero.
 
-  /* gli archi: ognuno copre la porzione di giro in cui la tenuta è aperta.
-     Tre stati. Una tenuta che suona è spessa il doppio per tutto il tempo in
-     cui suona, ma l'arancione lo prende SOLO `corrente`, la più recente in
-     tutta la pagina: le altre ancora aperte restano inchiostro pieno. Perché
-     una sola e non una per linea, lo spiega il commento su `corrente`.     */
-  /* Tre stili, quindi TRE campiture e non una per arco: tacente, suonante,
-     e la più recente. Con l'Intreccio alto una linea può tenerne aperte
-     parecchie insieme, e ognuna era un disegno a sé.
+   In INCHIOSTRO e non in arancione, e la differenza è la regola dell'unico
+   accento: la lente è uno stato, e l'arancione in questo progetto segna un
+   evento.
 
-     Tratto in pixel assoluti, non in frazioni del raggio: sul reticolo R è
-     quattro volte quello dei vecchi quadranti, e la vecchia frazione
-     trasformava gli archi in fasce nere che coprivano tutto. Doppio mentre
-     suona: il colore dice QUALI stanno suonando, lo spessore lo ribadisce a
-     chi non distingue bene i colori.                                      */
-  for (let stile = 0; stile < 3; stile++) {          // 0 tacente, 1 suonante, 2 recente
-    g.strokeStyle = stile === 2 ? COL.amber : stile === 1 ? COL.ink : COL.ink2;
-    g.lineWidth   = stile ? Math.max(3, R * 0.014) : 1;
-    g.globalAlpha = (spento ? 0.3 : 1) * (stile ? 1 : 0.5);
-    g.beginPath();
-    let qualcosa = false;
-    for (const p of L.plan) {
-      const ev = p.ev;
-      const suo = ev === corrente ? 2 : (now >= ev.flash && now < ev.fino) ? 1 : 0;
-      if (suo !== stile) continue;
-      const a0 = -Math.PI / 2 + p.ph * Math.PI * 2;
-      /* moveTo prima di ogni arco, o il tracciato li collega con una corda */
-      g.moveTo(cx + Math.cos(a0) * r, cy + Math.sin(a0) * r);
-      g.arc(cx, cy, r, a0, a0 + clamp(ev.dur, 0.02, 1) * Math.PI * 2);
-      qualcosa = true;
+   Ventotto coppie, ma si entra nel ritaglio solo quando tutt'e due le linee
+   suonano davvero — in pratica due o tre volte per fotogramma. Il salvataggio
+   del contesto costa, e per questo la guardia viene prima.               */
+function lenti(g) {
+  for (let i = 0; i < 8; i++) {
+    const a = forme[i];
+    if (a.viva <= 0.02) continue;
+    for (let j = i + 1; j < 8; j++) {
+      const b = forme[j];
+      if (b.viva <= 0.02) continue;
+      const dx = a.x - b.x, dy = a.y - b.y;
+      if (dx * dx + dy * dy >= (a.r + b.r) * (a.r + b.r)) continue;
+      g.save();
+      g.beginPath(); g.arc(a.x, a.y, a.r, 0, Math.PI * 2); g.clip();
+      g.fillStyle = COL.ink;
+      g.globalAlpha = 0.30 * Math.min(a.viva, b.viva);
+      g.beginPath(); g.arc(b.x, b.y, b.r, 0, Math.PI * 2); g.fill();
+      g.restore();
     }
-    if (qualcosa) g.stroke();
   }
-  g.globalAlpha = spento ? 0.3 : 1;
-
-  /* l'indicatore di fase, dalla coda dei cicli udibili */
-  if (ctx && running && tessutiOn && !L.muted && L.cycles.length) {
-    while (L.cycles.length > 1 && now >= L.cycles[0].start + L.cycles[0].period)
-      L.cycles.shift();
-    const c = L.cycles[0];
-    const a = -Math.PI / 2 + clamp((now - c.start) / c.period, 0, 1) * Math.PI * 2;
-    g.fillStyle = COL.amber;
-    g.beginPath();
-    g.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, Math.max(2, R * 0.011), 0, Math.PI * 2);
-    g.fill();
-  }
-
-  etichettaAnello(g, CANVAS.linea[L.i], cx, cy, r, 4 + L.i, +1);
-  g.restore();
+  g.globalAlpha = 1;
 }
 
-/* Legami effimeri: quando due gocce di frasi DIVERSE suonano quasi insieme,
-   un filo le unisce e sfuma con loro. Sul reticolo unico il filo attraversa
-   gli anelli — è il collage còlto sul fatto. Legge le posizioni raccolte in
-   hotPool in questo stesso fotogramma: nessun nuovo array.                 */
-function drawLinks(g, now) {
-  g.save();
-  g.lineCap = "round";
-  g.strokeStyle = COL.amber;
-  g.lineWidth = 1;
-  for (let i = 0; i < hotCount; i++) {
-    for (let j = i + 1; j < hotCount; j++) {
-      const a = hotPool[i], b = hotPool[j];
-      if (a.loop === b.loop) continue;
-      const gap = Math.abs(a.t - b.t);
-      if (gap > LINK_WINDOW) continue;
-      const age = now - Math.max(a.t, b.t);
-      const fade = clamp(1 - age / LAMPO, 0, 1) * clamp(1 - gap / LINK_WINDOW, 0, 1);
-      if (fade <= 0) continue;
-      g.globalAlpha = fade * 0.5;
+/* Il lampo di una goccia accende il suo disco intero e si spegne in mezzo
+   secondo. È il segno che sul reticolo stava al centro, nel mirino: lì diceva
+   «una goccia è caduta», qui dice anche QUALE linea l'ha fatta cadere — ed è
+   per questo che il mirino non serve più.                                 */
+function lampiGocce(g) {
+  for (let k = 0; k < 4; k++) {
+    const f = forme[k];
+    if (f.viva <= 0) continue;
+    g.fillStyle = COL.amber;
+    g.globalAlpha = f.viva;
+    g.beginPath(); g.arc(f.x, f.y, f.r, 0, Math.PI * 2); g.fill();
+  }
+  g.globalAlpha = 1;
+}
+
+/* L'ultima passata, disco per disco: lo spicchio del giro, il bordo, le
+   tacche dell'idea, il punto di fase e il numerale.
+
+   Qui NON si raggruppa per stile, e la ragione è cambiata rispetto al
+   reticolo: là le tacche erano una cinquantina tutte uguali su otto anelli
+   concentrici, e raggrupparle risparmiava quaranta tracciati. Qui ogni disco
+   ha il suo centro, le sue tacche in un colore solo e il suo grado di
+   trasparenza se è muto — raggruppare costerebbe una passata per linea
+   invece che una per stile, cioè esattamente lo stesso numero.           */
+function contorni(g, now) {
+  for (let k = 0; k < 8; k++) {
+    const f = forme[k], L = f.L;
+    g.globalAlpha = f.spenta ? 0.3 : 1;
+
+    /* lo spicchio: quanta parte del giro è passata */
+    if (f.fase >= 0) {
+      g.fillStyle = COL.velo;
       g.beginPath();
-      g.moveTo(a.x, a.y); g.lineTo(b.x, b.y);
-      g.stroke();
+      g.moveTo(f.x, f.y);
+      g.arc(f.x, f.y, f.r, -Math.PI / 2, -Math.PI / 2 + f.fase * Math.PI * 2);
+      g.closePath(); g.fill();
     }
+
+    g.strokeStyle = COL.hair;
+    g.lineWidth = 1;
+    g.beginPath(); g.arc(f.x, f.y, f.r, 0, Math.PI * 2); g.stroke();
+
+    /* Le tacche dell'idea, dal bordo verso l'interno: dove cadranno gli
+       eventi di questa linea, e la LUNGHEZZA è il registro — corta grave,
+       lunga acuta. Vale per tutt'e due le classi: una tenuta ha un suo
+       momento d'ingresso come una goccia, e qui dichiara quello.         */
+    g.strokeStyle = COL.ink2;
+    g.lineWidth = 1;
+    g.beginPath();
+    for (const p of L.plan) {
+      const a = -Math.PI / 2 + p.ph * Math.PI * 2;
+      const co = Math.cos(a), si = Math.sin(a);
+      const lung = 3 + 5 * (p.ev.rel + 1) / 2;
+      g.moveTo(f.x + co * f.r, f.y + si * f.r);
+      g.lineTo(f.x + co * (f.r - lung), f.y + si * (f.r - lung));
+    }
+    g.stroke();
+
+    /* il punto di fase, sul bordo */
+    if (f.fase >= 0) {
+      const af = -Math.PI / 2 + f.fase * Math.PI * 2;
+      g.fillStyle = COL.amber;
+      g.beginPath();
+      g.arc(f.x + Math.cos(af) * f.r, f.y + Math.sin(af) * f.r, 2.4, 0, Math.PI * 2);
+      g.fill();
+    }
+
+    /* Il numerale al CENTRO del disco, non fuori: è l'unico posto che resta
+       suo qualunque cosa gli si sovrapponga, e lega la riga che si tocca al
+       disco che si guarda.                                                */
+    g.fillStyle = COL.dust;
+    g.font = "400 " + Math.max(8, Math.min(CORPO_SIGLA, f.r * 0.22)).toFixed(1) +
+             "px " + FONT_PILA;
+    g.fillText(CANVAS.linea[L.i], f.x, f.y);
+    g.globalAlpha = 1;
   }
-  g.restore();
 }
 
 /* ---------------------------------------------------------------------------
@@ -639,7 +508,7 @@ function drawLinks(g, now) {
 function drawFascia(s, now) {
   const g = cv2d;
   const left = s.w * 0.03, right = s.w * 0.97;
-  const top   = s.ret + s.stripH * 0.06;
+  const top   = s.campo + s.stripH * 0.06;
   const hA    = s.stripH * 0.22;          // quattro corsie di gocce
   const laneH = hA / 4;
   const topR  = top + hA + s.stripH * 0.09;
@@ -740,7 +609,7 @@ function drawFascia(s, now) {
    ma con una corsa da 2,5 a 90 secondi quella fila traboccherebbe quasi
    sempre, e non si leggerebbe più nulla.
 
-   La tenuta arancione è la stessa che sul reticolo ha l'arco arancione:
+   La tenuta arancione è la stessa che sul campo ha l'arco arancione:
    `corrente`, calcolata una volta per fotogramma — e ce n'è UNA in tutta la
    pagina, non una per linea. Le altre che suonano restano inchiostro.
 
@@ -772,7 +641,7 @@ function disegnaGuideTessuti(g, left, right, topR, railH, now) {
 
   /* Poi le tenute che suonano, in DUE campiture e in quest'ordine: prima le
      altre in inchiostro, poi la più recente in arancione, che così vince dove
-     si sovrappongono. È la stessa gerarchia degli archi sul reticolo, e sono
+     si sovrappongono. È la stessa gerarchia degli archi sul campo, e sono
      gli stessi due colori: le due letture dicono la stessa cosa, e un terzo
      grigio qui le farebbe sembrare due informazioni diverse.
 
