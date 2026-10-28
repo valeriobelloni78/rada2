@@ -73,26 +73,26 @@ Se due frasi durassero ad esempio sei e nove secondi condividerebbero il tre com
 La Deriva armonica: il campo delle altezze delle note che vengono scelte si sposta sul circolo delle ==quinte== ogni due minuti e mezzo esatti, e fra una collezione e la successiva cambia una nota su cinque — uno slittamento lieve per l'orecchio, un passaggio tenue fra due collezioni consonanti. 
 Questo rende il passaggio impercettibile. I tempi del ricambio, come le velocità della deriva, stanno in rapporti *irrazionali*.
 
-La riga arancione sopra il reticolo dice quante modulazioni sono state fatte e, soprattutto, **in che tonalità sei adesso**. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era.
+La riga arancione sopra il campo dice quante modulazioni sono state fatte e, soprattutto, **in che tonalità sei adesso**. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era.
 
-Il baricentro è invece il movimento continuo: le altezze restano ferme, a scorrere piano è il punto attorno a cui vengono pescate. La rappresentazione di questo movimento è data dall'arco di cerchio esterno in alto che oscilla tra destra e sinistra.
-La sua oscillazione è rappresentata anche nello scorrere di 15 minuti nell'istogramma orizzontale più in basso
+Il baricentro è invece il movimento continuo: le altezze restano ferme, a scorrere piano è il punto attorno a cui vengono pescate. Lo vedi nella **composizione intera**, che va alla deriva nel campo: i dischi scivolano piano sui due assi, mai avanti e indietro sulla stessa linea.
+La sua oscillazione si legge anche nella striscia orizzontale più in basso, dove scorrono gli ultimi tre minuti
 
 ---
 
-## [riquadro 3c — Il reticolo]
+## [riquadro 3c — Il campo]
 
-**Titolo:** Il reticolo
+**Titolo:** Il campo
 
-Le otto linee sono anelli concentrici di un solo strumento: le frasi all'interno, i tessuti all'esterno.
+Le otto linee sono otto dischi di un solo strumento, posati l'uno sull'altro: le frasi davanti e piccole, i tessuti dietro e larghi. Il **diametro** è la durata del giro — un disco grande è una linea lenta — e il numerale al centro è quello della riga di comando lì accanto.
 
-Sul bordo esterno sono indicate le dodici tacche per il circolo delle quinte, con la posizione corrente marcata in arancione, e un arco pesante che rolla lentissimo con il baricentro — a destra il pezzo sta alto, a sinistra basso. È il segno più lento della pagina.
+Dentro ogni disco, uno spicchio appena più chiaro dice a che punto è il giro, e un punto ==arancione== corre sul bordo a segnarne la fase. Le tacche che pendono dal bordo verso l'interno sono gli eventi che quella linea ha in programma: la **lunghezza** è il registro, corta se la nota è grave, lunga se è acuta.
 
-Al centro, dove le otto linee si incontrano, ci sono due segni concentrici: il punto lampeggia a ogni goccia, l'anello che lo circonda quando un tessuto si apre.
+Si accende quello che suona. Una frase lampeggia ==arancione== per meno di mezzo secondo a ogni goccia e torna subito com'era; un tessuto resta pieno per tutta la tenuta, e si schiarisce mentre si dissolve. In tutta la pagina **un disco arancione alla volta**, e non è quello che suona più forte: è l'ultimo entrato.
 
-Ai piedi del reticolo due archi dicono quanto è largo il ventaglio delle altezze di ciascuna classe: le gocce a destra in ==arancione==, i tessuti a sinistra in nero. Si aprono partendo dalla diagonale del proprio quadrante, allargandosi nei due versi insieme quando muovi il cursore dell'ampiezza — o quando lo muovono per te la deriva e la stagione.
+Dove due dischi che stanno suonando si sovrappongono, l'area comune si scurisce. È il collage che si vede: quella macchia dura finché dura l'incontro, e sparisce quando una delle due linee tace.
 
-Il reticolo si guarda e basta: tutti i comandi stanno nelle due righe di colonna accanto, dallo stesso lato delle loro etichette dentro il disegno.
+Il campo si guarda e basta: tutti i comandi stanno nelle due colonne accanto, ciascuna dal lato della propria classe. La composizione non è mai ferma del tutto — la tavola intera scivola piano, ed è il baricentro che la porta.
 
 ---
 
@@ -104,19 +104,19 @@ I comandi di linea
 
 **Etichetta:** La scala della durata
 
-Ogni linea ha la sua riga accanto al reticolo, e la scala ne cambia la durata: fra 3 e 30 secondi per le frasi, fra 7 e 60 per i tessuti. La nuova durata entra in vigore al giro successivo.
+Ogni linea ha la sua riga accanto al campo, e la scala ne cambia la durata: fra 3 e 30 secondi per le frasi, fra 7 e 60 per i tessuti. La nuova durata entra in vigore al giro successivo.
 
 ## [gesto 2]
 
 **Etichetta:** Il quadratino
 
-Silenzia quella linea, o la riattiva: pieno suona, vuoto tace. L'anello impallidisce ma continua a girare in silenzio: quando lo riaccendi è già dove sarebbe dovuto essere.
+Silenzia quella linea, o la riattiva: pieno suona, vuoto tace. Il disco impallidisce ma continua a girare in silenzio: quando lo riaccendi è già dove sarebbe dovuto essere.
 
 ## [gesto 3]
 
 **Etichetta:** ↻
 
-Genera una nuova idea musicale per quella linea soltanto: altre note, altro numero di eventi, altra posizione sull'anello.
+Genera una nuova idea musicale per quella linea soltanto: altre note, altro numero di eventi, altre tacche sul disco.
 
 ## [gesto 4]
 
@@ -366,19 +366,17 @@ Ai tessuti parla invece la stagione: l'autunno raccoglie appena il registro e al
 
 **Titolo:** La fascia temporale
 
-Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
+Sotto il campo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia. Puoi guardarla come uno ==spartito== in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.
 
-Nella seconda i puntini **accesi** dicono quanto è avanzata ogni tenuta in corso. In arancione l'ultima che viene suonata mentre le altre restano nere, come sugli anelli. 
+La seconda non scorre: dice che cosa sta suonando **adesso**. Ogni tenuta in corso è una barra, che nasce in un punto qualsiasi della riga e si allarga nei due versi mentre va avanti; quanto è larga da piena è quanto dura. ==Arancione== appena entrata, poi inchiostro che schiarisce mentre si dissolve. Non si legge quale linea sia: si legge quanto è fitta la trama.
 
-La terza contiene gli ultimi quindici minuti, ed è un istogramma: ogni colonnina è un'altezza del baricentro, da zero a quattro puntini sopra l'asse se il pezzo sta alto, altrettanti sotto se sta basso. Una colonnina ogni quindici secondi circa. Quella in cui cade una modulazione è ==arancione==.
+La terza contiene gli ultimi tre minuti, e non è un grafico: è una striscia sola, dove il baricentro è il tono. Chiara dove il pezzo pesca alto, scura dove pesca basso, con tutte le gradazioni in mezzo — vedi che si è mosso prima ancora di capire di quanto. Sotto, una tacca per ogni modulazione, col nome della tonalità che ha aperto; quella in corso è ==arancione==.
 
 ---
 
 ## [riquadro 6 — Un dettaglio sulla sincronia]
 
-**Titolo:** Un dettaglio sulla sincronia
-
-Un dettaglio che si nota solo guardando: quando due gocce di frasi diverse suonano a meno di due decimi di secondo l'una dall'altra, un sottile filo ==rosso== le unisce per un istante, attraverso gli anelli.
+TAGLIARE
 
 ---
 

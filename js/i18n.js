@@ -376,7 +376,7 @@ function buildCanvasCache() {
      e non può leggere le costanti dello scheduler; chi cambia TIMELINE_SEC o
      DERIVA_FINESTRA deve cambiare anche questi, o il cartello mente.      */
   CANVAS.fBreve = "30" + T("unit.sep") + T("unit.s");
-  CANVAS.fLunga = "15" + T("unit.sep") + T("unit.min");
+  CANVAS.fLunga = "3" + T("unit.sep") + T("unit.min");
 }
 
 /* --- il selettore di lingua ------------------------------------------------

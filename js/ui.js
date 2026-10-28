@@ -115,6 +115,144 @@ PARAMS.forEach(k => {
   $(k).addEventListener("input", e => { GT[k] = +e.target.value; });
 });
 
+/* --- quadranti ad arco -----------------------------------------------------
+   I dieci comandi d'insieme si girano invece che trascinarsi. L'input nativo
+   resta la SORGENTE DI VERITÀ: l'arco legge il puntatore, lo traduce in
+   valore, lo scrive nell'input e gli fa emettere `input`. Da lì in poi non
+   cambia niente — i due ascoltatori qui sopra e quelli dei tessuti non sanno
+   che esiste un arco, e continuerebbero a funzionare anche togliendolo.
+
+   È lo stesso schema del doppio binario del reticolo, e per la stessa
+   ragione: un comando disegnato non ha tastiera, non ha nome accessibile e
+   non si lascia leggere da uno screen reader. Quello che il browser sa fare
+   si lascia fare al browser.
+
+   GEOMETRIA — centro (70,70) in unità del viewBox, arco da 200° a −20°, cioè
+   220° con il settore morto in basso. I raggi sono incastrati come lo erano i
+   pixel della scala diritta: il filo passa a 65, le tacche pendono da 60 a 54
+   sotto di lui, e l'indice le attraversa da 51 a 69 — fuori da tutt'e due,
+   come il pomello rettangolare sporgeva sopra e sotto la linea. Il raggio
+   massimo è 69 e il centro sta a 70: l'arco tocca il bordo sinistro del
+   viewBox senza uscirne.                                                    */
+const NS_SVG = "http://www.w3.org/2000/svg";
+const Q_CX = 70, Q_CY = 70;              // centro
+const Q_A0 = 200, Q_A1 = -20;            // dal capo sinistro al capo destro
+const Q_FILO = 65;                       // il filo continuo
+const Q_TACCA_INT = 54, Q_TACCA_EST = 60;
+const Q_IND_INT = 51, Q_IND_EST = 69;
+const Q_DIV = 12;                        // dodici divisioni, come la scala diritta
+
+const quadranti = [];
+
+function puntoQ(t, r) {
+  const a = (Q_A0 + (Q_A1 - Q_A0) * t) * Math.PI / 180;
+  return [Q_CX + r * Math.cos(a), Q_CY - r * Math.sin(a)];
+}
+
+function quadrante(host) {
+  const input = $(host.dataset.per);
+  const min = +input.min, max = +input.max;
+  /* `step` non dichiarato vale "1" per il browser ma stringa vuota qui: senza
+     il ripiego i quadranti di Ampiezza e Densità scatterebbero a passo zero,
+     cioè continuo, e la lettura mostrerebbe decimali che l'input non ha. */
+  const passo = +input.step || 1;
+
+  const svg = document.createElementNS(NS_SVG, "svg");
+  svg.setAttribute("viewBox", "0 0 140 96");
+  svg.setAttribute("aria-hidden", "true");   // il comando è l'input, non questo
+
+  const filo = document.createElementNS(NS_SVG, "path");
+  const [fx0, fy0] = puntoQ(0, Q_FILO), [fx1, fy1] = puntoQ(1, Q_FILO);
+  /* arco grande (220° > 180°) e verso orario: l'angolo cala da 200 a −20, e
+     con la y rivolta in giù un angolo che cala gira in senso orario.       */
+  filo.setAttribute("class", "quadranteFilo");
+  filo.setAttribute("d", "M" + fx0.toFixed(2) + " " + fy0.toFixed(2) +
+                         "A" + Q_FILO + " " + Q_FILO + " 0 1 1 " +
+                         fx1.toFixed(2) + " " + fy1.toFixed(2));
+  svg.appendChild(filo);
+
+  /* Le tacche in un tracciato solo: tredici elementi separati sarebbero
+     tredici chiamate di disegno per quadrante, centotrenta sulla pagina. */
+  let d = "";
+  for (let i = 0; i <= Q_DIV; i++) {
+    const [x1, y1] = puntoQ(i / Q_DIV, Q_TACCA_INT);
+    const [x2, y2] = puntoQ(i / Q_DIV, Q_TACCA_EST);
+    d += "M" + x1.toFixed(2) + " " + y1.toFixed(2) +
+         "L" + x2.toFixed(2) + " " + y2.toFixed(2);
+  }
+  const tacche = document.createElementNS(NS_SVG, "path");
+  tacche.setAttribute("class", "quadranteTacca");
+  tacche.setAttribute("d", d);
+  svg.appendChild(tacche);
+
+  const indice = document.createElementNS(NS_SVG, "line");
+  indice.setAttribute("class", "quadranteIndice");
+  svg.appendChild(indice);
+
+  host.appendChild(svg);
+
+  let ultimo = null;
+  const posa = () => {
+    const v = +input.value;
+    if (v === ultimo) return;             // nessuno riscriva un valore che c'è già
+    ultimo = v;
+    const t = (v - min) / (max - min);
+    const [x1, y1] = puntoQ(t, Q_IND_INT), [x2, y2] = puntoQ(t, Q_IND_EST);
+    indice.setAttribute("x1", x1.toFixed(2)); indice.setAttribute("y1", y1.toFixed(2));
+    indice.setAttribute("x2", x2.toFixed(2)); indice.setAttribute("y2", y2.toFixed(2));
+  };
+
+  /* Dal puntatore all'angolo, e dall'angolo al valore. Sotto l'arco c'è un
+     settore morto di 140°: lì il puntatore va al capo più vicino, invece di
+     far saltare l'indice da un estremo all'altro mentre si trascina.      */
+  const daPuntatore = ev => {
+    const r = svg.getBoundingClientRect();
+    const x = (ev.clientX - r.left) / r.width * 140;
+    const y = (ev.clientY - r.top) / r.height * 96;
+    let a = Math.atan2(Q_CY - y, x - Q_CX) * 180 / Math.PI;
+    if (a < Q_A0 - 360) a += 360;         // il tratto oltre i 180° torna in alto
+    if (a < Q_A1) a = (a > -90) ? Q_A1 : Q_A0;
+    const t = Math.min(1, Math.max(0, (Q_A0 - a) / (Q_A0 - Q_A1)));
+    /* arrotondato al passo dell'input, e ripulito dal pelo di errore che
+       moltiplicare per 0,01 lascia dietro (1,1000000000000001) */
+    const v = Math.min(max, Math.max(min,
+      +(min + Math.round(t * (max - min) / passo) * passo).toFixed(6)));
+    if (v !== +input.value) {
+      input.value = v;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  };
+
+  svg.addEventListener("pointerdown", ev => {
+    daPuntatore(ev);                      // prima il valore: se la cattura non
+    ev.preventDefault();                  // riesce, il clic deve valere lo stesso
+    try {
+      svg.setPointerCapture(ev.pointerId);
+      input.focus({ preventScroll: true });
+    } catch (e) { /* si trascina comunque, senza cattura */ }
+  });
+  svg.addEventListener("pointermove", ev => {
+    if (svg.hasPointerCapture(ev.pointerId)) daPuntatore(ev);
+  });
+  const rilascia = ev => {
+    try { svg.releasePointerCapture(ev.pointerId); } catch (e) {}
+  };
+  svg.addEventListener("pointerup", rilascia);
+  svg.addEventListener("pointercancel", rilascia);
+
+  input.addEventListener("input", posa);
+  quadranti.push(posa);
+  posa();
+}
+
+/* I mood scrivono nei cursori senza emettere `input` — lo fanno apposta, per
+   non far ripartire i piani dieci volte di fila — quindi gli archi vanno
+   risvegliati a mano. La guardia dentro `posa` fa sì che costi qualcosa solo
+   per quelli che sono davvero cambiati.                                     */
+function aggiornaQuadranti() { quadranti.forEach(f => f()); }
+
+document.querySelectorAll(".quadrante").forEach(quadrante);
+
 /* --- mood: preset sonori + durate delle frasi + nuove idee -----------------
    Il bottone porta l'id del preset; l'etichetta arriva dal dizionario e viene
    riscritta a ogni cambio di lingua senza ricostruire i bottoni, così la
@@ -130,6 +268,7 @@ Object.keys(MOODS).forEach((id, i) => {
     b.classList.add("sel");
     const m = MOODS[id];
     PARAMS.forEach(k => { GT[k] = m[k]; G[k] = m[k]; $(k).value = m[k]; });
+    aggiornaQuadranti();
     loops.forEach((L, k) => { L.target = L.period = m.periods[k]; L.idx = 0; });
     restartCycles();
     loops.forEach(regenerate);
@@ -277,6 +416,7 @@ Object.keys(DRONI_MOODS).forEach((id, i) => {
     b.classList.add("sel");
     const m = DRONI_MOODS[id];
     DPARAMS.forEach(k => { D[k] = m[k]; $("d_" + k).value = m[k]; });
+    aggiornaQuadranti();
     D.dens = m.dens; D.liv = m.liv;
     droni.forEach((L, k) => { L.target = L.period = m.periods[k]; L.idx = 0; });
     restartCycles();

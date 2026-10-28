@@ -45,7 +45,7 @@ const dropHistory = [];
 
 /* --- la storia della deriva ------------------------------------------------
    Seconda memoria, per la corsia lunga della fascia: il baricentro
-   campionato ogni due secondi sull'ultimo quarto d'ora, più i tempi dei passi
+   campionato quattro volte al secondo sugli ultimi tre minuti, più i tempi dei passi
    di quinta. Stesso principio di `dropHistory` — lo scheduler scrive, il
    disegno legge — e la
    stessa ragione di stare qui: è lo scheduler a girare sempre, anche quando
@@ -57,14 +57,21 @@ const dropHistory = [];
    ciascun campione, perché i giri dello scheduler non sono equidistanti — a
    schermo bloccato passano anche dodici secondi — e il disegno deve sapere
    dove i buchi sono veri.                                                  */
-/* Un quarto d'ora. Erano trenta minuti: sei passi di quinta invece di dodici,
-   ma colonnine larghe il doppio nel tempo — ciascuna copre un quarto di
-   minuto invece di mezzo — e una corsia che si riempie in metà tempo, cioè
-   che diventa leggibile molto prima nell'ascolto.
+/* TRE MINUTI, e il passo di campionamento dipende da quelli. Erano quindici,
+   con un campione ogni due secondi: le colonne della striscia erano larghe
+   nove pixel e ciascuna copriva un quarto di minuto. Adesso la striscia ha
+   colonne da due pixel, cioè una ogni mezzo secondo scarso, e un campione
+   ogni due secondi ne lascerebbe vuote tre su quattro — una pettinata, non
+   una striscia.
+   IL PASSO VA TENUTO SOTTO LA DURATA DI UNA COLONNA, che è
+   `finestra / (larghezza in pixel / 2)`: nel caso peggiore — la fascia più
+   larga, 846 px a schermo stretto — sono 0,43 s, e un quarto di secondo ci
+   sta sotto con margine. Chi allarga la finestra senza toccare il passo
+   ritrova il pettine.
    Il cartello sopra la corsia lo scrive i18n.js: cambiando qui, cambiare
    anche `CANVAS.fLunga`.                                                  */
-const DERIVA_FINESTRA = 900;
-const DERIVA_PASSO    = 2;                          // secondi fra due campioni
+const DERIVA_FINESTRA = 180;
+const DERIVA_PASSO    = 0.25;                       // secondi fra due campioni
 const DERIVA_N        = DERIVA_FINESTRA / DERIVA_PASSO;
 const derivaStoria = {
   t: new Float32Array(DERIVA_N),

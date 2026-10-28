@@ -36,7 +36,7 @@ const GUIDA = {
     "g.der2": "Questo rende il passaggio impercettibile. I tempi del ricambio, come le velocità della deriva, stanno in rapporti <i>irrazionali</i>.",
     "g.der3": "La riga arancione sopra il reticolo dice quante modulazioni sono state fatte e, soprattutto, <em>in che tonalità sei adesso</em>. In pausa la deriva aspetta — alla ripresa il pezzo riparte da dov'era.",
     "g.der4": "Il baricentro è invece il movimento continuo: le altezze restano ferme, a scorrere piano è il punto attorno a cui vengono pescate. La rappresentazione di questo movimento è data dall'arco di cerchio esterno in alto che oscilla tra destra e sinistra.",
-    "g.der5": "La sua oscillazione è rappresentata anche nello scorrere di 15 minuti nell'istogramma orizzontale più in basso.",
+    "g.der5": "La sua oscillazione è rappresentata anche nello scorrere di 3 minuti nella striscia orizzontale più in basso.",
 
 
     "g.ret.t": "Il reticolo",
@@ -88,7 +88,7 @@ const GUIDA = {
     "g.strip.t": "La fascia temporale",
     "g.strip1": "Sotto il reticolo ci sono tre letture. La prima contiene gli ultimi trenta secondi delle quattro frasi, una tacca per goccia. Puoi guardarla come uno <em class=\"amb\">spartito</em> in movimento, o un sovrapporsi di strati che scorrono con viscosità differenti.",
     "g.strip1b": "Nella seconda i puntini <em>accesi</em> dicono quanto è avanzata ogni tenuta in corso. In arancione l'ultima che viene suonata mentre le altre restano nere, come sugli anelli.",
-    "g.strip3": "La terza contiene gli ultimi quindici minuti, ed è un istogramma: ogni colonnina è un'altezza del baricentro, da zero a quattro puntini sopra l'asse se il pezzo sta alto, altrettanti sotto se sta basso. Una colonnina ogni quindici secondi circa. Quella in cui cade una modulazione è <em class=\"amb\">arancione</em>.",
+    "g.strip3": "La terza contiene gli ultimi tre minuti, e non è un grafico: è una striscia sola, dove il baricentro è il tono. Chiara dove il pezzo pesca alto, scura dove pesca basso, con tutte le gradazioni in mezzo — vedi che si è mosso prima ancora di capire di quanto. Sotto, una tacca per ogni modulazione, col nome della tonalità che ha aperto; quella in corso è <em class=\"amb\">arancione</em>.",
 
     "g.name.t": "Il nome",
     "g.name1": "Una <em>rada</em> è il tratto di mare riparato dove le navi sostano al riparo dai venti e dalle onde.",
@@ -148,7 +148,7 @@ const GUIDA = {
     "g.der2": "C'est ce qui rend le passage imperceptible. Les temps du renouvellement, comme les vitesses de la dérive, sont dans des rapports <i>irrationnels</i>.",
     "g.der3": "La ligne orange au-dessus du réticule dit combien de modulations ont eu lieu et, surtout, <em>dans quelle tonalité tu te trouves</em>. En pause la dérive attend — à la reprise la pièce repart d'où elle était.",
     "g.der4": "Le barycentre est en revanche le mouvement continu~: les hauteurs restent fixes, ce qui glisse lentement c'est le point autour duquel on les puise. Ce mouvement est représenté par l'arc de cercle extérieur, en haut, qui oscille entre droite et gauche.",
-    "g.der5": "Son oscillation se lit aussi dans les 15 minutes qui défilent sur l'histogramme horizontal, plus bas.",
+    "g.der5": "Son oscillation se lit aussi dans les 3 minutes qui défilent sur la bande horizontale, plus bas.",
 
 
     "g.ret.t": "Le réticule",
@@ -200,7 +200,7 @@ const GUIDA = {
     "g.strip.t": "La bande temporelle",
     "g.strip1": "Sous le réticule il y a trois lectures. La première contient les trente dernières secondes des quatre phrases, une encoche par goutte. Tu peux la regarder comme une <em class=\"amb\">partition</em> en mouvement, ou comme des couches qui s'écoulent avec des viscosités différentes.",
     "g.strip1b": "Dans la deuxième, les points <em>allumés</em> disent où en est chaque tenue en cours. En orange la dernière à sonner, tandis que les autres restent noires, comme sur les anneaux.",
-    "g.strip3": "La troisième contient les quinze dernières minutes, et c'est un histogramme~: chaque colonne est une hauteur du barycentre, de zéro à quatre points au-dessus de l'axe si la pièce est haute, autant en dessous si elle est basse. Une colonne toutes les quinze secondes environ. Celle où tombe une modulation est <em class=\"amb\">orange</em>.",
+    "g.strip3": "La troisième contient les trois dernières minutes, et ce n'est pas un graphique~: c'est une seule bande, où le barycentre est le ton. Claire là où la pièce puise haut, sombre là où elle puise bas, avec toutes les nuances entre les deux — tu vois qu'elle a bougé avant même de comprendre de combien. Dessous, une encoche par modulation, avec le nom de la tonalité qu'elle a ouverte~; celle en cours est <em class=\"amb\">orange</em>.",
 
     "g.name.t": "Le nom",
     "g.name1": "Une <em>rade</em> est cette portion de mer abritée où les navires mouillent, à l'abri des vents et des vagues.",
@@ -260,7 +260,7 @@ const GUIDA = {
     "g.der2": "That is what makes the passage imperceptible. The times of the renewal, like the speeds of the drift, stand in <i>irrational</i> ratios.",
     "g.der3": "The amber line above the reticle says how many modulations have taken place and, above all, <em>what key you are in now</em>. Paused, the drift waits — on resuming, the piece picks up where it was.",
     "g.der4": "The centre of gravity is the continuous movement instead: the pitches stay put, what slides slowly is the point they are drawn around. This movement is shown by the outer arc of the circle at the top, swinging between right and left.",
-    "g.der5": "Its swing also shows in the 15 minutes scrolling across the horizontal histogram further down.",
+    "g.der5": "Its swing also shows in the 3 minutes scrolling across the horizontal strip further down.",
 
 
     "g.ret.t": "The reticle",
@@ -312,7 +312,7 @@ const GUIDA = {
     "g.strip.t": "The time strip",
     "g.strip1": "Below the reticle there are three readings. The first holds the last thirty seconds of the four phrases, one notch per drop. You can read it as a <em class=\"amb\">score</em> in motion, or as layers sliding over one another at different viscosities.",
     "g.strip1b": "In the second, the <em>lit</em> dots say how far each sounding weave has got. The last one to sound is amber, while the others stay black, as on the rings.",
-    "g.strip3": "The third holds the last fifteen minutes, and it is a histogram: each little column is a height of the centre of gravity, from zero to four dots above the axis if the piece sits high, as many below if it sits low. One column roughly every fifteen seconds. The one a modulation falls into is <em class=\"amb\">amber</em>.",
+    "g.strip3": "The third holds the last three minutes, and it is not a graph: it is a single strip, where the centre of gravity is a tone. Light where the piece draws high, dark where it draws low, with every shade in between — you see that it has moved before you work out by how much. Below it, one notch per modulation, with the name of the key it opened; the one in force is <em class=\"amb\">amber</em>.",
 
     "g.name.t": "The name",
     "g.name1": "A <em>roadstead</em> — <em>rada</em> in Italian — is the sheltered stretch of sea where ships lie at anchor, out of the wind and the waves.",
@@ -372,7 +372,7 @@ const GUIDA = {
     "g.der2": "だからこの移り変わりは知覚されません。入れ替わりの時間も、漂流の速度も、たがいに<i>無理数</i>の比になっています。",
     "g.der3": "レティクルの上の橙の行は、転調を何回してきたか、そして何より<em>いまどの調にいるか</em>を告げます。一時停止のあいだ漂流は待っています——再開すれば、曲は止まった場所から続きます。",
     "g.der4": "いっぽう重心は連続した運動です。音高は動かず、ゆっくり滑るのはそれを汲みとる中心のほうです。この動きを表しているのが、上部にある外側の円弧で、右と左のあいだを揺れています。",
-    "g.der5": "その揺れは、さらに下にある横長の柱状グラフを流れる15分のなかにも表れています。",
+    "g.der5": "その揺れは、さらに下にある横長の帯を流れる3分のなかにも表れています。",
 
 
     "g.ret.t": "レティクル",
@@ -424,7 +424,7 @@ const GUIDA = {
     "g.strip.t": "時間の帯",
     "g.strip1": "レティクルの下には三つの読み方があります。最初の帯は四つのフレーズの直近三十秒で、刻みのひとつひとつが滴です。動く<em class=\"amb\">楽譜</em>として眺めることもできますし、それぞれ異なる粘りで流れる層の重なりとして見ることもできます。",
     "g.strip1b": "二つめでは、<em>灯った</em>点が、鳴っているそれぞれの織りがどこまで進んだかを告げます。最後に鳴りはじめたものが橙で、ほかは黒のまま——輪の上と同じです。",
-    "g.strip3": "三つめは直近十五分で、これは柱状のグラフです。ひとつひとつの小さな柱が重心の高さで、曲が高いところにあれば軸の上に、低ければ下に、〇から四つの点が並びます。柱はおよそ十五秒にひとつ。転調が落ちた柱は<em class=\"amb\">橙</em>です。",
+    "g.strip3": "三つめは直近三分で、グラフではありません。一本の帯で、重心が濃淡そのものです。曲が高いところを汲むほど淡く、低いところを汲むほど濃く、そのあいだにすべての階調があります——どれだけ動いたかがわかる前に、動いたことが見えます。その下には、転調ごとの刻みと、そこで開いた調の名前。いま続いているものが<em class=\"amb\">橙</em>です。",
 
     "g.name.t": "名前",
     "g.name1": "イタリア語の<em>rada</em>とは、風と波を避けて船が停泊する、囲われた海の一帯のことです。",

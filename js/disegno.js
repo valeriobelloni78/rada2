@@ -25,15 +25,15 @@
 
      la tonalità e le modulazioni   nella riga sopra il campo
      il baricentro                  nel movimento della tavola, e in numero
-                                    nella corsia dei quindici minuti
+                                    nella striscia dei tre minuti
      il registro efficace           nei due numeri accanto a ogni cursore
      quale linea ha parlato         nel disco che si accende, che il mirino
                                     poteva solo dire che qualcuno l'aveva fatto
      due gocce insieme              nella lente, come area invece che linea
 
    Sotto il campo, la fascia: gli ultimi trenta secondi delle gocce, lo stato
-   delle tenute in corso, e la corsia lunga dove il baricentro sedimenta la
-   sua traiettoria sull'ultimo quarto d'ora.
+   delle tenute in corso, e la striscia dove il baricentro sedimenta la
+   sua traiettoria sugli ultimi tre minuti.
 
    IL CANVAS NON ASCOLTA NULLA. In Rada era una superficie di comando, con
    otto riquadri trasparenti a governare `touch-action` e un doppio binario
@@ -540,10 +540,9 @@ function contorni(g, now) {
    In mezzo le quattro GUIDE DEI TESSUTI, ferme: a che punto sono le tenute
    che suonano adesso.
 
-   In fondo il QUARTO D'ORA: l'istogramma del baricentro, con i passi di
-   quinta in arancione. All'apertura è vuoto e si riempie in quindici minuti:
-   è la memoria della sessione che si accumula, e il disegno più lento della
-   pagina.
+   In fondo i TRE MINUTI: la striscia del baricentro, con le modulazioni in
+   arancione. All'apertura è vuota e si riempie in tre minuti: è la memoria
+   della sessione che si accumula, e il disegno più lento della pagina.
 
    Tutto viene dalle memorie scritte dallo scheduler — dropHistory,
    derivaStoria, quinteHistory — e dal piano per le guide: il disegno non
@@ -578,16 +577,16 @@ function drawFascia(s, now) {
   g.fillText(CANVAS.fLunga, left, topB - 6);
   g.textAlign = "center";
 
-  /* le barre che chiudono i due gruppi che scorrono: a destra è adesso, a
+  /* le barre che chiudono le corsie delle gocce: a destra è adesso, a
      sinistra il fondo della memoria. La trama non scorre, quindi non ha
-     estremi da dichiarare.                                                */
+     estremi da dichiarare; la striscia scorre ma si chiude da sé, dentro la
+     sua cornice — due barre sopra un rettangolo già disegnato sarebbero un
+     segno ripetuto.                                                       */
   g.strokeStyle = COL.dust;
   g.lineWidth = 1;
   g.beginPath();
   g.moveTo(left,  top);   g.lineTo(left,  top + hA);
   g.moveTo(right, top);   g.lineTo(right, top + hA);
-  g.moveTo(left,  topB);  g.lineTo(left,  topB + hB);
-  g.moveTo(right, topB);  g.lineTo(right, topB + hB);
   g.stroke();
 
   /* guide continue per le sole corsie delle gocce: una tacca isolata
@@ -758,9 +757,11 @@ function disegnaTrama(g, left, right, topR, h, now) {
    sola.
 
    IL DATO VIENE DALLA MEMORIA, non da una formula. `derivaStoria` è un anello
-   riempito dallo scheduler ogni due secondi: ricalcolare il baricentro sul
-   tempo di adesso darebbe una curva che scorre anche in pausa, quando il
-   pezzo è fermo e non ha pescato niente.
+   riempito dallo scheduler quattro volte al secondo: ricalcolare il
+   baricentro sul tempo di adesso darebbe una curva che scorre anche in pausa,
+   quando il pezzo è fermo e non ha pescato niente. È la differenza con il
+   mockup, che la formula se la ricalcolava — lì non c'era un motore da
+   mettere in pausa.
 
    LE COLONNE SENZA CAMPIONI RESTANO VUOTE, e la carta si vede. È il modo in
    cui i buchi veri — schermo bloccato, scheda in secondo piano — restano
@@ -771,23 +772,34 @@ function disegnaTrama(g, left, right, topR, h, now) {
    ha aperto. I nomi non passano dalla cache `CANVAS` perché non sono composti
    — `tonalitaName` è un accesso a una tavola di dodici voci per lingua, non
    una stringa da costruire, e la cache esiste per quelle.                  */
-const STRISCIA_CHIARO = 0.04;   // alfa dove il pezzo pesca più alto
-const STRISCIA_SCURO  = 0.52;   // e dove pesca più basso
+const STRISCIA_CHIARO = 0.06;   // alfa dove il pezzo pesca più alto
+const STRISCIA_SCURO  = 0.50;   // e dove pesca più basso
 
-/* LA GRIGLIA È FISSA, i dati ci scorrono dentro. Quattrocentocinquanta
-   campioni su cinquecento pixel sarebbero quasi una colonna per pixel, cioè
-   una macchia: le colonne stanno su un passo di nove pixel — una cinquantina
-   in tutto, una ogni quindici secondi circa — e ciascuna prende il campione
-   più recente che le compete.
+/* LA GRIGLIA È FISSA, i dati ci scorrono dentro, e il passo è di DUE PIXEL
+   come nel mockup: colonnine sottilissime, così il tono si legge come una
+   superficie continua invece che come una fila di tasselli. A nove pixel —
+   la misura di prima, sulla finestra da un quarto d'ora — si vedevano i
+   tasselli uno per uno.
 
-   I due vettori sono preallocati: nel fotogramma non si alloca.          */
-const PASSO_PUNTI = 9;          // px fra una colonna e la successiva
-const COLONNE_MAX = 256;
+   Il passo di campionamento di `derivaStoria` è tarato su questa misura:
+   vedere il commento in `audio.js`, e non toccare l'una senza l'altra.
+
+   I due vettori sono preallocati: nel fotogramma non si alloca. Seicento
+   colonne coprono la fascia più larga che il foglio possa dare.          */
+const PASSO_PUNTI = 2;          // px fra una colonna e la successiva
+const COLONNE_MAX = 640;
 const colVal   = new Float32Array(COLONNE_MAX);
 const colPieno = new Uint8Array(COLONNE_MAX);
 
+/* L'ALTEZZA DELLA STRISCIA È IN PIXEL, non in frazioni — è l'eccezione che
+   vale già per gli spessori di tratto, e per la stessa ragione: qui il segno
+   non è una misura da leggere ma una banda da guardare, e diciotto pixel
+   sono diciotto pixel tanto sul telefono quanto sul portatile. Legata alla
+   fascia diventava alta venticinque sul desktop, cioè un'altra cosa. */
+const STRISCIA_H = 18;
+
 function disegnaStriscia(g, left, right, topB, hB, now) {
-  const hStr = hB * 0.5;
+  const hStr = STRISCIA_H;
   const larg = right - left;
 
   /* la cornice, sempre: così la fascia ha un telaio anche prima di Avvia */
@@ -816,15 +828,18 @@ function disegnaStriscia(g, left, right, topB, hB, now) {
 
   /* Il tono, colonna per colonna. Una campitura per colonna e non una sola
      per tutte: qui l'alfa È il dato, e raggrupparla la cancellerebbe. Sono
-     una cinquantina di rettangoli pieni, che non costano come altrettanti
-     tracciati curvi — misurato sul fotogramma intero.                    */
+     rettangoli pieni, che non costano come altrettanti tracciati curvi.
+
+     Lo 0,2 di troppo in larghezza è la saldatura fra una colonna e l'altra:
+     senza, il bordo di ciascuna resta chiaro un decimo di pixel e la striscia
+     si legge rigata. È la stessa misura del mockup.                       */
   g.fillStyle = COL.ink;
   for (let k = 0; k < n; k++) {
     if (!colPieno[k]) continue;
     const v = clamp(colVal[k], -1, 1);
     /* alto → chiaro, basso → scuro */
     g.globalAlpha = lerp(STRISCIA_CHIARO, STRISCIA_SCURO, (1 - v) / 2);
-    g.fillRect(left + k * passo, topB, passo + 0.6, hStr);
+    g.fillRect(left + k * passo, topB, passo + 0.2, hStr);
   }
   g.globalAlpha = 1;
 
@@ -849,10 +864,10 @@ function disegnaStriscia(g, left, right, topB, hB, now) {
       g.lineWidth = 1;
       g.beginPath(); g.moveTo(xa, yT); g.lineTo(xa, yT + 4); g.stroke();
     }
-    /* il nome solo se il tratto visibile gli lascia spazio: a quarto d'ora
-       pieno sono sei tonalità, ma al bordo sinistro l'ultima entra tagliata */
+    /* il nome solo se il tratto visibile gli lascia spazio: su tre minuti le
+       modulazioni sono una o due, ma al bordo sinistro entrano tagliate */
     const va = Math.max(xa, left), vb = Math.min(xb, right);
-    if (vb - va > 22) {
+    if (vb - va > 20) {
       g.fillStyle = corso ? COL.amber : COL.dust;
       g.fillText(tonalitaName(q.ton), (va + vb) / 2, yT + 7);
     }

@@ -119,24 +119,33 @@
     </div>
   </div>
 
+  <!-- I comandi d'insieme sono quadranti ad arco. Il `div.quadrante` è il
+       posto dove `ui.js` disegna l'SVG; l'input nativo resta sotto, celato ma
+       non rimosso, ed è lui a tenere il valore. Chi toglie l'input lascia i
+       quadranti senza tastiera e senza nome accessibile. -->
   <div class="controls">
     <div class="ctl">
+      <div class="quadrante" data-per="spread"></div>
       <label for="spread"><span data-i18n="ctl.spread">Ampiezza registro</span> <b id="vSpread">—</b></label>
       <input type="range" id="spread" min="0" max="100" value="45">
     </div>
     <div class="ctl">
+      <div class="quadrante" data-per="warmth"></div>
       <label for="warmth"><span data-i18n="ctl.warmth">Calore</span> <b id="vWarmth">—</b></label>
       <input type="range" id="warmth" min="0" max="100" value="70">
     </div>
     <div class="ctl">
+      <div class="quadrante" data-per="rev"></div>
       <label for="rev"><span data-i18n="ctl.rev">Spazio / coda</span> <b id="vRev">—</b></label>
       <input type="range" id="rev" min="0" max="100" value="72">
     </div>
     <div class="ctl">
+      <div class="quadrante" data-per="dens"></div>
       <label for="dens"><span data-i18n="ctl.dens">Densità dell'idea</span> <b id="vDens">—</b></label>
       <input type="range" id="dens" min="2" max="14" value="5">
     </div>
     <div class="ctl">
+      <div class="quadrante" data-per="head"></div>
       <label for="head"><span data-i18n="ctl.head">Addensamento</span> <b id="vHead">—</b></label>
       <input type="range" id="head" min="10" max="70" value="30">
     </div>
@@ -161,22 +170,27 @@
 
   <div class="controls">
     <div class="ctl">
+      <div class="quadrante" data-per="d_spread"></div>
       <label for="d_spread"><span data-i18n="dctl.spread">Estensione</span> <b id="v_spread">—</b></label>
       <input type="range" id="d_spread" min="0" max="100" step="1" value="55">
     </div>
     <div class="ctl">
+      <div class="quadrante" data-per="d_apri"></div>
       <label for="d_apri"><span data-i18n="dctl.apri">Affioramento</span> <b id="v_apri">—</b></label>
       <input type="range" id="d_apri" min="0.3" max="12" step="0.1" value="3">
     </div>
     <div class="ctl">
+      <div class="quadrante" data-per="d_chiudi"></div>
       <label for="d_chiudi"><span data-i18n="dctl.chiudi">Dissolvenza</span> <b id="v_chiudi">—</b></label>
       <input type="range" id="d_chiudi" min="0.3" max="15" step="0.1" value="4.3">
     </div>
     <div class="ctl">
+      <div class="quadrante" data-per="d_sovr"></div>
       <label for="d_sovr"><span data-i18n="dctl.sovr">Intreccio</span> <b id="v_sovr">—</b></label>
       <input type="range" id="d_sovr" min="0.2" max="3" step="0.01" value="1.10">
     </div>
     <div class="ctl">
+      <div class="quadrante" data-per="d_battito"></div>
       <label for="d_battito"><span data-i18n="dctl.battito">Battito</span> <b id="v_battito">—</b></label>
       <input type="range" id="d_battito" min="0.05" max="2" step="0.01" value="0.57">
     </div>

@@ -363,7 +363,7 @@ secondo.
 **Le stringhe del canvas si preparano al cambio di lingua, non a ogni
 fotogramma.** La cache `CANVAS` è costruita una volta da `buildCanvasCache`;
 il disegno la legge e basta. Le parole vere sono uscite dalla tela col
-reticolo — restano numerali e cartelli di scala (`30 s`, `15 min`) — ma la
+reticolo — restano numerali e cartelli di scala (`30 s`, `3 min`) — ma la
 regola vale soprattutto per i formattatori: costruire un `Intl.NumberFormat`
 dentro il fotogramma costa più di tutto il resto del disegno. Ne esistono
 tre, creati una volta per lingua.
@@ -472,7 +472,7 @@ Chi cambia una delle due senza l'altra fa finire i cursori sopra il disegno.
 
 Nulla di quello che se n'è andato è andato perso, e conviene sapere dove
 ritrovarlo: la tonalità e il conteggio delle modulazioni stanno nella riga
-sopra il campo, il baricentro nella corsia dei quindici minuti, il registro
+sopra il campo, il baricentro nella striscia dei tre minuti, il registro
 efficace nei due numeri accanto a ciascun cursore. Erano tre letture doppie, e
 sul campo erano quelle che facevano rumore.
 
@@ -583,7 +583,7 @@ cerchietti in due campiture, adesso sono al massimo otto barre.
 La trama non ha un cartello di durata, e non è una svista: non contiene tempo
 trascorso, è lo stato di adesso.
 
-**LA STRISCIA DEL QUARTO D'ORA: il baricentro è un TONO, non una posizione.**
+**LA STRISCIA DEI TRE MINUTI: il baricentro è un TONO, non una posizione.**
 Più il pezzo pesca alto, più la striscia è chiara; più pesca basso, più si
 scurisce. Il verso è questo e non l'inverso: le note gravi pesano, e una banda
 scura si legge come peso. Rovesciarlo non sarebbe un errore di dato, ma
@@ -596,9 +596,25 @@ un asse verticale: tre grafici affiancati che si somigliavano. La striscia
 parla la lingua della trama appena sopra — densità di grigio, non posizione.
 
 **Il dato viene dalla MEMORIA, non da una formula.** `derivaStoria` è l'anello
-che lo scheduler riempie ogni due secondi; ricalcolare il baricentro sul tempo
-di adesso darebbe una curva che scorre anche in pausa, quando il pezzo è fermo
-e non ha pescato niente.
+che lo scheduler riempie quattro volte al secondo; ricalcolare il baricentro
+sul tempo di adesso darebbe una curva che scorre anche in pausa, quando il
+pezzo è fermo e non ha pescato niente. Il mockup la formula se la
+ricalcolava, e poteva: lì non c'era un motore da mettere in pausa.
+
+**LA FINESTRA E IL PASSO DI CAMPIONAMENTO SONO LEGATI, e vanno cambiati
+insieme.** La striscia ha colonne da due pixel — è quello che le dà l'aria di
+superficie continua invece che di fila di tasselli — quindi una colonna dura
+`finestra / (larghezza in pixel / 2)`. Sui tre minuti di oggi sono 0,56 s
+sulla fascia larga e 0,43 s nel caso peggiore, e `DERIVA_PASSO` sta a 0,25 s:
+due campioni per colonna, misurati. Col passo di due secondi che serviva alla
+finestra da un quarto d'ora resterebbero vuote tre colonne su quattro, e la
+striscia si leggerebbe come un pettine. **Chi allarga la finestra senza
+abbassare il passo ritrova il pettine.**
+
+L'altezza è in pixel — diciotto — e non in frazioni della fascia: è
+l'eccezione che vale già per gli spessori di tratto, e per la stessa ragione.
+Legata alla fascia diventava venticinque sul desktop e tredici sul telefono,
+cioè tre segni diversi per la stessa lettura.
 
 **Le colonne senza campioni restano vuote**, e la carta si vede: è così che i
 buchi veri — schermo bloccato, scheda in secondo piano — restano buchi invece
@@ -669,8 +685,9 @@ unità; ogni parola con tracking è HTML, e la spaziatura la fa il CSS.
 
 **La lingua visiva è quella dei disegni tecnici**: niente scatole — le
 sezioni le separano i fili — e niente angoli tondi né pillole; l'unico tondo
-è quello dei segni del reticolo. I cursori sono scale graduate con l'indice
-rettangolare, i mood etichette nude. Il CSS anteponeva a ciascuna un numero
+è quello dei segni del reticolo. I comandi d'insieme sono quadranti ad arco e
+le scale di durata restano diritte, ma la grammatica è una sola — un filo,
+dodici tacche, un indice rettangolare — e i mood sono etichette nude. Il CSS anteponeva a ciascuna un numero
 d'ordine con un `counter`; è stato tolto perché non serviva — i mood non si
 scelgono per numero — e liberava la quindicina di pixel per bottone che
 mancava perché otto colonne stessero su una riga sola.
@@ -698,11 +715,39 @@ dimensionato sul proprio contenuto invece che sullo spazio:
   per le frasi. La soglia era a 719 px, sbagliata da sempre e invisibile in
   italiano.
 
-**Il cursore sta al fondo della cella, non sotto la sua etichetta.** Le
-etichette non sono lunghe uguale, e appese a loro le scale finivano a quote
-diverse — undici pixel di scarto a 900 px, su una riga che deve leggersi come
-una scala sola. La cella è una colonna flessibile e l'etichetta si prende lo
-spazio che avanza.
+**I DIECI COMANDI D'INSIEME SONO QUADRANTI AD ARCO**, come le manopole di
+Nuvole: un filo di 220°, dodici tacche e l'indice rettangolare che le
+attraversa. Le scale di durata nelle colonne di linea restano diritte —
+lì il dato è una lunghezza, e otto archi incolonnati non starebbero in piedi.
+
+**Sotto ogni arco resta l'`input[type=range]` nativo**, celato ma non rimosso:
+è lui a tenere il valore, e con lui restano la tastiera, il nome accessibile e
+l'etichetta. L'SVG traduce il puntatore in valore, lo scrive nell'input e gli
+fa emettere `input`; da lì in poi il modello non sa che esiste un arco. È lo
+stesso doppio binario del reticolo, e chi toglie l'input per "semplificare"
+lascia dieci comandi senza tastiera e senza voce.
+
+Due cose a cui badare:
+
+- **`touch-action:none` sull'SVG.** Con i pointer event lo scorrimento della
+  pagina lo decide solo quello: senza, su un telefono il trascinamento scorre
+  la pagina invece di girare l'indice.
+- **I mood scrivono nei cursori senza emettere `input`** — apposta, per non
+  far ripartire i piani dieci volte di fila — quindi chiamano
+  `aggiornaQuadranti()`. Senza, gli archi restano fermi su un valore che non
+  c'è più.
+
+**Il quadrante sta in cima alla cella, l'etichetta sotto.** Prima era il
+contrario, e siccome le etichette non sono lunghe uguale le scale finivano a
+quote diverse — undici pixel di scarto a 900 px, su una riga che deve leggersi
+come una sola. Ci voleva un `flex:1` sull'etichetta per spingere il cursore al
+fondo della cella; con l'arco in cima il problema non si pone, e l'etichetta
+può andare a capo quanto vuole. Verificato: cella di 110 px in tutte e quattro
+le lingue, una quota sola per riga.
+
+**I comandi d'insieme restano a due colonne anche sul telefono.** La riga a
+colonna sola serviva alle scale diritte; dieci archi incolonnati allungavano
+la pagina di più di mille pixel, e a 345 px due quadranti ci stanno comodi.
 
 **Chi misura queste cose lo faccia in tutte e quattro le lingue**, e sappia
 che `textContent` non include il contenuto generato da `::before`: la prima
@@ -730,7 +775,7 @@ stato verificato su rada2).
 Le quattro direzioni visive di Rada sono state percorse dal reticolo e dalla
 fascia: l'altezza si legge nella lunghezza delle tacche, il collage negli
 dischi che si sovrappongono e nelle lenti, il tempo lungo nella corsia dei
-quindici minuti dove il baricentro sedimenta. Restano aperte, in ordine di
+tre minuti dove il baricentro sedimenta. Restano aperte, in ordine di
 interesse:
 
 1. **Estendere le palette al visivo.** L'ora e la stagione oggi agiscono solo
