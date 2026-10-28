@@ -236,7 +236,15 @@ function canvasSize() {
   }
 
   SIZE.w      = avail;
-  SIZE.campo  = Math.min(SIZE.w * (SIZE.w < 420 ? 0.82 : 0.62), 560);
+  /* IL RAPPORTO 0,62 NON SI PUÒ CAPARE IN ALTEZZA, e non è una preferenza:
+     la composizione dei dischi ha le posizioni in frazioni della larghezza e
+     dell'altezza, ma i raggi in frazioni del LATO CORTO. Un campo più
+     schiacciato allontana i dischi senza ingrandirli, e le lenti si spengono —
+     misurato: a 1060 × 560 le coppie che si toccano scendono da 14 a 11 e
+     qualche frase non incrocia più due tessuti. Finché il tetto resta sopra
+     la larghezza massima per 0,62, il campo scala uniforme e la tavola è
+     identica a sé stessa a ogni misura.                                   */
+  SIZE.campo  = Math.min(SIZE.w * (SIZE.w < 420 ? 0.82 : 0.62), 680);
   SIZE.stripH = clamp(SIZE.w * 0.26, 120, 190);
   /* Senza colonne ai lati la fascia tiene il suo margine di sempre, il tre
      per cento: è il caso del telefono, e là la larghezza serve tutta.    */

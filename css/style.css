@@ -275,8 +275,6 @@ h1 em{font-style:normal;color:var(--amber)}
   grid-template-columns:var(--colonna) minmax(0,1fr) var(--colonna);
   grid-template-rows:var(--hCampo,0px) auto;
   column-gap:var(--vuotoStrumento);
-  max-width:880px;
-  margin-inline:auto;
 }
 /* la tela copre tutta la griglia: il campo sta nella riga alta, la fascia
    nella bassa, e le colonne le si affiancano senza coprirla */

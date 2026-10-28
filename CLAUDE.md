@@ -441,9 +441,16 @@ vuoti gli angoli.
 **LE COLONNE DI LINEA STANNO AI LATI DELLA FASCIA, non del campo.** Prima
 fiancheggiavano l'intera tela, e il campo era largo quanto la colonna centrale
 gli concedeva — 560 px, con i due terzi laterali della pagina occupati da otto
-cursori. Adesso il campo prende tutta la larghezza (880 × 546) e le colonne
-scendono accanto agli score, che di spazio ne vogliono meno: la fascia passa
-da 526 a 468 px, il campo cresce del 57%.
+cursori. Adesso il campo prende tutta la larghezza e le colonne scendono
+accanto agli score, che di spazio ne vogliono meno.
+
+**Lo strumento è largo quanto la pagina**, cioè quanto i blocchi di cursori e
+di mood che gli stanno sotto: 1060 px, i bordi delle colonne di linea sugli
+stessi pixel dei blocchi successivi. Aveva un `max-width` di 880 px e le due
+colonne rientravano di novanta pixel rispetto a tutto il resto — una
+difformità dello stesso ceppo di quelle in fondo a questo file, un elemento
+dimensionato su di sé invece che sullo spazio della pagina. Il campo è passato
+da 880 × 546 a 1060 × 657.
 
 **La tela resta UNA**, quindi non si divide in due: copre tutta la griglia su
 due righe, e le colonne le si posano sopra nei margini della riga bassa, dove
@@ -491,6 +498,16 @@ per sessantaquattro combinazioni di mood, 256 casi per candidato, e ha tenuto
 la tavola **più larga** che reggesse entrambe le condizioni ovunque: raggio
 `0,17` del lato corto, posizioni contratte del 30% verso il centro. Lì le
 coppie che si possono toccare stanno fra 14 e 19. Si contano, non si guardano.
+
+**Il rapporto 0,62 del campo non si può capare in altezza.** I raggi vengono
+dal lato CORTO, le posizioni da tutt'e due gli assi: schiacciare il campo
+rimpicciolisce i dischi e allarga le distanze insieme, e le lenti si spengono.
+Allargando lo strumento a 1060 px il tetto dell'altezza è salito da 560 a 680
+proprio per questo — misurato a 1060 × 560 le coppie scendono da 14 a 11 e la
+condizione «ogni frase incrocia due tessuti» non regge più, mentre a 1060 × 657
+restano 14 con zero dischi fuori. **Chi abbassa quel tetto sotto
+`larghezza × 0,62` rimisuri le due condizioni**, o la lente sparisce senza che
+nessuna riga di codice sia stata toccata.
 
 **Il raggio segue la RADICE del periodo, con un pavimento a 0,70.** Preso
 linearmente, un mood come «carillon» — 4 e 25 secondi — farebbe un disco sei
