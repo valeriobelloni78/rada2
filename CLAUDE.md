@@ -339,13 +339,16 @@ questo, o i cursori si muovono al rallentatore.
 
 **Un disegno per oggetto è la spesa che conta, non il numero di oggetti.**
 Ogni tracciato separato costa una tassellatura e una chiamata di disegno, e
-su un telefono è lì che si perde il tempo. Le tacche delle gocce — sul
-reticolo e nella fascia — gli archi dei tessuti e le dodici tacche delle
-quinte si disegnano **raggruppati per stile**: due campiture per le tacche
-(accesa e spenta), tre per gli archi (tacente, suonante, la più recente), due
-per le quinte. Col mood più fitto i tracciati per fotogramma sono passati da
-166 a 41. Chi aggiunge segni ripetuti li raggruppi allo stesso modo — e metta
-un `moveTo` prima di ogni arco, o il tracciato li collega con una corda.
+su un telefono è lì che si perde il tempo. Le tacche delle gocce — sui dischi
+e nella fascia — gli archi dei tessuti e i puntini della corsia lunga si
+disegnano **raggruppati per stile**: due campiture per le tacche (accesa e
+spenta), tre per gli archi (tacente, suonante, la più recente), due per le
+colonnine. Col mood più fitto i tracciati per fotogramma sono passati da 166 a
+41. Chi aggiunge segni ripetuti li raggruppi allo stesso modo — e metta un
+`moveTo` prima di ogni arco, o il tracciato li collega con una corda.
+
+L'unica eccezione è la trama delle tenute, e la ragione è scritta là: lì
+l'alfa di ogni barra è l'informazione, quindi raggrupparle la cancellerebbe.
 
 **Nessuno ripeta al motore audio un bersaglio che ha già.** `setTargetAtTime`
 inserisce un evento nella lista di automazione del parametro, e `tickParams`
@@ -497,20 +500,50 @@ sembrare due fenomeni.
 di fase sul bordo. Due conti scritti a parte finirebbero per dire due cose
 diverse della stessa linea.
 
-**Le guide dei tessuti mostrano uno STATO, non una storia.** Le quattro corsie
-delle gocce scorrono e ricordano trenta secondi; le quattro guide dei tessuti
-sono ferme e dicono a che punto sono le tenute che suonano adesso, in
-puntini accesi. Per un suono che dura mezzo minuto è la domanda che ci si fa davvero
-guardando. L'avanzamento è **proporzionale** alla durata della singola tenuta —
-la fila si riempie tutta, che duri tre secondi o novanta: a puntino fisso per
-secondo si potrebbero confrontare le durate fra linee, ma con una corsa da 2,5
-a 90 secondi la fila traboccherebbe quasi sempre. Le guide non hanno un
-cartello di durata, e non è una svista: non contengono tempo.
+**LA TRAMA DELLE TENUTE è una traccia sola, non quattro file.** Le quattro
+corsie delle gocce scorrono e ricordano trenta secondi; la trama è ferma e
+dice uno STATO — che cosa sta suonando adesso. Non si legge «quale linea», si
+legge **quanto è fitta la trama**, che è ciò che l'Intreccio governa.
 
-**I puntini si disegnano in due sole campiture.** Un `fill` per cerchietto
-sarebbe un centinaio di campiture per fotogramma, e a sessanta al secondo si
-sente su un telefono: si accumulano tutti i grigi in un percorso e tutti gli
-accesi in un altro, con un `moveTo` prima di ogni arco perché non si colleghino.
+Prima erano quattro file di puntini, una per linea, che si riempivano da
+sinistra con l'avanzamento della tenuta in corso. Dicevano bene «a che punto è
+questa» e male la cosa che conta — quante ce ne sono insieme — perché tenevano
+le sovrapposizioni ognuna per conto suo. E somigliavano troppo alle corsie
+delle gocce sopra: tre righe orizzontali quasi uguali per tre letture diverse.
+
+**Ogni tenuta nasce in un punto qualsiasi e si allarga nei due versi.** Il
+punto viene da `casualeDa(ev.flash)`: casuale, stabile per tutta la durata —
+ricalcolarlo a ogni fotogramma deve dare lo stesso punto, o la macchia
+tremerebbe — e diverso a ogni volta che quella tenuta torna. Un campo in più
+sull'evento era l'altra strada, e avrebbe fatto portare al modello un dato che
+serve al solo disegno.
+
+**La larghezza piena è la DURATA**, letta sui novanta secondi che `playTone`
+impone come tetto: una tenuta lunga occupa la traccia intera, una breve un
+decimo. È la cosa che le quattro file non dicevano — lì ogni fila si riempiva
+tutta, che durasse tre secondi o novanta, e il carattere dei mood dei tessuti
+non si vedeva.
+
+**E parte già larga.** `AVVIO_TRAMA` è la frazione della misura piena che la
+tenuta ha nell'istante in cui entra. Partendo da zero il segno nasceva come un
+pallino — misurato: 17 px di larghezza contro 19 di altezza, qualunque fosse
+la durata — e per i primi secondi sembrava una goccia, cioè proprio la cosa da
+cui questa lettura deve distinguersi. Ora entra a 35 px se dura nove secondi e
+a 179 se ne dura novanta: la durata si legge già all'ingresso.
+
+**Qui NON si raggruppa per stile, e per una volta è giusto.** L'alfa di ogni
+barra *è* l'informazione — dice a che punto è quella tenuta — e una campitura
+sola la perderebbe. Il conto comunque scende: erano fino a un centinaio di
+cerchietti in due campiture, adesso sono al massimo otto barre.
+
+La trama non ha un cartello di durata, e non è una svista: non contiene tempo
+trascorso, è lo stato di adesso.
+
+**I puntini della corsia lunga si disegnano in due sole campiture.** Un `fill`
+per cerchietto sarebbe un centinaio di campiture per fotogramma, e su un
+telefono si sente: si accumulano tutti i grigi in un percorso e tutti gli
+accesi in un altro, con un `moveTo` prima di ogni arco perché non si
+colleghino.
 
 **La tela è UNA, e il ciclo di fotogrammi pure.** Le otto linee sono otto
 dischi di un solo campo, disegnato da `disegno.js` su un solo canvas dentro un

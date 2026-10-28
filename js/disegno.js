@@ -512,8 +512,7 @@ function drawFascia(s, now) {
   const hA    = s.stripH * 0.22;          // quattro corsie di gocce
   const laneH = hA / 4;
   const topR  = top + hA + s.stripH * 0.09;
-  const hR    = s.stripH * 0.22;          // quattro guide di tessuti
-  const railH = hR / 4;
+  const hR    = s.stripH * 0.22;          // la trama delle tenute, una traccia
   const topB  = topR + hR + s.stripH * 0.11;
   /* La corsia lunga è la più alta delle tre: deve contenere quattro livelli
      sopra l'asse e quattro sotto, e a puntini troppo vicini la colonnina si
@@ -522,9 +521,9 @@ function drawFascia(s, now) {
 
   g.save();
 
-  /* I cartelli: dicono quanto tempo la riga contiene. Le guide dei tessuti
-     non ne hanno uno, e non è una dimenticanza — non contengono tempo, sono
-     lo stato di adesso. Un cartello di durata lì sarebbe una bugia.       */
+  /* I cartelli: dicono quanto tempo la riga contiene. La trama non ne ha uno,
+     e non è una dimenticanza — non contiene tempo trascorso, è lo stato di
+     adesso. Un cartello di durata lì sarebbe una bugia.                   */
   g.fillStyle = COL.dust;
   g.font = "400 7px " + FONT_PILA;
   g.textAlign = "left";
@@ -533,8 +532,8 @@ function drawFascia(s, now) {
   g.textAlign = "center";
 
   /* le barre che chiudono i due gruppi che scorrono: a destra è adesso, a
-     sinistra il fondo della memoria. Le guide dei tessuti non scorrono,
-     quindi non hanno estremi da dichiarare.                               */
+     sinistra il fondo della memoria. La trama non scorre, quindi non ha
+     estremi da dichiarare.                                                */
   g.strokeStyle = COL.dust;
   g.lineWidth = 1;
   g.beginPath();
@@ -556,9 +555,9 @@ function drawFascia(s, now) {
   g.stroke();
 
   /* Le due chiamate stanno PRIMA della guardia su `ctx`: hanno la loro, e
-     disegnano comunque il telaio — le file di puntini spenti e l'asse della
+     disegnano comunque il telaio — la traccia della trama e l'asse della
      corsia lunga — così la fascia esiste anche prima di premere Avvia.   */
-  disegnaGuideTessuti(g, left, right, topR, railH, now);
+  disegnaTrama(g, left, right, topR, hR, now);
   disegnaCorsiaLunga(g, left, right, topB, hB, now);
 
   if (!ctx) { g.restore(); return; }
@@ -590,94 +589,105 @@ function drawFascia(s, now) {
 }
 
 /* ---------------------------------------------------------------------------
-   LE QUATTRO GUIDE DEI TESSUTI
+   LA TRAMA DELLE TENUTE
 
-   Quattro file di puntini grigi, ferme: non scorrono e non ricordano niente.
-   Non sono una storia, sono uno STATO — quanto sono avanzate le tenute che
-   stanno suonando adesso su ciascuna linea, lette in puntini accesi.
+   Una traccia sola per tutte e quattro le linee, non quattro file separate.
+   Non si legge più «quale linea», si legge QUANTO È FITTA LA TRAMA — che è
+   ciò che l'Intreccio governa, e che quattro file separate nascondevano
+   proprio perché tenevano le sovrapposizioni ognuna per conto suo.
 
-   Prima qui c'erano segmenti che scorrevano da destra a sinistra come le
-   gocce sopra, e leggevano la memoria `toneHistory`. Dicevano che cosa era
-   stato suonato; queste dicono a che punto si è. Sono due domande diverse, e
-   per un suono che dura mezzo minuto la seconda è quella che si fa davvero
-   guardando.
+   Prima qui c'erano quattro file di puntini, una per linea, che si
+   riempivano da sinistra con l'avanzamento della tenuta in corso. Dicevano
+   bene «a che punto è questa», e male la cosa che conta: quante ce ne sono
+   insieme. E somigliavano troppo alle corsie delle gocce sopra, che sono
+   una storia e non uno stato: tre righe orizzontali quasi uguali per tre
+   letture diverse.
 
-   L'avanzamento è PROPORZIONALE alla durata della singola tenuta: la fila si
-   riempie da sinistra e arriva in fondo quando la tenuta si chiude, che duri
-   tre secondi o novanta. Non è l'unica lettura possibile — a puntino fisso
-   per secondo si potrebbero confrontare le durate fra una linea e l'altra —
-   ma con una corsa da 2,5 a 90 secondi quella fila traboccherebbe quasi
-   sempre, e non si leggerebbe più nulla.
+   OGNI TENUTA NASCE IN UN PUNTO QUALSIASI e si allarga nei due versi
+   insieme, come una macchia. Il punto è una funzione del suo istante
+   d'inizio — `casualeDa(ev.flash)` — quindi è casuale ma non va ricordato da
+   nessuna parte, e cambia a ogni volta che quella tenuta torna. Un campo in
+   più sull'evento sarebbe stato l'altra strada, e avrebbe fatto portare al
+   modello un dato che serve al solo disegno.
 
-   La tenuta arancione è la stessa che sul campo ha l'arco arancione:
-   `corrente`, calcolata una volta per fotogramma — e ce n'è UNA in tutta la
-   pagina, non una per linea. Le altre che suonano restano inchiostro.
+   LA LARGHEZZA PIENA È LA DURATA, letta sui novanta secondi che `playTone`
+   impone come tetto: una tenuta lunga occupa la traccia intera, una breve
+   un decimo. È la cosa che le quattro file non dicevano — lì ogni fila si
+   riempiva tutta, che durasse tre secondi o novanta, e il carattere dei mood
+   dei tessuti non si vedeva.
 
-   I puntini si disegnano in DUE sole campiture, una per i grigi e una per gli
-   accesi: un `fill` per cerchietto sarebbe un centinaio di campiture per
-   fotogramma, e su un telefono si sente. Il `moveTo`
-   prima di ogni arco serve a non collegare i cerchietti fra loro.        */
-const PASSO_PUNTI = 9;      // px fra un puntino e il successivo
+   E PARTE GIÀ LARGA, non da un punto: `AVVIO_TRAMA` è la frazione della
+   misura piena che la tenuta ha nell'istante in cui entra. A zero il segno
+   nasceva come un pallino e per i primi secondi sembrava una goccia, cioè
+   proprio la cosa da cui questa lettura deve distinguersi.
 
-function disegnaGuideTessuti(g, left, right, topR, railH, now) {
-  const n = Math.max(8, Math.floor((right - left) / PASSO_PUNTI));
-  const passo = (right - left) / (n - 1);
-  const rSpento = 1.1, rAcceso = 2.2;
+   I COLORI sono quelli di sempre. Arancione nel mezzo secondo dell'ingresso,
+   e solo se è `corrente`: le due condizioni insieme garantiscono un accento
+   alla volta, come sul campo. Poi inchiostro che si fa sempre più
+   trasparente mentre la tenuta si dissolve — e dove due si accavallano le
+   trasparenze si sommano da sole nelle gradazioni di grigio. È lo stesso
+   meccanismo della lente sul campo: area che si scurisce, non una linea.
 
-  /* prima tutti i puntini spenti, in una campitura sola */
-  g.fillStyle = COL.hair;
-  g.beginPath();
-  for (let i = 0; i < droni.length; i++) {
-    const y = topR + (i + 0.5) * railH;
-    for (let k = 0; k < n; k++) {
-      const x = left + k * passo;
-      g.moveTo(x + rSpento, y);
-      g.arc(x, y, rSpento, 0, Math.PI * 2);
-    }
-  }
-  g.fill();
+   QUI NON SI RAGGRUPPA PER STILE, e per una volta è giusto così: l'alfa di
+   ogni barra È l'informazione — dice a che punto è quella tenuta — e una
+   campitura sola la perderebbe. Il conto comunque scende: erano fino a un
+   centinaio di cerchietti in due campiture, adesso sono al massimo otto
+   barre, una per tenuta aperta.                                           */
+const SCALA_TRAMA = 90;      // il tetto di `playTone`: la tenuta più lunga
+const AVVIO_TRAMA = 0.34;    // quanto è larga nell'istante in cui entra
+
+/* Un numero fra 0 e 1 che dipende solo dall'istante. Serve a dare a ogni
+   tenuta un posto sulla traccia che sia casuale ma STABILE per tutta la sua
+   durata: ricalcolarlo a ogni fotogramma deve dare sempre lo stesso punto,
+   o la macchia tremerebbe.                                                */
+function casualeDa(s) {
+  const x = Math.sin(s * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+function disegnaTrama(g, left, right, topR, h, now) {
+  const larg = right - left;
+  const y = topR + h / 2;
+
+  /* la traccia, sempre: così la fascia ha un telaio anche prima di Avvia */
+  g.strokeStyle = COL.hair;
+  g.lineWidth = 0.75;
+  g.beginPath(); g.moveTo(left, y); g.lineTo(right, y); g.stroke();
 
   if (!ctx) return;
 
-  /* Poi le tenute che suonano, in DUE campiture e in quest'ordine: prima le
-     altre in inchiostro, poi la più recente in arancione, che così vince dove
-     si sovrappongono. È la stessa gerarchia degli archi sul campo, e sono
-     gli stessi due colori: le due letture dicono la stessa cosa, e un terzo
-     grigio qui le farebbe sembrare due informazioni diverse.
+  const alt = h * 0.46;
+  const mezzaMin = alt * 0.9;        // mai meno larga che alta: sarebbe un punto
 
-     La sovrapposizione non è un caso limite ma la norma con l'Intreccio sopra
-     l'uno, e si legge: se la più recente è indietro rispetto a una più
-     vecchia, la fila mostra prima l'arancione e poi l'inchiostro che prosegue
-     — cioè quanto manca a chiudersi al tessuto che era già aperto.        */
-  accendiTenute(g, COL.ink,   false, now, left, topR, railH, n, passo, rAcceso);
-  accendiTenute(g, COL.amber, true,  now, left, topR, railH, n, passo, rAcceso);
-}
-
-/* Una passata sola sulle quattro linee. `soloRecente` sceglie di quale metà
-   occuparsi: la tenuta corrente, o tutte le altre che stanno suonando.    */
-function accendiTenute(g, colore, soloRecente, now, left, topR, railH, n, passo, raggio) {
-  g.fillStyle = colore;
-  g.beginPath();
-  for (let i = 0; i < droni.length; i++) {
-    /* Una linea silenziata non accende niente: il piano continua a girare, e
-       mostrare l'avanzamento di un suono che non esce sarebbe una bugia.  */
-    if (droni[i].muted || !tessutiOn) continue;
-    const y = topR + (i + 0.5) * railH;
-    for (const p of droni[i].plan) {
+  for (const L of droni) {
+    /* Una linea silenziata non disegna niente: il piano continua a girare, e
+       mostrare una tenuta che non esce sarebbe una bugia.                 */
+    if (L.muted || !tessutiOn) continue;
+    for (const p of L.plan) {
       const ev = p.ev;
-      if ((ev === corrente) !== soloRecente) continue;
       if (!(now >= ev.flash && now < ev.fino)) continue;
       const durata = ev.fino - ev.flash;
       if (!(durata > 0)) continue;
-      const accesi = Math.round(clamp((now - ev.flash) / durata, 0, 1) * n);
-      for (let k = 0; k < accesi; k++) {
-        const x = left + k * passo;
-        g.moveTo(x + raggio, y);
-        g.arc(x, y, raggio, 0, Math.PI * 2);
-      }
+
+      const avanz = clamp((now - ev.flash) / durata, 0, 1);
+      const cx = left + casualeDa(ev.flash) * larg;
+      const mezzaPiena = (Math.min(durata, SCALA_TRAMA) / SCALA_TRAMA) * larg / 2;
+      const mezza = Math.max(mezzaPiena * (AVVIO_TRAMA + (1 - AVVIO_TRAMA) * avanz),
+                             mezzaMin);
+
+      const xa = clamp(cx - mezza, left, right);
+      const xb = clamp(cx + mezza, left, right);
+      if (xb - xa < 1) continue;
+
+      const appena = ev === corrente && now - ev.flash < LAMPO;
+      g.fillStyle = appena ? COL.amber : COL.ink;
+      g.globalAlpha = appena ? 0.5 : lerp(0.34, 0.06, avanz);
+      g.beginPath();
+      g.roundRect(xa, y - alt / 2, xb - xa, alt, alt / 2);
+      g.fill();
     }
   }
-  g.fill();
+  g.globalAlpha = 1;
 }
 
 /* ---------------------------------------------------------------------------
@@ -697,13 +707,17 @@ function accendiTenute(g, colore, soloRecente, now, left, topR, railH, n, passo,
 
    LA GRIGLIA È FISSA, i dati ci scorrono dentro. Quattrocentocinquanta
    campioni su cinquecento pixel sarebbero quasi una colonnina per pixel,
-   cioè una macchia: le colonnine stanno invece sullo stesso passo di nove
-   pixel delle guide dei tessuti — una sessantina in tutto, una ogni quindici
-   secondi circa — e ciascuna prende il campione più recente che le compete. Una
-   colonnina senza campioni non si disegna, ed è così che i buchi veri —
-   schermo bloccato — restano buchi invece di essere colmati da un ponte.
+   cioè una macchia: le colonnine stanno su un passo di nove pixel — una
+   sessantina in tutto, una ogni quindici secondi circa — e ciascuna prende il
+   campione più recente che le compete. Una colonnina senza campioni non si
+   disegna, ed è così che i buchi veri — schermo bloccato — restano buchi
+   invece di essere colmati da un ponte.
 
    I tre vettori sono preallocati: nel fotogramma non si alloca.          */
+/* Stava con le quattro guide dei tessuti, che il passo se lo dividevano; da
+   quando quelle sono diventate la trama, questa corsia è l'unica a contare
+   per puntini e il passo è suo.                                          */
+const PASSO_PUNTI = 9;      // px fra una colonnina e la successiva
 const COLONNE_MAX = 256;
 const colVal    = new Float32Array(COLONNE_MAX);
 const colPieno  = new Uint8Array(COLONNE_MAX);
