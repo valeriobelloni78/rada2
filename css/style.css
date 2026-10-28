@@ -611,10 +611,21 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 @media (max-width:819px){
   .moods{grid-template-columns:repeat(4,minmax(0,1fr));width:100%}
 }
+/* In colonna sola l'ordine va DETTO, non lasciato al markup. Nel documento le
+   frasi vengono prima della tela — è giusto così, perché a schermo largo
+   stanno alla sua sinistra e il fuoco deve incontrarle per prime — ma
+   impilate verticalmente quell'ordine metterebbe otto cursori sopra lo
+   strumento, e la prima cosa che si vede aprendo la pagina sarebbe un
+   pannello di comandi invece del pezzo che suona.
+
+   Le righe esplicite rimettono la tela in cima senza toccare il documento,
+   quindi l'ordine di tabulazione resta frasi → tessuti: la tela non prende
+   fuoco e non ha testo, quindi scavalcarla non salta nulla.              */
 @media (max-width:540px){
-  .strumento{grid-template-columns:1fr}
-  #canvas-holder{grid-column:auto;grid-row:auto}
-  .colLinee{grid-row:auto;grid-column:auto}
+  .strumento{grid-template-columns:1fr;grid-template-rows:auto auto auto}
+  #canvas-holder{grid-column:1;grid-row:1}
+  .colFrasi{grid-column:1;grid-row:2}
+  .colTessuti{grid-column:1;grid-row:3}
   .controls{grid-template-columns:1fr}
   .bar{justify-content:center}
 }
