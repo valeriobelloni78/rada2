@@ -340,15 +340,17 @@ questo, o i cursori si muovono al rallentatore.
 **Un disegno per oggetto è la spesa che conta, non il numero di oggetti.**
 Ogni tracciato separato costa una tassellatura e una chiamata di disegno, e
 su un telefono è lì che si perde il tempo. Le tacche delle gocce — sui dischi
-e nella fascia — gli archi dei tessuti e i puntini della corsia lunga si
-disegnano **raggruppati per stile**: due campiture per le tacche (accesa e
-spenta), tre per gli archi (tacente, suonante, la più recente), due per le
-colonnine. Col mood più fitto i tracciati per fotogramma sono passati da 166 a
-41. Chi aggiunge segni ripetuti li raggruppi allo stesso modo — e metta un
-`moveTo` prima di ogni arco, o il tracciato li collega con una corda.
+e nella fascia — e gli archi dei tessuti si disegnano **raggruppati per
+stile**: due campiture per le tacche (accesa e spenta), tre per gli archi
+(tacente, suonante, la più recente). Col mood più fitto i tracciati per
+fotogramma sono passati da 166 a 41. Chi aggiunge segni ripetuti li raggruppi
+allo stesso modo — e metta un `moveTo` prima di ogni arco, o il tracciato li
+collega con una corda.
 
-L'unica eccezione è la trama delle tenute, e la ragione è scritta là: lì
-l'alfa di ogni barra è l'informazione, quindi raggrupparle la cancellerebbe.
+Le due eccezioni sono la trama delle tenute e la striscia della deriva, e la
+ragione è la stessa, scritta in tutt'e due i posti: lì l'alfa di ogni segno è
+l'informazione, quindi raggrupparla la cancellerebbe. In cambio sono
+rettangoli pieni, che non costano come un tracciato curvo.
 
 **Nessuno ripeta al motore audio un bersaglio che ha già.** `setTargetAtTime`
 inserisce un evento nella lista di automazione del parametro, e `tickParams`
@@ -564,11 +566,38 @@ cerchietti in due campiture, adesso sono al massimo otto barre.
 La trama non ha un cartello di durata, e non è una svista: non contiene tempo
 trascorso, è lo stato di adesso.
 
-**I puntini della corsia lunga si disegnano in due sole campiture.** Un `fill`
-per cerchietto sarebbe un centinaio di campiture per fotogramma, e su un
-telefono si sente: si accumulano tutti i grigi in un percorso e tutti gli
-accesi in un altro, con un `moveTo` prima di ogni arco perché non si
-colleghino.
+**LA STRISCIA DEL QUARTO D'ORA: il baricentro è un TONO, non una posizione.**
+Più il pezzo pesca alto, più la striscia è chiara; più pesca basso, più si
+scurisce. Il verso è questo e non l'inverso: le note gravi pesano, e una banda
+scura si legge come peso. Rovesciarlo non sarebbe un errore di dato, ma
+direbbe il contrario di quello che il suono fa sentire.
+
+Prima era un istogramma di puntini, da zero a quattro sopra l'asse e
+altrettanti sotto. Diceva la stessa cosa con nove stati invece che con una
+scala continua, e soprattutto era la terza riga della fascia con un valore su
+un asse verticale: tre grafici affiancati che si somigliavano. La striscia
+parla la lingua della trama appena sopra — densità di grigio, non posizione.
+
+**Il dato viene dalla MEMORIA, non da una formula.** `derivaStoria` è l'anello
+che lo scheduler riempie ogni due secondi; ricalcolare il baricentro sul tempo
+di adesso darebbe una curva che scorre anche in pausa, quando il pezzo è fermo
+e non ha pescato niente.
+
+**Le colonne senza campioni restano vuote**, e la carta si vede: è così che i
+buchi veri — schermo bloccato, scheda in secondo piano — restano buchi invece
+di essere colmati da un ponte. Era la regola dell'istogramma e vale identica.
+
+**`quinteHistory` porta il tempo E la tonalità.** Prima erano solo tempi;
+adesso ogni voce è `{t, ton}`, perché la striscia ne scrive il nome.
+Ricostruire la tonalità all'indietro sarebbe possibile — la parola sturmiana è
+deterministica — ma vorrebbe dire rifare in `disegno.js` un conto che è di
+`deriva.js`. I nomi non passano dalla cache `CANVAS` perché non sono
+composti: `tonalitaName` è un accesso a una tavola di dodici voci per lingua,
+e la cache esiste per le stringhe da costruire.
+
+Anche qui, come per la trama, **non si raggruppa**: l'alfa di ogni colonna è
+il dato. Sono una cinquantina di rettangoli pieni, che non costano come
+altrettanti tracciati curvi — misurato, 0,07 ms sul fotogramma intero.
 
 **La tela è UNA, e il ciclo di fotogrammi pure.** Le otto linee sono otto
 dischi di un solo campo, disegnato da `disegno.js` su un solo canvas dentro un

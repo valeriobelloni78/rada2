@@ -597,7 +597,7 @@ function drawFascia(s, now) {
      disegnano comunque il telaio — la traccia della trama e l'asse della
      corsia lunga — così la fascia esiste anche prima di premere Avvia.   */
   disegnaTrama(g, left, right, topR, hR, now);
-  disegnaCorsiaLunga(g, left, right, topB, hB, now);
+  disegnaStriscia(g, left, right, topB, hB, now);
 
   if (!ctx) { g.restore(); return; }
 
@@ -730,104 +730,129 @@ function disegnaTrama(g, left, right, topR, h, now) {
 }
 
 /* ---------------------------------------------------------------------------
-   LA CORSIA DEL QUARTO D'ORA
+   LA STRISCIA DEL QUARTO D'ORA
 
-   Un istogramma di puntini, non più una poligonale. Ogni colonnina è
-   un'altezza: da zero a quattro puntini sopra l'asse se il baricentro sta
-   alto, altrettanti sotto se sta basso. Quattro livelli e non di più perché
-   sono quanti se ne contano a colpo d'occhio senza rileggere.
+   Il baricentro non ha più una dimensione verticale: è il TONO di una striscia
+   sola. Più il pezzo pesca alto, più la striscia è chiara; più pesca basso,
+   più si scurisce.
 
-   La colonnina in cui cade un PASSO DI QUINTA è arancione, e prende il posto
-   delle croci che c'erano prima: il cambio d'armonia non è più un segno
-   estraneo appoggiato sopra al movimento, è una delle colonnine del movimento
-   stesso — che è quello che è, visto che i due orologi girano indipendenti.
-   Una colonnina arancione al livello zero disegnerebbe il nulla, quindi in
-   quel caso si accende comunque un puntino sull'asse.
+   Il verso è questo e non l'inverso, ed è una scelta di lettura: le note
+   gravi pesano, e una banda scura sotto a tutto il resto si legge come peso.
+   Chi lo rovesciasse non farebbe un errore di dato, ma direbbe il contrario
+   di quello che il suono fa sentire.
 
-   LA GRIGLIA È FISSA, i dati ci scorrono dentro. Quattrocentocinquanta
-   campioni su cinquecento pixel sarebbero quasi una colonnina per pixel,
-   cioè una macchia: le colonnine stanno su un passo di nove pixel — una
-   sessantina in tutto, una ogni quindici secondi circa — e ciascuna prende il
-   campione più recente che le compete. Una colonnina senza campioni non si
-   disegna, ed è così che i buchi veri — schermo bloccato — restano buchi
-   invece di essere colmati da un ponte.
+   Prima qui c'era un istogramma di puntini, da zero a quattro sopra l'asse e
+   altrettanti sotto. Diceva la stessa cosa con nove stati invece che con una
+   scala continua, e soprattutto era la TERZA riga orizzontale della fascia
+   con un valore su un asse verticale: tre grafici affiancati che si
+   somigliavano. La striscia parla invece la lingua della trama appena sopra —
+   densità di grigio, non posizione — e la fascia torna a essere una cosa
+   sola.
 
-   I tre vettori sono preallocati: nel fotogramma non si alloca.          */
-/* Stava con le quattro guide dei tessuti, che il passo se lo dividevano; da
-   quando quelle sono diventate la trama, questa corsia è l'unica a contare
-   per puntini e il passo è suo.                                          */
-const PASSO_PUNTI = 9;      // px fra una colonnina e la successiva
+   IL DATO VIENE DALLA MEMORIA, non da una formula. `derivaStoria` è un anello
+   riempito dallo scheduler ogni due secondi: ricalcolare il baricentro sul
+   tempo di adesso darebbe una curva che scorre anche in pausa, quando il
+   pezzo è fermo e non ha pescato niente.
+
+   LE COLONNE SENZA CAMPIONI RESTANO VUOTE, e la carta si vede. È il modo in
+   cui i buchi veri — schermo bloccato, scheda in secondo piano — restano
+   buchi invece di essere colmati da un ponte. Era la regola dell'istogramma
+   e vale identica qui.
+
+   Sotto la striscia, una tacca per modulazione e il nome della tonalità che
+   ha aperto. I nomi non passano dalla cache `CANVAS` perché non sono composti
+   — `tonalitaName` è un accesso a una tavola di dodici voci per lingua, non
+   una stringa da costruire, e la cache esiste per quelle.                  */
+const STRISCIA_CHIARO = 0.04;   // alfa dove il pezzo pesca più alto
+const STRISCIA_SCURO  = 0.52;   // e dove pesca più basso
+
+/* LA GRIGLIA È FISSA, i dati ci scorrono dentro. Quattrocentocinquanta
+   campioni su cinquecento pixel sarebbero quasi una colonna per pixel, cioè
+   una macchia: le colonne stanno su un passo di nove pixel — una cinquantina
+   in tutto, una ogni quindici secondi circa — e ciascuna prende il campione
+   più recente che le compete.
+
+   I due vettori sono preallocati: nel fotogramma non si alloca.          */
+const PASSO_PUNTI = 9;          // px fra una colonna e la successiva
 const COLONNE_MAX = 256;
-const colVal    = new Float32Array(COLONNE_MAX);
-const colPieno  = new Uint8Array(COLONNE_MAX);
-const colQuinta = new Uint8Array(COLONNE_MAX);
-const LIVELLI = 4;
+const colVal   = new Float32Array(COLONNE_MAX);
+const colPieno = new Uint8Array(COLONNE_MAX);
 
-function disegnaCorsiaLunga(g, left, right, topB, hB, now) {
-  const yB = topB + hB / 2;
+function disegnaStriscia(g, left, right, topB, hB, now) {
+  const hStr = hB * 0.5;
+  const larg = right - left;
 
-  /* l'asse: lo zero da cui le colonnine salgono e scendono */
+  /* la cornice, sempre: così la fascia ha un telaio anche prima di Avvia */
   g.strokeStyle = COL.hair;
   g.lineWidth = 0.75;
-  g.beginPath(); g.moveTo(left, yB); g.lineTo(right, yB); g.stroke();
+  g.strokeRect(left + 0.5, topB + 0.5, larg - 1, hStr - 1);
 
   if (!ctx) return;
 
-  const n = Math.min(COLONNE_MAX, Math.max(8, Math.floor((right - left) / PASSO_PUNTI)));
-  const passo = (right - left) / (n - 1);
-  const passoV = (hB / 2) / (LIVELLI + 0.5);
-  const raggio = 1.4;
+  const n = Math.min(COLONNE_MAX, Math.max(8, Math.floor(larg / PASSO_PUNTI)));
+  const passo = larg / n;
 
-  for (let k = 0; k < n; k++) { colPieno[k] = 0; colQuinta[k] = 0; }
+  for (let k = 0; k < n; k++) colPieno[k] = 0;
 
-  /* in quale colonnina cade un istante: destra è adesso */
-  const colonnaDi = t => Math.round((1 - (now - t) / DERIVA_FINESTRA) * (n - 1));
+  /* in quale colonna cade un istante: destra è adesso */
+  const colonnaDi = t => Math.floor((1 - (now - t) / DERIVA_FINESTRA) * (n - 1));
 
   const st = derivaStoria;
   for (let j = 0; j < st.pieni; j++) {
     const idx = (st.testa - st.pieni + j + DERIVA_N) % DERIVA_N;
     const k = colonnaDi(st.t[idx]);
     if (k < 0 || k >= n) continue;
-    colVal[k] = st.c[idx];      // l'ultimo campione della colonnina vince
+    colVal[k] = st.c[idx];      // l'ultimo campione della colonna vince
     colPieno[k] = 1;
   }
-  for (const t of quinteHistory) {
-    const k = colonnaDi(t);
-    if (k >= 0 && k < n) colQuinta[k] = 1;
-  }
 
-  /* Due campiture sole, come per le guide: prima le colonnine ordinarie, poi
-     quelle dei passi di quinta.                                           */
-  colonnine(g, COL.ink2, false, n, left, passo, yB, passoV, raggio);
-  colonnine(g, COL.amber, true,  n, left, passo, yB, passoV, raggio);
-}
-
-function colonnine(g, colore, quinte, n, left, passo, yB, passoV, raggio) {
-  g.fillStyle = colore;
-  g.beginPath();
+  /* Il tono, colonna per colonna. Una campitura per colonna e non una sola
+     per tutte: qui l'alfa È il dato, e raggrupparla la cancellerebbe. Sono
+     una cinquantina di rettangoli pieni, che non costano come altrettanti
+     tracciati curvi — misurato sul fotogramma intero.                    */
+  g.fillStyle = COL.ink;
   for (let k = 0; k < n; k++) {
     if (!colPieno[k]) continue;
-    if (!!colQuinta[k] !== quinte) continue;
-    const v = colVal[k];
-    const alti = clamp(Math.round(Math.abs(v) * LIVELLI), 0, LIVELLI);
-    const x = left + k * passo;
-    const verso = v < 0 ? 1 : -1;         // il canvas cresce verso il basso
-    if (alti === 0) {
-      /* Al livello zero non c'è colonnina. Per un passo di quinta si accende
-         comunque un puntino sull'asse, o il cambio d'armonia sparirebbe
-         proprio quando il pezzo passa per il centro.                      */
-      if (!quinte) continue;
-      g.moveTo(x + raggio, yB);
-      g.arc(x, yB, raggio, 0, Math.PI * 2);
-      continue;
+    const v = clamp(colVal[k], -1, 1);
+    /* alto → chiaro, basso → scuro */
+    g.globalAlpha = lerp(STRISCIA_CHIARO, STRISCIA_SCURO, (1 - v) / 2);
+    g.fillRect(left + k * passo, topB, passo + 0.6, hStr);
+  }
+  g.globalAlpha = 1;
+
+  /* LE MODULAZIONI: una tacca sotto la striscia, e il nome della tonalità
+     centrato nel tratto che quella tonalità ha tenuto. L'ultima è arancione —
+     è quella in corso, e resta l'unico accento di questa lettura.        */
+  const yT = topB + hStr;
+  g.font = "400 7px " + FONT_PILA;
+  g.textBaseline = "top";
+  g.textAlign = "center";
+
+  for (let i = 0; i < quinteHistory.length; i++) {
+    const q = quinteHistory[i];
+    const xa = right - ((now - q.t) / DERIVA_FINESTRA) * larg;
+    if (xa > right) continue;
+    const corso = i === quinteHistory.length - 1;
+    const xb = corso ? right
+             : right - ((now - quinteHistory[i + 1].t) / DERIVA_FINESTRA) * larg;
+
+    if (xa >= left) {
+      g.strokeStyle = corso ? COL.amber : COL.hair;
+      g.lineWidth = 1;
+      g.beginPath(); g.moveTo(xa, yT); g.lineTo(xa, yT + 4); g.stroke();
     }
-    for (let j = 1; j <= alti; j++) {
-      const y = yB + verso * j * passoV;
-      g.moveTo(x + raggio, y);
-      g.arc(x, y, raggio, 0, Math.PI * 2);
+    /* il nome solo se il tratto visibile gli lascia spazio: a quarto d'ora
+       pieno sono sei tonalità, ma al bordo sinistro l'ultima entra tagliata */
+    const va = Math.max(xa, left), vb = Math.min(xb, right);
+    if (vb - va > 22) {
+      g.fillStyle = corso ? COL.amber : COL.dust;
+      g.fillText(tonalitaName(q.ton), (va + vb) / 2, yT + 7);
     }
   }
-  g.fill();
+
+  /* adesso: la tacca piena al bordo destro */
+  g.fillStyle = COL.amber;
+  g.fillRect(right - 1.5, topB, 1.5, hStr);
 }
 
 /* Qui stava `trackedText`, la composizione lettera per lettera che dava alle

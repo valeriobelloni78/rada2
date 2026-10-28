@@ -76,7 +76,13 @@ let ultimoCampione = -99;
 
 /* I passi di quinta sono rari — uno ogni due minuti e mezzo — quindi qui una
    coda va benissimo. `ultimiPassi` ricorda l'ultimo passiQuinta visto: è così
-   che lo scheduler si accorge che deriva.js ha fatto un passo.             */
+   che lo scheduler si accorge che deriva.js ha fatto un passo.
+
+   Ogni voce porta il tempo E LA TONALITÀ che quel passo ha aperto, perché la
+   striscia della fascia ne scrive il nome. Ricostruirla all'indietro sarebbe
+   possibile — la parola sturmiana è deterministica — ma vorrebbe dire
+   rifare in `disegno.js` un conto che è di `deriva.js`, e l'indice lo dà già
+   `tonalita()`: qui si registra, non si ricalcola.                        */
 const quinteHistory = [];
 let ultimiPassi = 0;
 
@@ -97,10 +103,10 @@ function registraDeriva(now) {
   }
   if (passiQuinta !== ultimiPassi) {
     ultimiPassi = passiQuinta;
-    quinteHistory.push(now);
+    quinteHistory.push({ t: now, ton: tonalita() });
     quintaScattata = true;
   }
-  while (quinteHistory.length && quinteHistory[0] < now - DERIVA_FINESTRA)
+  while (quinteHistory.length && quinteHistory[0].t < now - DERIVA_FINESTRA)
     quinteHistory.shift();
 }
 
