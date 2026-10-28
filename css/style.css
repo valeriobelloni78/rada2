@@ -22,7 +22,11 @@
   --amber:#c25a2b;   /* unico accento */
   --velo:rgba(32,33,28,.07); /* lo spicchio del giro, sui dischi del campo */
   --glow:rgba(194,90,43,.18);
-  --amber-filo:rgba(194,90,43,.34); /* il filo del marchio, l'accento smorzato */
+  --amber-filo:rgba(194,90,43,.34); /* i fili della testata, l'accento smorzato */
+  /* Il corpo del marchio sta QUI e non su `.logo`, perché non lo usa solo il
+     marchio: la testata ci calcola anche l'altezza del blocco delle lingue,
+     ed è così che i due fili cadono alla stessa quota a qualunque corpo. */
+  --corpoLogo:clamp(19px,4.1vw,23px);
   --sans:"Helvetica Neue",-apple-system,system-ui,"Segoe UI",Roboto,Arial,sans-serif;
 }
 
@@ -74,6 +78,10 @@ body{
   flex-wrap:wrap;
   margin-bottom:34px;
 }
+/* Solo la testata dello STRUMENTO allinea in alto, perché è l'unica in cui i
+   due blocchi devono far combaciare un filo. Nella guida la testata è a due
+   poli senza fili orizzontali e tiene l'allineamento alle linee di base. */
+.headStrumento{align-items:flex-start}
 h1{
   margin:0;
   font-weight:300;
@@ -97,7 +105,7 @@ h1 em{font-style:normal;color:var(--amber)}
      perché il letter-spacing del nome lascia già sotto la linea di base il
      vuoto delle discendenti, che di maiuscole non ne ha nessuna.        */
   gap:0;
-  font-size:clamp(21px,4.6vw,26px);
+  font-size:var(--corpoLogo);
 }
 .logo h1,
 .logo h2{
@@ -273,6 +281,22 @@ h1 em{font-style:normal;color:var(--amber)}
 /* la tela copre tutta la griglia: il campo sta nella riga alta, la fascia
    nella bassa, e le colonne le si affiancano senza coprirla */
 #canvas-holder{grid-column:1 / -1;grid-row:1 / 3;min-width:0}
+
+/* LA TELA NON DEVE RICEVERE IL PUNTATORE, e da quando copre tutta la griglia
+   questa non è più una buona intenzione ma una necessità.
+
+   Un canvas è trasparente dove non disegna, ma resta un rettangolo pieno per
+   il puntatore: copriva le colonne, e si prendeva i clic di quella che nel
+   documento viene PRIMA di lui. Le frasi stanno prima, i tessuti dopo —
+   quindi i cursori delle frasi erano morti e quelli dei tessuti no. Su
+   schermo stretto il difetto spariva, perché là la tela e le colonne stanno
+   su righe diverse e non si sovrappongono.
+
+   `pointer-events:none` dice in una riga la regola che il progetto ha sempre
+   avuto: il canvas è puro display, i comandi sono gli elementi nativi
+   accanto. Chi volesse renderlo interattivo deve togliere questa riga, e a
+   quel punto deve anche rileggere perché i dialZone di Rada sono spariti. */
+#canvas-holder{pointer-events:none}
 #canvas-holder canvas{display:block}
 .colLinee{grid-row:2;min-width:0}
 .colFrasi{grid-column:1}
@@ -488,11 +512,27 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
    filo che separa deve arrivare da parte a parte di ciò che separa.
    Il blocco si allinea a destra perché sta al bordo destro della pagina. */
 .headLato{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+/* I DUE FILI DELLA TESTATA CADONO ALLA STESSA QUOTA, e non per un padding
+   indovinato a occhio: il blocco delle lingue è alto esattamente quanto la
+   prima riga del marchio, quindi il suo bordo inferiore atterra dove comincia
+   «deriva». Il conto è `1em` di corpo più il `.067em` che il nome si porta
+   sotto, più il pixel del bordo stesso — che sta DENTRO l'altezza, perché il
+   foglio usa `border-box`.
+
+   Questo vuole `align-items:flex-start` sulla testata (vedi `.headStrumento`):
+   con l'allineamento alle linee di base i due blocchi partivano da quote
+   diverse, e i fili uscivano sfalsati di quasi otto pixel.
+
+   Stesso colore del filo del marchio: sono lo stesso segno, e l'arancione
+   smorzato è il solo modo in cui l'accento può fare da riga senza diventare
+   un accento in più.                                                      */
 .headLato .langs{
   align-self:stretch;
   justify-content:flex-end;
-  padding-bottom:8px;
-  border-bottom:1px solid var(--hair);
+  align-items:flex-end;
+  height:calc(var(--corpoLogo) * 1.067 + 1px);
+  padding-bottom:0;
+  border-bottom:1px solid var(--amber-filo);
 }
 .docLink{
   font-family:var(--sans);font-weight:400;
