@@ -436,6 +436,31 @@ baricentro e i due archi di misura del registro. Il reticolo era quadrato
 perché un cerchio lo è; una composizione libera no, e in un quadrato lascerebbe
 vuoti gli angoli.
 
+**LE COLONNE DI LINEA STANNO AI LATI DELLA FASCIA, non del campo.** Prima
+fiancheggiavano l'intera tela, e il campo era largo quanto la colonna centrale
+gli concedeva — 560 px, con i due terzi laterali della pagina occupati da otto
+cursori. Adesso il campo prende tutta la larghezza (880 × 546) e le colonne
+scendono accanto agli score, che di spazio ne vogliono meno: la fascia passa
+da 526 a 468 px, il campo cresce del 57%.
+
+**La tela resta UNA**, quindi non si divide in due: copre tutta la griglia su
+due righe, e le colonne le si posano sopra nei margini della riga bassa, dove
+non disegna niente. Perché regga servono due accordi fra `style.css` e
+`canvasSize`, ed è l'unico punto del progetto in cui il foglio e il disegno si
+parlano:
+
+- **`--colonna`** la larghezza delle colonne. La griglia la usa per le sue
+  tracce, e `canvasSize` la LEGGE per rientrare la fascia esattamente di
+  tanto. Sotto i 900 px il foglio la porta a zero, e quello è il segnale che
+  fa tornare la fascia larga quanto il campo — così il disegno non conosce
+  nessuna soglia di finestra.
+- **`--hCampo`** l'altezza del campo, che `canvasSize` SCRIVE: è quella a dare
+  l'altezza alla prima riga, e quindi a far cadere le colonne accanto alla
+  fascia invece che al campo. Si scrive solo quando cambia — a ogni fotogramma
+  farebbe ricalcolare lo stile trenta volte al secondo.
+
+Chi cambia una delle due senza l'altra fa finire i cursori sopra il disegno.
+
 Nulla di quello che se n'è andato è andato perso, e conviene sapere dove
 ritrovarlo: la tonalità e il conteggio delle modulazioni stanno nella riga
 sopra il campo, il baricentro nella corsia dei quindici minuti, il registro
@@ -456,8 +481,8 @@ opposte — allargare la tavola separa i dischi e spegne le lenti:
   incrociano fra loro. Senza, la lente non ha mai occasione di comparire e il
   segno esiste solo sulla carta.
 
-La prima stesura veniva da un mockup largo quasi mille pixel. Portata qui, dove
-il campo è 560 × 347, i dischi smettevano di toccarsi — **tre coppie su 28**, e
+La prima stesura veniva da un mockup largo quasi mille pixel. Portata in un
+campo di 560 × 347, i dischi smettevano di toccarsi — **tre coppie su 28**, e
 la lente non si accendeva mai; ingrandirli e basta li faceva uscire dal campo.
 La taratura ha provato ogni misura contro ogni contrazione su quattro formati
 per sessantaquattro combinazioni di mood, 256 casi per candidato, e ha tenuto

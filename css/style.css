@@ -238,14 +238,45 @@ h1 em{font-style:normal;color:var(--amber)}
 .derivaBlocco{display:flex;flex-direction:column;gap:5px}
 .derivaBlocco .realign{color:var(--amber)}
 
+/* ------------------------------------------------------------- lo strumento
+   LE COLONNE DI LINEA STANNO AI LATI DELLA FASCIA, non del campo. Prima
+   fiancheggiavano l'intera tela, e il campo dei dischi era largo quanto la
+   colonna centrale glielo concedeva: 560 px, con i due terzi laterali della
+   pagina occupati da otto cursori. Adesso il campo prende tutta la larghezza
+   e le colonne scendono accanto agli score, che di spazio ne vogliono meno.
+
+   La tela resta UNA — è una regola del progetto — quindi non si divide in
+   due: copre tutta la griglia, su due righe, e le colonne le si posano sopra
+   nei margini della riga bassa, dove la tela non disegna niente. Perché il
+   trucco regga servono due accordi fra CSS e disegno, e sono entrambi
+   espliciti:
+
+     `--colonna`  la larghezza delle colonne. La griglia la usa per le sue
+                  tracce, e `canvasSize` la LEGGE per rientrare la fascia
+                  esattamente di tanto. Un numero solo, in un posto solo.
+     `--hCampo`   l'altezza del campo, che il disegno SCRIVE a ogni misura:
+                  è quella a dare l'altezza alla prima riga, e quindi a far
+                  cadere le colonne accanto alla fascia e non al campo.
+
+   Chi cambia una delle due a mano, senza toccare l'altra, fa finire i cursori
+   sopra il disegno.                                                         */
 .strumento{
+  --colonna:180px;
+  --vuotoStrumento:26px;
   display:grid;
-  grid-template-columns:minmax(170px,1fr) minmax(0,560px) minmax(170px,1fr);
-  gap:26px;
-  align-items:center;
+  grid-template-columns:var(--colonna) minmax(0,1fr) var(--colonna);
+  grid-template-rows:var(--hCampo,0px) auto;
+  column-gap:var(--vuotoStrumento);
+  max-width:880px;
+  margin-inline:auto;
 }
-#canvas-holder{display:flex;justify-content:center;min-width:0}
+/* la tela copre tutta la griglia: il campo sta nella riga alta, la fascia
+   nella bassa, e le colonne le si affiancano senza coprirla */
+#canvas-holder{grid-column:1 / -1;grid-row:1 / 3;min-width:0}
 #canvas-holder canvas{display:block}
+.colLinee{grid-row:2;min-width:0}
+.colFrasi{grid-column:1}
+.colTessuti{grid-column:3}
 
 /* ------------------------------------------------------- le colonne di linea
    Otto righe native — sigla, scala della durata, valore, quadratino, ↻ —
@@ -546,11 +577,25 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
   .controls{grid-template-columns:repeat(5,1fr);gap:0 26px}
   .stage{padding:34px 28px}
 }
-/* Sotto i 900 px le colonne non stanno più ai lati: il reticolo sale sopra,
-   intero, e le due colonne si affiancano sotto di lui.                     */
+/* Sotto i 900 px le colonne non stanno più ai lati della fascia: non ci
+   starebbero, e rientrare la fascia di 180 px per lato la ridurrebbe a un
+   francobollo. La tela torna sopra, intera, e le due colonne si affiancano
+   sotto di lei.
+
+   `--colonna` a zero è il segnale che il disegno legge per smettere di
+   rientrare la fascia: così la regola sta scritta una volta sola, qui, e
+   `canvasSize` non deve conoscere nessuna soglia di finestra.             */
 @media (max-width:899px){
-  .strumento{grid-template-columns:1fr 1fr;gap:20px}
+  .strumento{
+    --colonna:0px;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:auto auto;
+    gap:20px;
+  }
   #canvas-holder{grid-column:1 / -1;grid-row:1}
+  .colLinee{grid-row:2}
+  .colFrasi{grid-column:1}
+  .colTessuti{grid-column:2}
 }
 /* Otto colonne vogliono circa 75 px per bottone: tanto misura l'etichetta più
    lunga in inglese, «Archipelago». Sotto quella misura la riga delle frasi
@@ -568,7 +613,8 @@ input[type=range]:focus-visible{outline:1.5px solid var(--amber);outline-offset:
 }
 @media (max-width:540px){
   .strumento{grid-template-columns:1fr}
-  #canvas-holder{grid-column:auto}
+  #canvas-holder{grid-column:auto;grid-row:auto}
+  .colLinee{grid-row:auto;grid-column:auto}
   .controls{grid-template-columns:1fr}
   .bar{justify-content:center}
 }

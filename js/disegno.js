@@ -105,7 +105,7 @@ let COL = {};                // palette letta dal CSS
 let holder = null, cvEl = null, cv2d = null;
 
 /* Strutture riusate a ogni fotogramma: niente allocazioni dentro `disegna`. */
-const SIZE = { w: 0, h: 0, ret: 0, campo: 0, stripH: 0 };
+const SIZE = { w: 0, h: 0, campo: 0, stripH: 0, margine: 0 };
 
 /* Il numerale al centro di un disco non cresce oltre questo: è una sigla, non
    un titolo, e sul tessuto più largo arriverebbe al corpo di un'intestazione. */
@@ -199,21 +199,56 @@ function readPalette() {
   };
 }
 
-/* Il campo è ORIZZONTALE, la fascia una striscia sotto della stessa
-   larghezza. Il reticolo era quadrato perché un cerchio lo è; una
-   composizione libera no, e in un quadrato lascerebbe vuoti gli angoli.
+/* Il campo è ORIZZONTALE e prende TUTTA la tela; la fascia è una striscia
+   sotto, rientrata di una colonna per lato perché è lì che stanno i cursori.
+   Il reticolo era quadrato perché un cerchio lo è; una composizione libera
+   no, e in un quadrato lascerebbe vuoti gli angoli.
+
+   LA RIENTRANZA LA DICE IL CSS, non una soglia scritta qui: `--colonna` è la
+   larghezza delle colonne di linea, e la griglia la usa per le sue tracce.
+   Leggerla invece di indovinarla è ciò che tiene i cursori accanto alla
+   fascia e non sopra. Sotto i 900 px il foglio la porta a zero, le colonne
+   scendono sotto la tela e la fascia torna larga quanto il campo.
 
    Sul telefono il campo si alza — 0,82 invece di 0,62 — perché a schermo
    stretto una tavola bassa schiaccia gli otto dischi uno sull'altro: le
    sovrapposizioni diventano una macchia sola e la lente smette di dire
-   quali due linee si sono incontrate.                                     */
+   quali due linee si sono incontrate.
+
+   L'altezza del campo torna al CSS come `--hCampo`: è quella a dare
+   l'altezza alla prima riga della griglia, e quindi a far cadere le colonne
+   accanto alla fascia. Si scrive solo quando cambia, che è un accesso allo
+   stile e non va fatto a ogni fotogramma.                                 */
+let strumentoEl = null;
+let ultimaMisura = -1, ultimoCampo = -1, colonnaPx = 0, vuotoPx = 0;
+
 function canvasSize() {
   const avail = holder ? holder.clientWidth : 320;
-  SIZE.ret    = Math.min(avail, 560);
-  SIZE.campo  = Math.min(SIZE.ret * (SIZE.ret < 420 ? 0.82 : 0.62), 520);
-  SIZE.stripH = clamp(SIZE.ret * 0.34, 120, 190);
-  SIZE.w      = SIZE.ret;
+
+  if (avail !== ultimaMisura) {
+    ultimaMisura = avail;
+    if (!strumentoEl && holder) strumentoEl = holder.closest(".strumento");
+    if (strumentoEl) {
+      const cs = getComputedStyle(strumentoEl);
+      colonnaPx = parseFloat(cs.getPropertyValue("--colonna")) || 0;
+      vuotoPx   = parseFloat(cs.getPropertyValue("--vuotoStrumento")) || 0;
+    }
+  }
+
+  SIZE.w      = avail;
+  SIZE.campo  = Math.min(SIZE.w * (SIZE.w < 420 ? 0.82 : 0.62), 560);
+  SIZE.stripH = clamp(SIZE.w * 0.26, 120, 190);
+  /* Senza colonne ai lati la fascia tiene il suo margine di sempre, il tre
+     per cento: è il caso del telefono, e là la larghezza serve tutta.    */
+  SIZE.margine = colonnaPx > 0 ? colonnaPx + vuotoPx : SIZE.w * 0.03;
   SIZE.h      = SIZE.campo + SIZE.stripH;
+
+  /* solo quando cambia: scrivere una proprietà a ogni fotogramma farebbe
+     ricalcolare lo stile trenta volte al secondo per niente */
+  if (strumentoEl && SIZE.campo !== ultimoCampo) {
+    ultimoCampo = SIZE.campo;
+    strumentoEl.style.setProperty("--hCampo", SIZE.campo + "px");
+  }
   return SIZE;
 }
 
@@ -507,7 +542,11 @@ function contorni(g, now) {
    ricalcola nulla, mostra ciò che è stato davvero suonato.                 */
 function drawFascia(s, now) {
   const g = cv2d;
-  const left = s.w * 0.03, right = s.w * 0.97;
+  /* La fascia rientra di una colonna per lato: è lì che stanno i cursori
+     delle otto linee, e il margine lo decide `canvasSize` leggendolo dal
+     CSS. Il campo sopra non rientra affatto — è il motivo per cui le
+     colonne sono scese quaggiù.                                          */
+  const left = s.margine, right = s.w - s.margine;
   const top   = s.campo + s.stripH * 0.06;
   const hA    = s.stripH * 0.22;          // quattro corsie di gocce
   const laneH = hA / 4;
