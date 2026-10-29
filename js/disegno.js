@@ -737,7 +737,7 @@ function disegnaTrama(g, left, right, topR, h, now) {
 }
 
 /* ---------------------------------------------------------------------------
-   LA STRISCIA DEL QUARTO D'ORA
+   LA STRISCIA DEI TRE MINUTI
 
    Il baricentro non ha più una dimensione verticale: è il TONO di una striscia
    sola. Più il pezzo pesca alto, più la striscia è chiara; più pesca basso,
@@ -757,7 +757,7 @@ function disegnaTrama(g, left, right, topR, h, now) {
    sola.
 
    IL DATO VIENE DALLA MEMORIA, non da una formula. `derivaStoria` è un anello
-   riempito dallo scheduler quattro volte al secondo: ricalcolare il
+   riempito dallo scheduler due volte al secondo: ricalcolare il
    baricentro sul tempo di adesso darebbe una curva che scorre anche in pausa,
    quando il pezzo è fermo e non ha pescato niente. È la differenza con il
    mockup, che la formula se la ricalcolava — lì non c'era un motore da
@@ -775,21 +775,38 @@ function disegnaTrama(g, left, right, topR, h, now) {
 const STRISCIA_CHIARO = 0.06;   // alfa dove il pezzo pesca più alto
 const STRISCIA_SCURO  = 0.50;   // e dove pesca più basso
 
-/* LA GRIGLIA È FISSA, i dati ci scorrono dentro, e il passo è di DUE PIXEL
-   come nel mockup: colonnine sottilissime, così il tono si legge come una
-   superficie continua invece che come una fila di tasselli. A nove pixel —
-   la misura di prima, sulla finestra da un quarto d'ora — si vedevano i
-   tasselli uno per uno.
+/* LA GRIGLIA È FISSA, i dati ci scorrono dentro, e il passo è di SEI PIXEL.
+   È stato prima nove, sulla finestra da un quarto d'ora, e poi due, copiato
+   dal mockup: sei è il punto in cui le due ragioni si incontrano.
+
+   Verso il basso il limite è la lettura — a nove pixel sulla finestra lunga
+   si contavano i tasselli uno per uno — e verso l'alto è il costo: una
+   campitura per colonna con la sua alfa, e a due pixel erano più di
+   trecento campiture per fotogramma, da sole più di tutte le tacche delle
+   gocce. La superficie non ci guadagnava niente, perché il baricentro non ha
+   dettaglio a mezzo secondo da mostrare: è una deriva, si muove in minuti.
+
+   LA COLONNA È LA MEDIA DEI SUOI CAMPIONI, non l'ultimo che le capita, ed è
+   la media a pagare l'allargamento. Con colonne strette la differenza non si
+   vedeva — un campione o l'altro dicevano quasi la stessa cosa — ma a sei
+   pixel una colonna ne contiene da due a sette, e prendere l'ultimo
+   butterebbe via gli altri facendo saltare il tono di colonna in colonna:
+   misurata sulla stessa storia, la ruvidità (la differenza seconda media fra
+   colonne vicine) passa da 0,86 a due pixel a 1,62 a sei pixel ultimo-vince,
+   e torna a 0,88 con la media. A nove pixel nemmeno la media tiene: 1,57.
+   Sei pixel è il punto in cui le due ragioni si incontrano, e la media è
+   anche ciò che lo rende onesto — la colonna dice davvero quel secondo e
+   mezzo, non un istante dentro di esso.
 
    Il passo di campionamento di `derivaStoria` è tarato su questa misura:
    vedere il commento in `audio.js`, e non toccare l'una senza l'altra.
 
-   I due vettori sono preallocati: nel fotogramma non si alloca. Seicento
-   colonne coprono la fascia più larga che il foglio possa dare.          */
-const PASSO_PUNTI = 2;          // px fra una colonna e la successiva
-const COLONNE_MAX = 640;
+   I due vettori sono preallocati: nel fotogramma non si alloca. La fascia
+   più larga che il foglio possa dare sono 778 px, cioè 129 colonne.      */
+const PASSO_PUNTI = 6;          // px fra una colonna e la successiva
+const COLONNE_MAX = 192;
 const colVal   = new Float32Array(COLONNE_MAX);
-const colPieno = new Uint8Array(COLONNE_MAX);
+const colQuanti = new Uint16Array(COLONNE_MAX);
 
 /* L'ALTEZZA DELLA STRISCIA È IN PIXEL, non in frazioni — è l'eccezione che
    vale già per gli spessori di tratto, e per la stessa ragione: qui il segno
@@ -812,34 +829,49 @@ function disegnaStriscia(g, left, right, topB, hB, now) {
   const n = Math.min(COLONNE_MAX, Math.max(8, Math.floor(larg / PASSO_PUNTI)));
   const passo = larg / n;
 
-  for (let k = 0; k < n; k++) colPieno[k] = 0;
+  for (let k = 0; k < n; k++) { colVal[k] = 0; colQuanti[k] = 0; }
 
-  /* in quale colonna cade un istante: destra è adesso */
-  const colonnaDi = t => Math.floor((1 - (now - t) / DERIVA_FINESTRA) * (n - 1));
+  /* In quale colonna cade un istante: destra è adesso. Si divide per `n` e
+     non per `n − 1` — con `n − 1` l'ultima colonna è un intervallo di durata
+     nulla, che riceve un campione solo se è caduto nell'istante esatto di
+     adesso, cioè mai: restava carta bianca al bordo destro. A due pixel non
+     si vedeva, a sei sì.                                                  */
+  const colonnaDi = t =>
+    Math.min(n - 1, Math.floor((1 - (now - t) / DERIVA_FINESTRA) * n));
 
   const st = derivaStoria;
   for (let j = 0; j < st.pieni; j++) {
     const idx = (st.testa - st.pieni + j + DERIVA_N) % DERIVA_N;
     const k = colonnaDi(st.t[idx]);
-    if (k < 0 || k >= n) continue;
-    colVal[k] = st.c[idx];      // l'ultimo campione della colonna vince
-    colPieno[k] = 1;
+    if (k < 0) continue;
+    colVal[k] += st.c[idx];     // si somma qui e si divide al disegno
+    colQuanti[k]++;
   }
 
   /* Il tono, colonna per colonna. Una campitura per colonna e non una sola
      per tutte: qui l'alfa È il dato, e raggrupparla la cancellerebbe. Sono
      rettangoli pieni, che non costano come altrettanti tracciati curvi.
 
-     Lo 0,2 di troppo in larghezza è la saldatura fra una colonna e l'altra:
-     senza, il bordo di ciascuna resta chiaro un decimo di pixel e la striscia
-     si legge rigata. È la stessa misura del mockup.                       */
+     I BORDI SI ARROTONDANO AL PIXEL, e il bordo destro di una colonna è il
+     bordo sinistro della successiva: così non resta né un filo di carta fra
+     le due né una sovrapposizione.
+
+     Prima c'era una saldatura — ogni colonna larga 0,2 px di troppo — ed era
+     il rimedio sbagliato alla stessa malattia. La fascia non comincia quasi
+     mai a un pixel intero, quindi ogni bordo cadeva a metà pixel e veniva
+     smussato; la saldatura ci metteva sopra una seconda campitura, e il
+     doppio strato faceva una riga più scura. A due pixel di colonna la riga
+     cadeva ogni due pixel e si leggeva come grana; a sei è diventata uno
+     steccato, visibile a occhio nudo su tutta la striscia.                */
   g.fillStyle = COL.ink;
   for (let k = 0; k < n; k++) {
-    if (!colPieno[k]) continue;
-    const v = clamp(colVal[k], -1, 1);
+    if (!colQuanti[k]) continue;
+    const v = clamp(colVal[k] / colQuanti[k], -1, 1);
+    const xa = Math.round(left + k * passo);
+    const xb = Math.round(left + (k + 1) * passo);
     /* alto → chiaro, basso → scuro */
     g.globalAlpha = lerp(STRISCIA_CHIARO, STRISCIA_SCURO, (1 - v) / 2);
-    g.fillRect(left + k * passo, topB, passo + 0.2, hStr);
+    g.fillRect(xa, topB, xb - xa, hStr);
   }
   g.globalAlpha = 1;
 

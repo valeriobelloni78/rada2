@@ -45,7 +45,7 @@ const dropHistory = [];
 
 /* --- la storia della deriva ------------------------------------------------
    Seconda memoria, per la corsia lunga della fascia: il baricentro
-   campionato quattro volte al secondo sugli ultimi tre minuti, più i tempi dei passi
+   campionato due volte al secondo sugli ultimi tre minuti, più i tempi dei passi
    di quinta. Stesso principio di `dropHistory` — lo scheduler scrive, il
    disegno legge — e la
    stessa ragione di stare qui: è lo scheduler a girare sempre, anche quando
@@ -57,21 +57,24 @@ const dropHistory = [];
    ciascun campione, perché i giri dello scheduler non sono equidistanti — a
    schermo bloccato passano anche dodici secondi — e il disegno deve sapere
    dove i buchi sono veri.                                                  */
-/* TRE MINUTI, e il passo di campionamento dipende da quelli. Erano quindici,
-   con un campione ogni due secondi: le colonne della striscia erano larghe
-   nove pixel e ciascuna copriva un quarto di minuto. Adesso la striscia ha
-   colonne da due pixel, cioè una ogni mezzo secondo scarso, e un campione
-   ogni due secondi ne lascerebbe vuote tre su quattro — una pettinata, non
-   una striscia.
+/* TRE MINUTI, e il passo di campionamento dipende da quelli.
+
    IL PASSO VA TENUTO SOTTO LA DURATA DI UNA COLONNA, che è
-   `finestra / (larghezza in pixel / 2)`: nel caso peggiore — la fascia più
-   larga, 846 px a schermo stretto — sono 0,43 s, e un quarto di secondo ci
-   sta sotto con margine. Chi allarga la finestra senza toccare il passo
-   ritrova il pettine.
+   `finestra / (larghezza in pixel / PASSO_PUNTI)`. Nel caso peggiore — la
+   fascia più larga, 778 px appena sotto i 900 di finestra, divisa in colonne
+   da sei pixel — una colonna dura 1,4 s, e mezzo secondo ci sta sotto con
+   margine: misurato, ogni colonna riceve da due a sette campioni e nessuna
+   resta vuota. Chi stringe le colonne senza stringere il passo ritrova il
+   pettine, cioè colonne vuote in mezzo a colonne piene.
+
+   Mezzo secondo è anche il passo giusto per l'altro verso: la striscia fa la
+   MEDIA dei campioni che le cadono dentro, e con due o tre per colonna la
+   media è ancora il valore di quel secondo, non una pappa.
+
    Il cartello sopra la corsia lo scrive i18n.js: cambiando qui, cambiare
    anche `CANVAS.fLunga`.                                                  */
 const DERIVA_FINESTRA = 180;
-const DERIVA_PASSO    = 0.25;                       // secondi fra due campioni
+const DERIVA_PASSO    = 0.5;                        // secondi fra due campioni
 const DERIVA_N        = DERIVA_FINESTRA / DERIVA_PASSO;
 const derivaStoria = {
   t: new Float32Array(DERIVA_N),

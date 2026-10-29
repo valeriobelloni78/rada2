@@ -596,20 +596,38 @@ un asse verticale: tre grafici affiancati che si somigliavano. La striscia
 parla la lingua della trama appena sopra — densità di grigio, non posizione.
 
 **Il dato viene dalla MEMORIA, non da una formula.** `derivaStoria` è l'anello
-che lo scheduler riempie quattro volte al secondo; ricalcolare il baricentro
+che lo scheduler riempie due volte al secondo; ricalcolare il baricentro
 sul tempo di adesso darebbe una curva che scorre anche in pausa, quando il
 pezzo è fermo e non ha pescato niente. Il mockup la formula se la
 ricalcolava, e poteva: lì non c'era un motore da mettere in pausa.
 
+**LA COLONNA È SEI PIXEL E LA MEDIA DEI SUOI CAMPIONI**, e le due cose stanno
+in piedi insieme. È stata prima nove, sulla finestra da un quarto d'ora, e poi
+due, copiata dal mockup; sei è dove le due ragioni si incontrano. Sotto, il
+limite è il costo — a due pixel erano più di trecento campiture per fotogramma,
+da sole più di tutte le tacche delle gocce, e il baricentro non ha dettaglio a
+mezzo secondo da mostrare. Sopra, il limite è la lettura, e la misura è la
+ruvidità (la differenza seconda media fra colonne vicine): 0,86 a due pixel,
+1,62 a sei col vecchio ultimo-vince, **0,88 a sei con la media**, 1,57 a nove
+nemmeno con la media. **È la media a pagare l'allargamento**, e chi allarga
+senza mediarci sopra se ne accorge subito.
+
+**I bordi delle colonne si arrotondano al pixel**, e il bordo destro di una è
+il sinistro della successiva. La saldatura di prima — ogni colonna 0,2 px più
+larga — era il rimedio sbagliato: la fascia non comincia quasi mai a un pixel
+intero, quindi i bordi cadevano a metà pixel e il doppio strato della saldatura
+ci faceva sopra una riga più scura. A due pixel si leggeva come grana, a sei
+era uno steccato su tutta la striscia (misurato: zero pali dopo
+l'arrotondamento, e tratti piatti larghi esattamente una colonna).
+
 **LA FINESTRA E IL PASSO DI CAMPIONAMENTO SONO LEGATI, e vanno cambiati
-insieme.** La striscia ha colonne da due pixel — è quello che le dà l'aria di
-superficie continua invece che di fila di tasselli — quindi una colonna dura
-`finestra / (larghezza in pixel / 2)`. Sui tre minuti di oggi sono 0,56 s
-sulla fascia larga e 0,43 s nel caso peggiore, e `DERIVA_PASSO` sta a 0,25 s:
-due campioni per colonna, misurati. Col passo di due secondi che serviva alla
-finestra da un quarto d'ora resterebbero vuote tre colonne su quattro, e la
-striscia si leggerebbe come un pettine. **Chi allarga la finestra senza
-abbassare il passo ritrova il pettine.**
+insieme.** Una colonna dura `finestra / (larghezza in pixel / 6)`: sui tre
+minuti di oggi sono 1,4 s nel caso peggiore — la fascia più larga che il
+foglio dia, 778 px appena sotto i 900 di finestra — e `DERIVA_PASSO` sta a
+0,5 s. Misurato su tutte le larghezze: da due a sette campioni per colonna,
+nessuna colonna vuota. Chi stringe le colonne o allarga la finestra senza
+abbassare il passo ritrova il pettine, cioè colonne vuote in mezzo a colonne
+piene.
 
 L'altezza è in pixel — diciotto — e non in frazioni della fascia: è
 l'eccezione che vale già per gli spessori di tratto, e per la stessa ragione.
@@ -629,8 +647,9 @@ composti: `tonalitaName` è un accesso a una tavola di dodici voci per lingua,
 e la cache esiste per le stringhe da costruire.
 
 Anche qui, come per la trama, **non si raggruppa**: l'alfa di ogni colonna è
-il dato. Sono una cinquantina di rettangoli pieni, che non costano come
-altrettanti tracciati curvi — misurato, 0,07 ms sul fotogramma intero.
+il dato. Sono un centinaio di rettangoli pieni, che non costano come
+altrettanti tracciati curvi — misurato con la pittura forzata, alternando le
+due versioni fotogramma per fotogramma: 0,3 ms a due pixel, 0,1 ms a sei.
 
 **La tela è UNA, e il ciclo di fotogrammi pure.** Le otto linee sono otto
 dischi di un solo campo, disegnato da `disegno.js` su un solo canvas dentro un
